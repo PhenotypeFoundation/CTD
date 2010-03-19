@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class lazy="false" name="ctd.model.Chip" table="chip">
+    <id name="id" type="java.lang.Integer">
+      <column name="id"/>
+      <generator class="increment"/>
+    </id>
+    <property name="name" type="string">
+      <column length="200" name="name" not-null="true"/>
+    </property>
+    <property name="timestamp" type="string">
+      <column name="time_stamp"/>
+    </property>
+    <property name="dbname" type="string">
+      <column length="45" name="dbname"/>
+    </property>
+    <property name="taxId" type="java.lang.Integer">
+      <column name="tax_id"/>
+    </property>
+    <list cascade="all" name="chipAnnotation">
+      <key column="chip_id"/>
+      <list-index column="LIST_POS"/>
+      <one-to-many class="ctd.model.ChipAnnotation"/>
+    </list>
+  </class>
+</hibernate-mapping>

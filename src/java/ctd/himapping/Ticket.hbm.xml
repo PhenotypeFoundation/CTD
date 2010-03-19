@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 4-feb-2010 11:21:24 by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+  <class lazy="false" name="ctd.model.Ticket" table="ticket">
+    <id name="id" type="java.lang.Integer">
+      <column name="id"/>
+      <generator class="increment"/>
+    </id>
+    <property name="ctdRef" type="string">
+      <column length="45" name="ctd_REF" not-null="true"/>
+    </property>
+    <property name="folder" type="string">
+      <column length="45" name="folder" not-null="true"/>
+    </property>
+    <property name="password" type="string">
+      <column length="45" name="password" not-null="true"/>
+    </property>
+    <property name="closed" type="string">
+      <column length="3" name="closed" not-null="true"/>
+    </property>
+    <list cascade="all" name="studySampleAssaies">
+      <key column="ticket_id"/>
+      <list-index column="LIST_POS"/>
+      <one-to-many class="ctd.model.StudySampleAssay"/>
+    </list>
+  </class>
+</hibernate-mapping>

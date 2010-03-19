@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class lazy="false" name="ctd.model.ChipAnnotation" table="chip_annotation">
+    <id name="id" type="java.lang.Integer">
+      <column name="id"/>
+      <generator class="increment"/>
+    </id>
+    <many-to-one class="ctd.model.Chip" column="chip_id" name="chip"/>
+    <property name="probeset" type="string">
+      <column length="50" name="probeset"/>
+    </property>
+    <property name="geneAccession" type="string">
+      <column length="45" name="gene_accession"/>
+    </property>
+    <property name="geneSymbol" type="string">
+      <column length="45" name="gene_symbol"/>
+    </property>
+    <property name="geneAnnotation" type="string">
+      <column length="200" name="gene_description"/>
+    </property>
+    <property column="LIST_POS" name="LIST_POS" type="java.lang.Integer"/>
+  </class>
+</hibernate-mapping>

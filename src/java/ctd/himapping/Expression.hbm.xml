@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="ctd.model.Expression" table="expression">
+        <composite-id>
+            <key-property column="study_sample_assay_id" name="studySampleAssayId"/>
+            <key-property column="chip_annotation_id" name="ChipAnnotationId"/>
+        </composite-id>
+        <property name="expression" type="java.lang.Double">
+            <column name="expression" precision="22" scale="0"/>
+        </property>
+    </class>
+</hibernate-mapping>

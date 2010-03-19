@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 4-feb-2010 11:21:24 by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+  <class lazy="false" name="ctd.model.StudySampleAssay" table="study_sample_assay">
+    <id name="id" type="java.lang.Integer">
+      <column name="id"/>
+      <generator class="increment"/>
+    </id>
+    <many-to-one class="ctd.model.Ticket" column="ticket_id" name="ticket"/>
+    <property name="XREF" type="string">
+      <column length="45" name="X_REF"/>
+    </property>
+    <property name="chipTime" type="string">
+      <column length="45" name="chip_time"/>
+    </property>
+    <property name="nameRawfile" type="string">
+      <column length="45" name="name_RAWFILE"/>
+    </property>
+    <property name="average" type="java.lang.Double">
+      <column name="average" precision="22" scale="0"/>
+    </property>
+    <property name="std" type="java.lang.Double">
+      <column name="std" precision="22" scale="0"/>
+    </property>
+    <property column="LIST_POS" name="LIST_POS" type="java.lang.Integer"/>
+  </class>
+</hibernate-mapping>
