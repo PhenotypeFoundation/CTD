@@ -76,7 +76,7 @@
         </tr>
       </table>
       <br />
-      <p class="text_normal1"><span class="header2">Store a local GCT file (file-format containing precessed CEL-files).</span></p>
+      <p class="text_normal1"><span class="header2">Store a local GCT file (file-format containing processed CEL-files.)</span></p>
       <table  width="640" border="1" cellpadding="0" cellspacing="5">
         <tr>
           <td bordercolor="#FFFFFF" bgcolor="#FFFFFF"><p>String gct_file = <span class="prog_style2">&quot;c://ftp//result.gct&quot;</span>;<br />
