@@ -50,7 +50,7 @@
           <td bgcolor="#0099CC" class="text_header_white">Client installation</td>
         </tr>
       </table>
-      <p class="text_normal">1. Download the client-api CleanTranscriptomeAPI.jar from the <a target="content" href="download.jsp">download page</a>.</p>
+      <p class="text_normal">1. Download the client jar-library from the <a target="content" href="download.jsp">download page</a>.</p>
       <p class="text_normal">2. Edit the settings.properties file in the jar manually. There you find the webservice location, password and sftp parameters. Look at them carefully and manually edit it for the server you want to use. The default server is nbx13.nugo.org/ctd. (<a target="_blank" href="settings.properties">example</a>) </p>
       <table cellpadding="0" cellspacing="0" width="640" border="0">
         <tr>
