@@ -27,7 +27,7 @@
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
           <td width="100" class="text_normal">JAR File:</td>
-          <td width="250"><a href="download/nugoctdwebappclient.zip">nugoctdwebappclient.zip</a></td>
+          <td width="250"><a href="download/nugoctdclient.zip">nugoctdclient.zip</a></td>
           <td width="250">The Client library </td>
         </tr>
         <tr>
