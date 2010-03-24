@@ -71,7 +71,6 @@ public class storeGCTFile {
         String db_password = res.getString("db.password");
         String db_database = res.getString("db.database");
 
-
         //get the Ticket
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
