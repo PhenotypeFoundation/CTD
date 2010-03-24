@@ -521,10 +521,9 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.ejb3-persistence.classpath}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.libs.ejb3-persistence.classpath" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.mysql-connector-java-5.1.6-bin.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.mysql-connector-java-5.1.6-bin.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${libs.skaringa.classpath}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.libs.skaringa.classpath" todir="${dist.ear.dir}"/>
-        <copyfiles files="${file.reference.ojdbc14.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.ojdbc14.jar" todir="${dist.ear.dir}"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.libs.hibernate-support.classpath} ${manifest.libs.ejb3-persistence.classpath} ${manifest.file.reference.mysql-connector-java-5.1.6-bin.jar} ${manifest.libs.skaringa.classpath} ${manifest.file.reference.ojdbc14.jar} "/>
+            <attribute name="Class-Path" value="${manifest.libs.hibernate-support.classpath} ${manifest.libs.ejb3-persistence.classpath} ${manifest.file.reference.mysql-connector-java-5.1.6-bin.jar} ${manifest.libs.skaringa.classpath} "/>
         </manifest>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
@@ -532,7 +531,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.ejb3-persistence.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.mysql-connector-java-5.1.6-bin.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.skaringa.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${file.reference.ojdbc14.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,library-inclusion-in-manifest" name="do-ear-dist">
         <dirname file="${dist.ear.war}" property="dist.jar.dir"/>
