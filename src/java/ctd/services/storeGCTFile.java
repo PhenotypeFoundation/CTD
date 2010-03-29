@@ -201,7 +201,7 @@ public class storeGCTFile {
                     StudySampleAssay ssa = new StudySampleAssay();
                     String name_raw_file = cel_file_array.get(i).replace(".CEL", "");
                     ssa.setNameRawfile(name_raw_file);
-  
+                    ssa.setXREF(name_raw_file);
                     ssas.add(ssa);
                 }
                 ticket_update_1.getStudySampleAssaies().addAll(ssas);

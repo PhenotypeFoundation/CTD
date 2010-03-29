@@ -113,6 +113,7 @@ public class cleanData {
             String cel_zip_file = "";
             String zip_file = "";
             String gct_file = "";
+
             for (int i = 0; i < files.length; i++) {
                 String file = files[i];
                 if (file.contains("zip")) {
@@ -136,7 +137,7 @@ public class cleanData {
                 //Check if CEL files are allready there
                 for (int i = 0; i < files2.length; i++) {
                     String file = files2[i];
-                    if (file.endsWith("gct")) {
+                    if (file.endsWith("chip")) {
                         do_loop = false;
                         try {
                             Thread.sleep(5000);
@@ -149,196 +150,167 @@ public class cleanData {
 
             File dir2 = new File(zip_folder);
             String[] files2 = dir2.list();
+            String chip_file = "";
             ArrayList<String> unziped_files = new ArrayList<String>();
             for (int i = 0; i < files2.length; i++) {
                 String file = files2[i];
                 if (file.endsWith("CEL")) {
                     unziped_files.add(file);
                 }
+                if (file.endsWith("chip")) {
+                    chip_file = file;
+                }
             }
-
             //Check if all CEL files are derived from the same chip.
             //This is essential for normalization.
             //initiate check hashmap. This map contains all the unique chip definition file names. There should be only one per analysis.
-            HashMap<String, String> check = new HashMap<String, String>();
+
 
             ArrayList<StudySampleAssay> map = new ArrayList<StudySampleAssay>();
-            String cdf = "";
-            String date = "";
+
+
             for (int i = 0; i < unziped_files.size(); i++) {
                 String cel_file = unziped_files.get(i);
-                try {
-                    // Open the file that is the first
-                    // command line parameter
-                    String cel_file_path = zip_folder + "/" + cel_file;
-                    String name = cel_file.replaceAll(".CEL", "");
-                    FileInputStream fstream = new FileInputStream(cel_file_path);
-                    // Get the object of DataInputStream
-                    DataInputStream in = new DataInputStream(fstream);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                    String strLine = "";
-                    String[] line2parse;
-                    //Read File Line By Line
-                    while ((strLine = br.readLine()) != null) {
-                        // Print the content on the console
-                        if (strLine.contains("DatHeader")) {
-                            StudySampleAssay ssa = new StudySampleAssay();
-                            line2parse = strLine.split(" ");
-                            date = line2parse[17].trim();
-                            cdf = line2parse[27].trim().replaceAll("_", "");
-                            cdf = cdf.substring(0, cdf.length() - 4);
-                            cdf = cdf.toLowerCase();
-                            cdf = cdf_list.getString(cdf);
-                            //check
-                            check.put(cdf, cdf);
 
-                            ssa.setNameRawfile(name);
-                            ssa.setChipTime(date);
-                            ssa.setXREF("NA");
-                            map.add(ssa);
-                            break;
-                        }
-                    }
-                    //Close the input stream
-                    fstream.close();
-                    br.close();
-                    in.close();
-                } catch (Exception e) {//Catch exception if any
-                    System.err.println("Error: " + e.getMessage());
-                }
+                StudySampleAssay ssa = new StudySampleAssay();
+                // Open the file that is the first
+                // command line parameter
+                String cel_file_path = zip_folder + "/" + cel_file;
+                String name = cel_file.replaceAll(".CEL", "");
+                ssa.setNameRawfile(name);
+                ssa.setXREF(name);
+                map.add(ssa);
             }
-            //check if CEL files are derived from one chip only
-            Boolean run_normalisation = true;
-            if (check.keySet().size() == 1) {
-                ticket.getStudySampleAssaies().addAll(map);
-                session.saveOrUpdate(ticket);
-                session.persist(ticket);
-                tr.commit();
-            }
-            if (check.keySet().size() > 1) {
-                run_normalisation = false;
-                error_message = error_message + " Not all CEL files are derived from the same chip.";
-            }
+
+            ticket.getStudySampleAssaies().addAll(map);
+            session.saveOrUpdate(ticket);
+            session.persist(ticket);
+            tr.commit();
             session.close();
 
             //Storage chip definition file (CDF), creation gct file and database storage.
-            if (run_normalisation) {
-                SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-                Session session1 = sessionFactory1.openSession();
+            SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
+            Session session1 = sessionFactory1.openSession();
 
-                List<ChipAnnotation> chip_annotation = null;
+            List<ChipAnnotation> chip_annotation = null;
 
-                //check if cdf (chip definition file) is allready stored, if not, store it.
-                if (cdf.length() != 0) {
-                    Query q2 = session1.createQuery("from Chip Where Name='" + cdf + "'");
-                    if (q2.uniqueResult() != null) {
-                        Chip chip = (Chip) q2.list().get(0);
-                        chip_annotation = chip.getChipAnnotation();
-                    }
-                    if (q2.uniqueResult() == null) {
-                        //Add this chip and its annotation
-                        Chip chip_new = new Chip();
-                        chip_new.setName(cdf);
+            //check if cdf (chip definition file) is allready stored, if not, store it.
 
-                        //read chip file
-                        String chip_file = gct_file + ".chip";
-                        chip_annotation = readChip(chip_file);
-
-                        //Store the whole
-                        chip_new.getChipAnnotation().addAll(chip_annotation);
-
-                        Transaction tr1 = session1.beginTransaction();
-                        session1.save(chip_new);
-                        session1.persist(chip_new);
-                        tr1.commit();
-                        session1.close();
-                    }
-                }
-
-                //create array data input file for the database table, find correct foreign keys.
-                //get the study_sample_assay id and the probeset ids.
-
-                SessionFactory sessionFactory2 = new Configuration().configure().buildSessionFactory();
-                Session session2 = sessionFactory2.openSession();
-
-
-                //Get the cip_annotation_id
-                Query q3 = session2.createQuery("from Chip Where Name='" + cdf + "'");
-                Chip chip = (Chip) q3.list().get(0);
+            Query q2 = session1.createQuery("from Chip Where Name='" + chip_file + "'");
+            if (q2.uniqueResult() != null) {
+                Chip chip = (Chip) q2.list().get(0);
                 chip_annotation = chip.getChipAnnotation();
-                Iterator it2 = chip_annotation.iterator();
-                //for speed, put the chip annotation id in a hashmap
-                HashMap<String, String> chip_annotation_ids = new HashMap<String, String>();
-                while (it2.hasNext()) {
-                    ChipAnnotation ca = (ChipAnnotation) it2.next();
-                    String id = ca.getId().toString();
-                    String ps = ca.getProbeset();
-                    chip_annotation_ids.put(ps, id);
-                }
-                //create the temp file for storage of the data_insert file.
-                String data_file = zip_folder + "/data.txt";
-                FileOutputStream out = null;
-                PrintStream pr = null;
-                try {
-                    out = new FileOutputStream(data_file);
-                    pr = new PrintStream(out);
-                    Query qt = session2.createQuery("from Ticket where password='" + getPassword() + "' AND ctd_REF='" + getCTD_REF() + "'");
-
-                    ticket = null;
-
-                    if (qt.list().size() != 0) {
-                        ticket = (Ticket) qt.list().get(0);
-                    }
-
-                    Iterator it3 = ticket.getStudySampleAssaies().iterator();
-                    while (it3.hasNext()) {
-                        StudySampleAssay ssa = (StudySampleAssay) it3.next();
-                        String name_raw_file = ssa.getNameRawfile();
-                        String ssa_id = ssa.getId().toString();
-                        error_message = error_message + name_raw_file;
-
-                        String gct_file_generated = gct_file + ".gct";
-                        ArrayList<Double> values = writeFile(pr, chip_annotation_ids, ssa_id, gct_file_generated, name_raw_file);
-
-                        Statistics stat = new Statistics();
-                        stat.setData(values);
-                        Double average = stat.getAverage();
-                        Double std = stat.getSTD();
-
-                        ssa.setAverage(average);
-                        ssa.setStd(std);
-                    }
-
-                    pr.close();
-                } catch (IOException e) {
-                }
-                out.close();
-
-                Transaction tr2 = session2.beginTransaction();
-                session2.update(ticket);
-                session2.persist(ticket);
-                tr2.commit();
-
-                session2.close();
-
-                String sql = "LOAD DATA LOCAL INFILE '" + data_file + "' INTO TABLE " + db_database + ".expression";
-                String u = "--user=" + db_username;
-                String p1 = "--password=" + db_password;
-                String[] commands = new String[]{"mysql", "-e", sql, u, p1};
-
-                Process p4 = Runtime.getRuntime().exec(commands);
-                message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
-
-                //close the ticket when finished, normalization can only be performed once by the client.
-                CloseTicket();
             }
+
+            if (q2.uniqueResult() == null) {
+                //Add this chip and its annotation
+                Chip chip_new = new Chip();
+                chip_new.setName(chip_file);
+
+                //read chip file
+                String chip_file_path = zip_folder + "/" + chip_file;
+                chip_annotation = readChip(chip_file_path);
+
+                //Store the whole
+                chip_new.getChipAnnotation().addAll(chip_annotation);
+
+                Transaction tr1 = session1.beginTransaction();
+                session1.save(chip_new);
+                session1.persist(chip_new);
+                tr1.commit();
+                session1.close();
+            }
+
+            //create the temp file for storage of the data_insert file.
+            String data_file = zip_folder + "/data.txt";
+            FileOutputStream out = null;
+            PrintStream pr = null;
+            out = new FileOutputStream(data_file);
+            pr = new PrintStream(out);
+
+
+            //create array data input file for the database table, find correct foreign keys.
+            //get the study_sample_assay id and the probeset ids.
+            SessionFactory sessionFactory2 = new Configuration().configure().buildSessionFactory();
+            Session session2 = sessionFactory2.openSession();
+
+            //Get the cip_annotation_id
+            Query q3 = session2.createQuery("from Chip Where Name='" + chip_file + "'");
+            Chip chip = (Chip) q3.list().get(0);
+            chip_annotation = chip.getChipAnnotation();
+            Iterator it2 = chip_annotation.iterator();
+            //for speed, put the chip annotation id in a hashmap
+            HashMap<String, String> chip_annotation_ids = new HashMap<String, String>();
+            while (it2.hasNext()) {
+                ChipAnnotation ca = (ChipAnnotation) it2.next();
+                String id = ca.getId().toString();
+                String ps = ca.getProbeset();
+                chip_annotation_ids.put(ps, id);
+            }
+
+
+
+            try {
+
+                Query qt = session2.createQuery("from Ticket where password='" + getPassword() + "' AND ctd_REF='" + getCTD_REF() + "'");
+
+                ticket = null;
+
+                if (qt.list().size() != 0) {
+                    ticket = (Ticket) qt.list().get(0);
+                }
+
+                Iterator it3 = ticket.getStudySampleAssaies().iterator();
+                while (it3.hasNext()) {
+                    StudySampleAssay ssa = (StudySampleAssay) it3.next();
+                    String name_raw_file = ssa.getNameRawfile();
+                    String ssa_id = ssa.getId().toString();
+                    error_message = error_message + name_raw_file;
+
+                    String gct_file_generated = gct_file + ".gct";
+                    ArrayList<Double> values = writeFile(pr, chip_annotation_ids, ssa_id, gct_file_generated, name_raw_file);
+
+                    Statistics stat = new Statistics();
+                    stat.setData(values);
+                    Double average = stat.getAverage();
+                    Double std = stat.getSTD();
+
+                    ssa.setXREF(name_raw_file);
+                    ssa.setAverage(average);
+                    ssa.setStd(std);
+                }
+
+                
+            } catch (IOException e) {
+            }
+            pr.close();
+            out.close();
+
+            Transaction tr2 = session2.beginTransaction();
+            session2.update(ticket);
+            session2.persist(ticket);
+            tr2.commit();
+
+            session2.close();
+
+            String sql = "LOAD DATA LOCAL INFILE '" + data_file + "' INTO TABLE " + db_database + ".expression";
+            String u = "--user=" + db_username;
+            String p1 = "--password=" + db_password;
+            String[] commands = new String[]{"mysql", "-e", sql, u, p1};
+
+            Process p4 = Runtime.getRuntime().exec(commands);
+            message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
+
+            //close the ticket when finished, normalization can only be performed once by the client.
+            CloseTicket();
+
         }
 
         ////////////////////
         //SKARINGA
         result.setErrorMessage(error_message);
-        result.setMessage(message);
 
+        result.setMessage(message);
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
@@ -382,7 +354,8 @@ public class cleanData {
 
         //read the header
         String line = null;
-        line = input.readLine();
+        line =
+                input.readLine();
         String[] columns = line.split("\t");
         for (int i = 0; i <
                 columns.length; i++) {
@@ -398,6 +371,7 @@ public class cleanData {
             if (name.equals("Gene Title")) {
                 gene_title_index = i;
             }
+
         }
 
         String probeset = null;
@@ -436,6 +410,7 @@ public class cleanData {
             if (gene_description.equals("NA") == false) {
                 chip_annotation.setGeneAnnotation(gene_description);
             }
+
             count++;
             ann_list.add(chip_annotation);
         }
@@ -490,16 +465,19 @@ public class cleanData {
             String[] columns = line.split("\t");
             if (columns[0].equals("Name")) {
                 do_header = true;
-                name_column = 0;
+                name_column =
+                        0;
             }
 
             if (do_header) {
-                for (int i = 0; i < columns.length; i++) {
+                for (int i = 0; i <
+                        columns.length; i++) {
                     String header = columns[i].trim();
                     String xx = name_raw_file + ".CEL";
                     if (header.equals(xx)) {
                         expression_column = i;
-                        do_data = true;
+                        do_data =
+                                true;
                     }
 
 //                    if (header.equals("Name")) {
@@ -513,7 +491,8 @@ public class cleanData {
                 String probesetid = columns[name_column];
 
                 Double value = Double.valueOf(columns[expression_column]);
-                value = Math.log10(value) / Math.log10(2);
+                value =
+                        Math.log10(value) / Math.log10(2);
 
                 values.add(value);
 
