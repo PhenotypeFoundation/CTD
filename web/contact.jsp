@@ -8,13 +8,22 @@
 </head>
 
 <body>
+<table width="700" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="314"><strong class="text_header_black">Postal address:</strong></td>
+    <td width="386">&nbsp;</td>
+  </tr>
+  <tr>
+    <td><span class="text_normal">Wageningen University<br/>
+        <a href="http://www.hne.wur.nl/UK">Division of Human Nutrition</a> (Bode 62)<br/>
+P.O. Box 8129<br/>
+6700 EV Wageningen<br/>
+The Netherlands</span></td>
+    <td><img src="images/universiteit_logo_wur.jpg" width="250" height="50" /></td>
+  </tr>
+</table>
 <p><strong class="text_header_black"><br />
-  Postal address:</strong><br/>
-  <span class="text_normal">Wageningen University<br/>
-  <a href="http://www.hne.wur.nl/UK">Division of Human Nutrition</a> (Bode 62)<br/>
-  P.O. Box 8129<br />
-  6700 EV Wageningen<br />
-  The Netherlands</span>
+</strong><br/>
 </p>
 <table cellpadding="0" cellspacing="0" width="640" border="0">
   <tr>
