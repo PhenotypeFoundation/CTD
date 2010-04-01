@@ -159,6 +159,7 @@ public class cleanData {
                 }
                 if (file.endsWith("chip")) {
                     chip_file = file;
+                    chip_file = chip_file.split("_CDF_")[1];
                 }
             }
             //Check if all CEL files are derived from the same chip.
@@ -195,6 +196,7 @@ public class cleanData {
             List<ChipAnnotation> chip_annotation = null;
 
             //check if cdf (chip definition file) is allready stored, if not, store it.
+
 
             Query q2 = session1.createQuery("from Chip Where Name='" + chip_file + "'");
             if (q2.uniqueResult() != null) {
