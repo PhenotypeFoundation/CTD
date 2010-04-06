@@ -57,7 +57,7 @@ public class Query {
         ArrayList<ProbeSetExpressionInfo> psei = aa.getExpressionByProbeSetIdInternal();
         setExpressionInfo(psei);
 
-        text = String.valueOf((psei.size() * 15) + 60);
+        text = String.valueOf((psei.size() * 15) + 60+10);
         return text;
     }
 
@@ -71,12 +71,19 @@ public class Query {
     /**
      * @return the svg
      */
-    public String getSvg() throws MalformedURLException, NoImplementationException, IOException, DeserializerException {
+    public String getSvg() throws MalformedURLException, NoImplementationException, IOException, DeserializerException, SerializerException {
 
         String image = "";
 
-        
-        ArrayList<ProbeSetExpressionInfo> psei = getExpressionInfo();
+        //init parameters
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        String webservice_password = res.getString("ws.password");
+
+        getExpressionByProbeSetId aa = new getExpressionByProbeSetId();
+        aa.setProbeSetId(getProbesetId());
+        aa.setPassword(webservice_password);
+        ArrayList<ProbeSetExpressionInfo> psei = aa.getExpressionByProbeSetIdInternal();
+
         Iterator it1 = psei.iterator();
         //String total = "<svg viewBox=\"0 0 100% 100%\" width=\""+String.valueOf(psei.size()*30)+"\" height=\"100pt\">";
 
@@ -84,7 +91,7 @@ public class Query {
         int ori_y = 60;
 
 
-        String total = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 530 " + String.valueOf((psei.size() * 15) + ori_y) + "\" width=\"530\" height=\"" + String.valueOf((psei.size() * 15) + ori_y) + "\">";
+        String total = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 700 " + String.valueOf((psei.size() * 15) + ori_y+10) + "\" width=\"700\" height=\"" + String.valueOf((psei.size() * 15) + ori_y+10) + "\">";
         int count = 0;
 
         //Style
@@ -120,16 +127,16 @@ public class Query {
             String number = "<text x=\"4\" y=\"" + String.valueOf((count * 15) + ori_y+5) + "\" fill = \"black\" font-size = \"11\">"+String.valueOf(count)+"</text>";
             image = image + " " + number;
             //name
-            String name = "<text x=\"325\" y=\"" + String.valueOf((count * 15) + ori_y+5) + "\" fill = \"black\" font-size = \"11\">"+local_accession+"</text>";
+            String name = "<text x=\"530\" y=\"" + String.valueOf((count * 15) + ori_y+5) + "\" fill = \"black\" font-size = \"11\">"+local_accession+"</text>";
             image = image + " " + name;
 
             //background
-            String bgline = "<rect x=\"30\" y=\"" + String.valueOf((count * 15) + ori_y - 7.5D) + "\" width=\"530\" height=\"15\" style=\"fill:grey;stroke:grey;stroke-width:1;fill-opacity:0.1;stroke-opacity:0.1\" />";
+            String bgline = "<rect x=\"30\" y=\"" + String.valueOf((count * 15) + ori_y - 7.5D) + "\" width=\"500\" height=\"15\" style=\"fill:grey;stroke:grey;stroke-width:1;fill-opacity:0.1;stroke-opacity:0.1\" />";
             if (count % 2 == 1) {
                 image = image + " " + bgline;
             }
             //values
-            String shape = "<circle cx=\"" + String.valueOf((500 * value / 25) + ori_x) + "\" cy=\"" + String.valueOf((count * 15) + ori_y) + "\" r=\"5\" stroke=\"black\" stroke-width=\"1\"/>";
+            String shape = "<circle cx=\"" + String.valueOf((value * 31.25D) + ori_x) + "\" cy=\"" + String.valueOf((count * 15) + ori_y) + "\" r=\"5\" stroke=\"black\" stroke-width=\"1\"/>";
             image = image + " " + shape;
         }
         total = total + image + "</svg>";

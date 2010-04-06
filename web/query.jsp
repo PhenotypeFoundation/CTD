@@ -35,7 +35,7 @@
         </tr>
       </table>
     </form>
-    <IFRAME SRC="svg.jsp?probesetId=<jsp:getProperty name="query" property="probesetId"/>" overflow-x="visible" scrolling="auto" width="530" height="<jsp:getProperty name="query" property="amountValues" />" frameborder="0" >
+    <IFRAME SRC="svg.jsp?probesetId=<jsp:getProperty name="query" property="probesetId"/>" scrolling="auto" width="700" height="<jsp:getProperty name="query" property="amountValues" />" frameborder="0" >
     <p>&nbsp;</p>
     <p><br>
     </p>
