@@ -27,12 +27,12 @@
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
           <td width="100" class="text_normal">JAR File:</td>
-          <td width="250"><a href="download/nugoctdclient.zip">nugoctdclient.zip</a></td>
+          <td width="250"><a target="_blank" href="https://gforge.nbic.nl/frs/?group_id=76">nugoctdclient</a></td>
           <td width="250">The Client library </td>
         </tr>
         <tr>
           <td class="text_normal">WAR File:</td>
-          <td><a href="download/nugoctdwebapp.zip">nugoctdwebapp.zip</a></td>
+          <td><a target="_blank" href="https://gforge.nbic.nl/frs/?group_id=75">nugoctdwebapp</a></td>
           <td>The Server war file</td>
         </tr>
         <tr>
@@ -46,7 +46,11 @@
           <td>sql backup file</td>
         </tr>
       </table>
-      <p class="text_header_black">&nbsp;</p></td>
+      <p class="text_header_black"><span class="text_normal">To check out the latest code:</span><br />
+        <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdclient</span><br />
+        <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdwebapp</span><br />
+      <br />
+    </p></td>
   </tr>
 </table>
 </body>
