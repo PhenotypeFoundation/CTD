@@ -80,6 +80,7 @@ public class getExpressionByProbeSetId {
             }
 
             session.close();
+            sessionFactory.close();
         }
         ////////////////////
         //SKARINGA
@@ -134,6 +135,7 @@ public class getExpressionByProbeSetId {
             }
 
             session.close();
+            sessionFactory.close();
         }
 
         return pseia;

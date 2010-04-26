@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-
 /**
  *
  * @author kerkh010
@@ -26,6 +25,7 @@ public class Query {
     private String amountValues;
     private ArrayList<ProbeSetExpressionInfo> expressionInfo;
     private String svg = "";
+    private String zvalue = "";
 
     /**
      * @return the probesetId
@@ -57,7 +57,7 @@ public class Query {
         ArrayList<ProbeSetExpressionInfo> psei = aa.getExpressionByProbeSetIdInternal();
         setExpressionInfo(psei);
 
-        text = String.valueOf((psei.size() * 15) + 60+10);
+        text = String.valueOf((psei.size() * 15) + 60 + 10);
         return text;
     }
 
@@ -90,29 +90,39 @@ public class Query {
         int ori_x = 30;
         int ori_y = 60;
 
-
-        String total = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 700 " + String.valueOf((psei.size() * 15) + ori_y+10) + "\" width=\"700\" height=\"" + String.valueOf((psei.size() * 15) + ori_y+10) + "\">";
+        String total = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 700 " + String.valueOf((psei.size() * 15) + ori_y + 10) + "\" width=\"700\" height=\"" + String.valueOf((psei.size() * 15) + ori_y + 10) + "\">";
         int count = 0;
 
         //Style
         String style = "<style type=\"text/css\" ><![CDATA[ circle {fill: #2222FF;}]]></style>";
-        total = total+style;
-
+        total = total + style;
 
         //Draw X-bar
         String xline = "<line x1=\"30\" y1=\"50\" x2=\"530\" y2=\"50\" stroke-width=\"4\" stroke=\"black\" />";
         total = total + xline;
         //Draw legenda X-bar
         String legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA + GRSN (Log2)</text>";
+        if (getZvalue().equals("zvalue")) {
+            legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA + GRSN (Log2, z-value)</text>";
+        }
         total = total + legenda;
 
-
         //Draw scales
-        for (int i = 0; i < 17; i++) {
-            String xscale = "<line x1=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y1=\"50\" x2=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y2=\"40\" stroke-width=\"3\"  stroke=\"black\" />";
-            total = total + xscale;
-            String number = "<text x=\"" + String.valueOf(ori_x + (i * 31.25D)-5) + "\" y=\"36\" fill = \"black\" font-size = \"15\">"+String.valueOf(i)+"</text>";
-            total = total + number;
+        if (getZvalue().equals("zvalue")==false) {
+            for (int i = 0; i < 17; i++) {
+                String xscale = "<line x1=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y1=\"50\" x2=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y2=\"40\" stroke-width=\"3\"  stroke=\"black\" />";
+                total = total + xscale;
+                String number = "<text x=\"" + String.valueOf(ori_x + (i * 31.25D) - 5) + "\" y=\"36\" fill = \"black\" font-size = \"15\">" + String.valueOf(i) + "</text>";
+                total = total + number;
+            }
+        }
+        if (getZvalue().equals("zvalue")) {
+            for (int i = 0; i < 17; i++) {
+                String xscale = "<line x1=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y1=\"50\" x2=\"" + String.valueOf(ori_x + (i * 31.25D)) + "\" y2=\"40\" stroke-width=\"3\"  stroke=\"black\" />";
+                total = total + xscale;
+                String number = "<text x=\"" + String.valueOf(ori_x + (i * 31.25D) - 5) + "\" y=\"36\" fill = \"black\" font-size = \"15\">" + String.valueOf(i - 8) + "</text>";
+                total = total + number;
+            }
         }
 
         //Draw dots and shadings and numbering and cel-file names.
@@ -122,12 +132,19 @@ public class Query {
             ProbeSetExpressionInfo pse = (ProbeSetExpressionInfo) it1.next();
             Double value = pse.getLog2Value();
             String local_accession = pse.getLocalAccession();
+            Double std = pse.getSTD();
+            Double avg = pse.getAverage();
+
+            Double zscore = (value-avg)/std;
+            if (getZvalue().equals("zvalue")) {
+                value = 8.0D+zscore;
+            }
 
             //numbering
-            String number = "<text x=\"4\" y=\"" + String.valueOf((count * 15) + ori_y+5) + "\" fill = \"black\" font-size = \"11\">"+String.valueOf(count)+"</text>";
+            String number = "<text x=\"4\" y=\"" + String.valueOf((count * 15) + ori_y + 5) + "\" fill = \"black\" font-size = \"11\">" + String.valueOf(count) + "</text>";
             image = image + " " + number;
             //name
-            String name = "<text x=\"530\" y=\"" + String.valueOf((count * 15) + ori_y+5) + "\" fill = \"black\" font-size = \"11\">"+local_accession+"</text>";
+            String name = "<text x=\"530\" y=\"" + String.valueOf((count * 15) + ori_y + 5) + "\" fill = \"black\" font-size = \"11\">" + local_accession + "</text>";
             image = image + " " + name;
 
             //background
@@ -162,5 +179,19 @@ public class Query {
      */
     public void setExpressionInfo(ArrayList<ProbeSetExpressionInfo> expressionInfo) {
         this.expressionInfo = expressionInfo;
+    }
+
+    /**
+     * @return the zvalue
+     */
+    public String getZvalue() {
+        return zvalue;
+    }
+
+    /**
+     * @param zvalue the zvalue to set
+     */
+    public void setZvalue(String zvalue) {
+        this.zvalue = zvalue;
     }
 }
