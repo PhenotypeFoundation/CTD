@@ -146,7 +146,6 @@ public class Query {
             //name
             String name = "<text x=\"530\" y=\"" + String.valueOf((count * 15) + ori_y + 5) + "\" fill = \"black\" font-size = \"11\">" + local_accession + "</text>";
             image = image + " " + name;
-
             //background
             String bgline = "<rect x=\"30\" y=\"" + String.valueOf((count * 15) + ori_y - 7.5D) + "\" width=\"500\" height=\"15\" style=\"fill:grey;stroke:grey;stroke-width:1;fill-opacity:0.1;stroke-opacity:0.1\" />";
             if (count % 2 == 1) {

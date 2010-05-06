@@ -20,7 +20,25 @@
     </head>
     <body>
    
-    <p class="text_header_black">Query</p>
+   
+    </p>
+    <table cellpadding="0" cellspacing="0" width="640" border="0">
+      <tr>
+        <td class="text_header_white"><span class="text_header_black">Query</span></td>
+      </tr>
+      <tr>
+        <td class="text_normal"><br>
+          Download the scalable vector graphics plugin for several operating systems. (<a target="_blank" href="http://www.adobe.com/svg/viewer/install">link Adobe</a>)<br>
+          Firefox is standard svg enabled.</td>
+      </tr>
+    </table>
+    <br>
+    <table cellpadding="0" cellspacing="0" width="640" border="0">
+      <tr>
+        <td bgcolor="#0099CC" class="text_header_white">Show  values by ProbeSet name</td>
+      </tr>
+    </table>
+    <br>
     <form action="" target="_self" method="get" enctype="multipart/form-data" name="form1">
       <table width="423" border="0" cellspacing="0" cellpadding="0">
         <tr>
@@ -30,11 +48,29 @@
         </tr>
         <tr>
           <td>&nbsp;</td>
+          <td><label><span class="text_normal">Method <a target="_blank" href="http://en.wikipedia.org/wiki/Standard_score">z-values</a></span>
+              <select name="zvalue" id="zvalue">
+              <option value="normal">log2</option>
+            </select>
+            <br>
+          </label></td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
           <td><input type="submit" name="submit" id="submit" value="Submit"></td>
           <td>&nbsp;</td>
         </tr>
       </table>
     </form>
+   
+
+    
     <IFRAME SRC="svg.jsp?probesetId=<jsp:getProperty name="query" property="probesetId"/>" scrolling="auto" width="700" height="<jsp:getProperty name="query" property="amountValues" />" frameborder="0" >
     <p>&nbsp;</p>
     <p><br>

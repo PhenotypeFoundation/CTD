@@ -5,9 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Untitled Document</title>
 <link href="style.css" rel="stylesheet" type="text/css">
-
 </head>
-
 <body>
 <table width="700" border="0" cellpadding="0" cellspacing="20">
   <tr>
@@ -46,7 +44,7 @@
           <td>sql backup file</td>
         </tr>
       </table>
-      <p class="text_header_black"><span class="text_normal">To check out the latest code:</span><br />
+      <p class="text_header_black"><span class="text_normal">To check out the latest code, use this checkout command:</span><br />
         <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdclient</span><br />
         <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdwebapp</span><br />
       <br />

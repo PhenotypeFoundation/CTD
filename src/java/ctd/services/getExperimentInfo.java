@@ -16,56 +16,79 @@
 
 package ctd.services;
 
+import com.skaringa.javaxml.NoImplementationException;
+import com.skaringa.javaxml.ObjectTransformer;
+import com.skaringa.javaxml.ObjectTransformerFactory;
+import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
+import ctd.ws.model.AssayInfo;
+import ctd.ws.model.ProbeSetExpression;
+import ctd.ws.model.ProbeSetZscore;
+import ctd.ws.model.ZscoresDataSet;
+import java.util.ArrayList;
+
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 /**
  *
  * @author kerkh010
  */
-public class addReference {
-    private String password;
-    private String name_RAWFILE;
-    private String reference;
+public class getExperimentInfo {
 
-    /**
-     *
-     * @return message
-     */
-    public String addReference(){
+    private String password;
+    
+
+    public String getExperimentInfo() throws NoImplementationException, SerializerException {
         String message = "";
+        ArrayList<AssayInfo> array = new ArrayList<AssayInfo>();
+        
+        
+        
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
-        Query q = session.createQuery("from Ticket where password='"+getPassword()+"'");
-        Ticket ticket = (Ticket) q.uniqueResult();
+        Ticket ticket = null;
         
+        Query q1 = session.createQuery("from Ticket where password='" + getPassword() + "'");
+        ticket = (Ticket) q1.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
-        while (it1.hasNext()){
+        while (it1.hasNext()) {
+            AssayInfo ai = new AssayInfo();
             StudySampleAssay ssa = (StudySampleAssay) it1.next();
-            String name = ssa.getNameRawfile();
-            name = name.replace(".CEL", "");
-            if (name.equals(getName_RAWFILE())){
-                ssa.setXREF(getReference());
-            }
+            String x_ref_name = ssa.getXREF();
+            String raw_name = ssa.getNameRawfile();
+            Double avg = ssa.getAverage();
+            Double std = ssa.getStd();
+
+            ai.setAverage(avg);
+            ai.setNameRawfile(raw_name);
+            ai.setXREF(x_ref_name);
+            ai.setStd(std);
+
+            array.add(ai);
         }
-        
-        Transaction tr = session.beginTransaction();
-        session.saveOrUpdate(ticket);
-        session.persist(ticket);
-        tr.commit();
         session.close();
         sessionFactory.close();
-        
-        message = getReference() +" is added.";
+        ////////////////////
+        //SKARINGA
+        ObjectTransformer trans = null;
+        try {
+            trans = ObjectTransformerFactory.getInstance().getImplementation();
+        } catch (NoImplementationException ex) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        message = trans.serializeToString(array);
+
 
         return message;
     }
@@ -84,31 +107,5 @@ public class addReference {
         this.password = password;
     }
 
-    /**
-     * @return the name_RAWFILE
-     */
-    public String getName_RAWFILE() {
-        return name_RAWFILE;
-    }
-
-    /**
-     * @param name_RAWFILE the name_RAWFILE to set
-     */
-    public void setName_RAWFILE(String name_RAWFILE) {
-        this.name_RAWFILE = name_RAWFILE;
-    }
-
-    /**
-     * @return the reference
-     */
-    public String getReference() {
-        return reference;
-    }
-
-    /**
-     * @param reference the reference to set
-     */
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
+   
 }
