@@ -52,8 +52,8 @@
   <tr>
     <td><p class="header1"><br/>
       Introduction</p>
-      <p class="text_normal">The CleanTranscriptomeAPI can be used as a library in any java application for handling the pre-processing of CEL-files derived from the Affymetrix mRNA-array platforms. Post- processing of the normalized data is partially provided by the retrieval method for z-scores.<br />
-        Be certain to use the right variables in the settings.properties. This file defines the connections with the server.<br />
+      <p class="text_normal">The CleanTranscriptomeAPI can be used as a library in any java application for handling the pre-processing of CEL-files derived from the Affymetrix mRNA-array platforms. <br />
+         Define the connections with the server by using the <span class="text_normal1">right variables in the settings.properties file</span>.<br />
       </p>
       <table cellpadding="0" cellspacing="0" width="640" border="0">
       <tr>
@@ -80,7 +80,7 @@
         </tr>
       </table>
       <br />
-      <p class="text_normal1"><span class="header2">Store a local GCT file (file-format containing processed CEL-files.)</span></p>
+      <p class="text_normal1"><span class="header2">Store a local GCT file (Assumes the CEL-files are processed allready.)</span></p>
       <table  width="640" border="1" cellpadding="0" cellspacing="5">
         <tr>
           <td bordercolor="#FFFFFF" bgcolor="#FFFFFF"><p>String gct_file = <span class="prog_style2">&quot;c://ftp//result.gct&quot;</span>;<br />
@@ -103,13 +103,32 @@ session.addReference(localReference, nameCELfile);<br />
 <br />
 ############# Use  password (from ticket) to add local reference afterwards.<br />
 CTD session = <span class="prog_style1">new</span> CTD();<br />
-String password = <span class="prog_style2">&quot;af3e211e-f773-450f-9662-e90994968c57&quot;</span>;<br/>
+String password = <span class="prog_style2">&quot;af3e211e-f773-450f-9662-e90994968c57&quot;</span>;  <br/>
 String localAccession = <span class="prog_style2">&quot;dbNP:001&quot;</span>;<br />
 String nameCELfile = <span class="prog_style2">&quot;A75_B06_KO_WY&quot;</span>;<br />
 session.addReference(password,localAccession, nameCELfile);</td>
       </tr>
       </table>
-      <p><span class="header2">Retrieve expression data by local accession code.</span></p>
+      <p><span class="header2">Specify a title.</span><br />
+      </p>
+      <table  width="640" border="1" cellpadding="0" cellspacing="5">
+        <tr>
+          <td bordercolor="#FFFFFF" bgcolor="#FFFFFF"><p>String title = <span class="prog_style2">&quot;Effect of PUFAs on liver cell proliferation&quot;</span>;<br />
+            String ticket_password = 
+            <span class="prog_style2">&quot;af3e211e-f773-450f-9662-e90994968c57&quot;</span>;<br />
+              CTD session = <span class="prog_style1">new</span> CTD();<br />
+          String message = session.addTitle(ticket_password,title);</p></td>
+        </tr>
+      </table>
+      <p><span class="header2">Retrieve a map with protocols for sample preparation.</span><br />
+      </p>
+      <table  width="640" border="1" cellpadding="0" cellspacing="5">
+        <tr>
+          <td bordercolor="#FFFFFF" bgcolor="#FFFFFF"><p>CTD session = <span class="prog_style1">new</span> CTD();<br />
+            HashMap&lt;String,String&gt; protocols = session.getProtocols();</p></td>
+        </tr>
+      </table>
+<p><span class="header2">Retrieve expression data by local accession code.</span></p>
       <table  width="640" border="1" cellpadding="0" cellspacing="5">
         <tr>
           <td bordercolor="#FFFFFF" bgcolor="#FFFFFF"><p>ArrayList&lt;ProbeSetExpression&gt; psa = <span class="prog_style1">new</span> ArrayList&lt;ProbeSetExpression&gt;();<br />
