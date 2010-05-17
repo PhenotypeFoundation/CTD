@@ -19,7 +19,9 @@ package ctd.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -33,6 +35,10 @@ public class Ticket  implements Serializable {
      private String folder;
      private String password;
      private String closed;
+     private String title;
+
+    
+
      private List studySampleAssaies = new ArrayList();
 
     public Ticket() {
@@ -99,6 +105,22 @@ public class Ticket  implements Serializable {
      */
     public void setClosed(String closed) {
         this.closed = closed;
+    }
+
+    
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 
 

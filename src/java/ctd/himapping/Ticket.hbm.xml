@@ -19,6 +19,9 @@
     <property name="closed" type="string">
       <column length="3" name="closed" not-null="true"/>
     </property>
+    <property name="title" type="string">
+      <column length="250" name="title"/>
+    </property>
     <list cascade="all" name="studySampleAssaies">
       <key column="ticket_id"/>
       <list-index column="LIST_POS"/>
