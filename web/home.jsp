@@ -39,7 +39,59 @@ Java secure channel library (JSch) from the <a target="_blank" href="http://www.
         <span class="text_normal">The main advantage of the Clean Transcriptome Database is the equal normalization of CEL files by using RMA and GRSN, global rank-invariant set normalization (<a target="_blank" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2644708/?tool=pubmed">PMID:19055840</a>). GRSN ensures samples within a dataset are fitted to an average intensitiy distribution allowing for a more robust comparison. However, one should always be aware of the probability of overfitting datasets.<br />
         Another advantage is the fast retrieval of expression values from a specific probeset. This allows the fast visualization of hundreds experiments from the viewpoint of a single gene.
       Expression data can also be automatically converted to z-scores for statistical pipelines.</span></p>
-      <p><img src="images/strategy.jpg" width="595" height="356" /><br />
+      <p><img src="images/strategy.jpg" width="595" height="356" /></p>
+      <table cellpadding="0" cellspacing="0" width="640" border="0">
+        <tr>
+          <td bgcolor="#0099CC" class="text_header_white">Add a protocol for sample preparation.</td>
+        </tr>
+      </table>
+      <form id="form1" name="form1" method="post" action="addProtocol.jsp">
+        <table  class="text_normal" width="640" border="0" cellspacing="0" cellpadding="0">
+          <tr >
+            <td>Password</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><label>
+              <input type="text" name="password" id="password" />
+            </label></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Protocol Name </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><label>
+              <input type="text" name="name" id="name" />
+            </label></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>Protocol Description </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><textarea name="description" id="description" cols="70" rows="10"></textarea></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td><label>
+              <input type="submit" name="submit" id="submit" value="Submit" />
+            </label></td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+        </table>
+      
+      </form>
+      <p><br />
       </p>
     <p>&nbsp;</p></td>
   </tr>
