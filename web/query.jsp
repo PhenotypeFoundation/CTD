@@ -48,8 +48,8 @@
         </tr>
         <tr>
           <td>&nbsp;</td>
-          <td><label><span class="text_normal">Method <a target="_blank" href="http://en.wikipedia.org/wiki/Standard_score">z-values</a></span>
-              <select name="zvalue" id="zvalue">
+          <td><label>
+            <select name="zvalue" id="zvalue">
               <option value="normal">log2</option>
             </select>
             <br>
