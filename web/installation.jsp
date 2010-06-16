@@ -34,6 +34,15 @@
 .prog_style2 {
 	color: #F93;
 }
+.text_normal1 {	font-family: Verdana, Geneva, sans-serif;
+	font-size: 14px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #000;
+}
+.text_normal1 {	font-weight: normal;
+}
 -->
 </style>
 </head>
@@ -50,8 +59,8 @@
           <td bgcolor="#0099CC" class="text_header_white">Client installation</td>
         </tr>
       </table>
-      <p class="text_normal">1. Download the client jar-library from the <a target="content" href="download.jsp">download page</a>.</p>
-      <p class="text_normal">2. Edit the settings.properties file in the jar manually. There you find the webservice location, password and sftp parameters. Look at them carefully and manually edit it for the server you want to use. The default server is nbx13.nugo.org/ctd. (<a target="_blank" href="settings.properties">example</a>) </p>
+      <p class="text_normal"><span class="text_header_black">1.</span> Download the client jar-library from the <a target="content" href="download.jsp">download page</a>.</p>
+      <p class="text_normal"><span class="text_header_black">2.</span> Edit the settings.properties file in the jar manually. There you find the webservice location, password and sftp parameters. Look at them carefully and manually edit it for the server you want to use. The default server is nbx13.nugo.org/ctd. (<a target="_blank" href="settings.properties">example</a>) </p>
       <table cellpadding="0" cellspacing="0" width="640" border="0">
         <tr>
           <td bgcolor="#0099CC" class="text_header_white">Server installation</td>
@@ -60,19 +69,21 @@
       <p class="header2">TomCat webserver</p>
     <p class="text_normal">Use an existing TomCat server on your system, download the <a target="content" href="download.jsp">war-file</a> and deploy it in the webapps folder of the installation directory. Otherwise download it and follow the installation instructions on the <a target="_blank" href="http://tomcat.apache.org/">project webpage</a>. Another installation protocol has been tested succesfully on an Ubuntu platform (<a target="_blank" href="http://www.howtogeek.com/howto/linux/installing-tomcat-6-on-ubuntu/">link</a>).<br />
       The war file is automatically deployed into the &quot;nugoctdwebapp&quot; folder. A virtual link should be made to the ctd folder where the client has its default webservice location.<br />
-      Create virtual link:</p>
-    <p class="text_normal">cd /usr/local/tomcat/webapps<br />
+      </p>
+    <p class="text_normal"><span class="text_header_black">1.</span> Place the war file into the webapps folder of your Tomcat installation, it is automatically deployed/unpacked.<br />
+      <span class="text_header_black">2.</span> Create virtual link:<br />
+      cd /usr/local/tomcat/webapps<br />
 ln -s nugoctdwebapp ctd<br />
-    </p>
-    <p><span class="header2">MySQL server</span>    </p>
-    <p><span class="text_normal">1. Download and install the MySQL server if needed. (<a target="_blank" href="http://www.mysql.com/">link</a>)</span><br/>
-      <span class="text_normal">2. Create the database, named &quot;ctd&quot;, and run the <a target="content" href="download.jsp">sql-script</a> to restore the database tables.</span></p>
+<span class="text_header_black">3.</span> For establishing a link with the MySQL database edit the username, password and database name in the hibernate.cfg.xml file. It is located in the WEB_INF/classes folder.<br />
+<span class="text_header_black">4.</span> Also edit the settings.properties file. Fill in the correct parameters for the webservice password (also used by the client), location of the ftp folder, the R-script and the connection parameters of the local MySQL database.</p>
+<p><span class="header2">MySQL server</span>    </p>
+    <p><span class="text_header_black">1.</span><span class="text_normal"> Download and install the MySQL server if needed. (<a target="_blank" href="http://www.mysql.com/">link</a>)</span><br/>
+      <span class="text_header_black">2.</span><span class="text_normal"> Create the database, named &quot;ctd&quot;, and run the <a target="content" href="download.jsp">sql-script</a> to restore the database tables.</span></p>
     <p><span class="header2">R</span></p>
-    <p class="text_normal">1. Allow the webserver to run <a href="http://manpages.ubuntu.com/manpages/intrepid/man1/Rscript.1.html">Rscript</a>. <br />
-      2. 
-      Provide the location of the <a href="download/CleanData.R">CleanData.R</a> script in the properties.settings file. It is located in the webapps subdirectory of your TomCat installation.</p>
+    <p class="text_normal"><span class="text_header_black">1.</span> Allow the webserver to run <a href="http://manpages.ubuntu.com/manpages/intrepid/man1/Rscript.1.html">Rscript</a>. <br />
+      <span class="text_header_black">2.</span> Provide the location of the <a href="download/CleanData.R">CleanData.R</a> script in the properties.settings file. It is located in the webapps subdirectory of your TomCat installation.</p>
     <p class="header2">Secure FTP channel.</p>
-    <p><span class="text_normal">1.The Ubuntu distribution of Linux allready has a standard sftp connection on port 22 for each user account. Create a new user:</span><br />
+    <p><span class="text_header_black">1.</span><span class="text_normal"> The Ubuntu distribution of Linux allready has a standard sftp connection on port 22 for each user account. Create a new user:</span><br />
       </p>
     <p><span class="text_normal">adduser cleandata</span>  <br />
       <span class="text_normal">cd /home/cleandata<br />
@@ -80,7 +91,7 @@ ln -s nugoctdwebapp ctd<br />
       mkdir data
       </span><br />
       <span class="text_normal">chmod 777 data </span></p>
-    <p><span class="text_normal">2. Ensure that the ftp-host, port number, username, password and remote data-folder are included in the  properties.settings file located at the client. These settings are confidential.</span><br/>
+    <p><span class="text_header_black">2.</span><span class="text_normal"> Ensure that the ftp-host, port number, username, password and remote data-folder are included in the  properties.settings file located at the client. These settings are confidential between the client and the server.</span><br/>
     </p></td>
   </tr>
 </table>
