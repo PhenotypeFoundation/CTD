@@ -116,7 +116,7 @@ DROP TABLE IF EXISTS `protocol`;
 CREATE TABLE `protocol` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET latin1 DEFAULT NULL,
-  `description` varchar(1000) CHARACTER SET latin1 DEFAULT NULL,
+  `description` varchar(2000) CHARACTER SET latin1 DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -7,6 +7,7 @@ package ctd.services.internal;
 import com.skaringa.javaxml.DeserializerException;
 import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.SerializerException;
+import ctd.model.Ticket;
 import ctd.services.getExpressionByProbeSetId;
 import ctd.ws.model.ProbeSetExpressionInfo;
 import java.io.IOException;
@@ -14,6 +15,10 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 /**
  *
@@ -26,6 +31,7 @@ public class Query {
     private ArrayList<ProbeSetExpressionInfo> expressionInfo;
     private String svg = "";
     private String zvalue = "";
+    private String downloadData = "";
 
     /**
      * @return the probesetId
@@ -192,5 +198,56 @@ public class Query {
      */
     public void setZvalue(String zvalue) {
         this.zvalue = zvalue;
+    }
+
+    /**
+     * @return the downloadData
+     */
+    public String getDownloadData() {
+        //init parameters
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        String ftp_username = res.getString("ws.ftp_username");
+        String ftp_folder = res.getString("ws.ftp_folder");
+        String hostname = res.getString("ws.hostname");
+
+
+        //open hibernate connection
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        Ticket ticket = null;
+
+        SQLQuery q1 = session.createSQLQuery("Select ctd_REF,title,folder FROM ticket");
+        Iterator it1 = q1.list().iterator();
+
+        String table = "";
+
+        while (it1.hasNext()) {
+            Object[] data = (Object[]) it1.next();
+            String ctd_REF = (String) data[0];
+            String title = (String) data[1];
+            String folder = (String) data[2];
+
+            if (title!=null && title.equals("")==false){
+                 String link2 = "sftp://"+ftp_username+"@"+hostname+":"+ftp_folder+folder+"/";
+                 String link1 = "<a href=\""+link2+"\">link</a>";
+                 table = table + "<tr><td>"+ctd_REF+"</td><td>"+title+"</td><td>"+link1+"</td></tr>";
+            }
+
+
+        }
+        session.close();
+        sessionFactory.close();
+
+
+
+        return table;
+    }
+
+    /**
+     * @param downloadData the downloadData to set
+     */
+    public void setDownloadData(String downloadData) {
+        this.downloadData = downloadData;
     }
 }

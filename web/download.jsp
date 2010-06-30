@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*" errorPage="" %>
+<jsp:useBean id="query" scope="session" class="ctd.services.internal.Query"/>
+<jsp:setProperty name="query" property="*"/>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -45,9 +48,28 @@
         </tr>
       </table>
       <p class="text_header_black"><span class="text_normal">To check out the latest code, use this checkout command:</span><br />
-        <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdclient</span><br />
-        <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdwebapp</span><br />
+        <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdclient</span><br/>
+      <span class="text_normal">svn checkout https://gforge.nbic.nl/svn/nugoctdwebapp</span></p>
+      <table cellpadding="0" cellspacing="0" width="640" border="0">
+        <tr>
+          <td bgcolor="#0099CC" class="text_header_white">Data Links </td>
+        </tr>
+      </table>
       <br />
+      <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
+        <tr>
+          <td width="50" class="text_normal"><span class="text_header_black">Id</span></td>
+          <td width="500" class="text_header_black">Title</td>
+          <td width="50" class="text_header_black">Link</td>
+        </tr>
+        <%
+         String message = query.getDownloadData();
+         out.println(message);
+        %>
+       
+      </table>
+      <p class="text_header_black"><br/>
+        <br/>
     </p></td>
   </tr>
 </table>
