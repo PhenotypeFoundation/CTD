@@ -151,6 +151,7 @@ public class cleanData {
             File dir2 = new File(zip_folder);
             String[] files2 = dir2.list();
             String chip_file = "";
+            String chip_file_db = "";
             ArrayList<String> unziped_files = new ArrayList<String>();
             for (int i = 0; i < files2.length; i++) {
                 String file = files2[i];
@@ -159,7 +160,8 @@ public class cleanData {
                 }
                 if (file.endsWith("chip")) {
                     chip_file = file;
-                    chip_file = chip_file.split("_CDF_")[1];
+
+                    chip_file_db = chip_file.split("_CDF_")[1];
                 }
             }
             //Check if all CEL files are derived from the same chip.
@@ -198,7 +200,7 @@ public class cleanData {
             //check if cdf (chip definition file) is allready stored, if not, store it.
 
 
-            Query q2 = session1.createQuery("from Chip Where Name='" + chip_file + "'");
+            Query q2 = session1.createQuery("from Chip Where Name='" + chip_file_db + "'");
             if (q2.uniqueResult() != null) {
                 Chip chip = (Chip) q2.list().get(0);
                 chip_annotation = chip.getChipAnnotation();
@@ -207,7 +209,7 @@ public class cleanData {
             if (q2.uniqueResult() == null) {
                 //Add this chip and its annotation
                 Chip chip_new = new Chip();
-                chip_new.setName(chip_file);
+                chip_new.setName(chip_file_db);
 
                 //read chip file
                 String chip_file_path = zip_folder + "/" + chip_file;
@@ -237,7 +239,7 @@ public class cleanData {
             Session session2 = sessionFactory2.openSession();
 
             //Get the cip_annotation_id
-            Query q3 = session2.createQuery("from Chip Where Name='" + chip_file + "'");
+            Query q3 = session2.createQuery("from Chip Where Name='" + chip_file_db + "'");
             Chip chip = (Chip) q3.list().get(0);
             chip_annotation = chip.getChipAnnotation();
             Iterator it2 = chip_annotation.iterator();

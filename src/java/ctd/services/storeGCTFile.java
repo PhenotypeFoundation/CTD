@@ -112,7 +112,6 @@ public class storeGCTFile {
                 if (file.endsWith("chip")) {
                     chip_file = session_folder + "/" + file;
                     cdf_name = file.split("_CDF_")[1];
-
                 }
             }
             Process p3 = Runtime.getRuntime().exec("chmod 770 " + gct_file);
