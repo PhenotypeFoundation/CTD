@@ -58,8 +58,8 @@
       <br />
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
-          <td width="50" class="text_normal"><span class="text_header_black">Id</span></td>
-          <td width="500" class="text_header_black">Title</td>
+          <td width="70" class="text_normal"><span class="text_header_black">Id</span></td>
+          <td width="480" class="text_header_black">Title</td>
           <td width="50" class="text_header_black">Link</td>
         </tr>
         <%

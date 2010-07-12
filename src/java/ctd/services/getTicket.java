@@ -112,9 +112,9 @@ public class getTicket {
             String command3 = "chmod 777 " + new_folder;
             Process child;
             try {
-                child = Runtime.getRuntime().exec(command3);
-                child = Runtime.getRuntime().exec(command2);
                 child = Runtime.getRuntime().exec(command1);
+                child = Runtime.getRuntime().exec(command2);
+                child = Runtime.getRuntime().exec(command3);
             } catch (IOException ex) {
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -122,7 +122,7 @@ public class cleanData {
                     gct_file = zip_folder + "/gctfile";
                 }
             }
-            Process p3 = Runtime.getRuntime().exec("chmod 770 " + zip_file);
+            Process p3 = Runtime.getRuntime().exec("chmod 774 " + zip_file);
 
             //////////////////////////////////////////////////////////////////
             //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
@@ -309,6 +309,10 @@ public class cleanData {
             CloseTicket();
 
         }
+
+
+
+
 
         ////////////////////
         //SKARINGA

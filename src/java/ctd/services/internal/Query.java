@@ -217,7 +217,7 @@ public class Query {
 
         Ticket ticket = null;
 
-        SQLQuery q1 = session.createSQLQuery("Select ctd_REF,title,folder FROM ticket");
+        SQLQuery q1 = session.createSQLQuery("Select ctd_REF,title,folder,id FROM ticket Order By id ASC");
         Iterator it1 = q1.list().iterator();
 
         String table = "";
