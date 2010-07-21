@@ -57,7 +57,7 @@ public class getTicket {
         String prefix_ftp_subfolder = res.getString("ws.prefix_ftp_subfolders");
 
         TicketClient ticket_client = new TicketClient();
-        String new_folder = null;
+        String new_folder = "";
         String message = "";
 
         String password_client = getPassword();

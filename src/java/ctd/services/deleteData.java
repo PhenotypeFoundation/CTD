@@ -52,7 +52,7 @@ public class deleteData {
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String webservice_password = res.getString("ws.password");
 
-        ArrayList<Integer> array = new ArrayList<Integer>();
+        
         DeleteDataResult ddr = new DeleteDataResult();
 
         if (webservice_password.equals(getWsPassword())) {
@@ -74,7 +74,8 @@ public class deleteData {
                 while (it1.hasNext()) {
                     StudySampleAssay ssa = (StudySampleAssay) it1.next();
                     Integer id = ssa.getId();
-                    array.add(id);
+                    session.delete(ssa);
+                    
                 }
                 //Delete ticket and its connected samples
                 Transaction tx = (Transaction) session.beginTransaction();
@@ -83,6 +84,7 @@ public class deleteData {
                 ddr.setMessage("Data from this ticket is deleted.");
             }
             session.close();
+            sessionFactory.close();
         }
 
         if (webservice_password.equals(getWsPassword()) == false) {
