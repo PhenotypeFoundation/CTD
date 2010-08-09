@@ -56,6 +56,8 @@
         </tr>
       </table>
       <br />
+      <span class="text_header_white">(<a target="_blank" href="http://winscp.net">WinSCP is needed for downloading</a>)<br />
+      </span><br />
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
           <td width="70" class="text_normal"><span class="text_header_black">Id</span></td>

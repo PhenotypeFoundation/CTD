@@ -110,11 +110,13 @@ public class getTicket {
             String command1 = "chown cleandata " + new_folder;
             String command2 = "chgrp cleandata " + new_folder;
             String command3 = "chmod 777 " + new_folder;
+            String command4 = "chmod +t " + new_folder;
             Process child;
             try {
                 child = Runtime.getRuntime().exec(command1);
                 child = Runtime.getRuntime().exec(command2);
                 child = Runtime.getRuntime().exec(command3);
+                child = Runtime.getRuntime().exec(command4);
             } catch (IOException ex) {
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
