@@ -114,6 +114,7 @@ public class storeGCTFile {
                     cdf_name = file.split("_CDF_")[1];
                 }
             }
+
             Process p3 = Runtime.getRuntime().exec("chmod 644 " + gct_file);
             Process p4 = Runtime.getRuntime().exec("chmod 644 " + chip_file);
 
