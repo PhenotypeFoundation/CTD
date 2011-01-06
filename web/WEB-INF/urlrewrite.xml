@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<!--
+
+    Configuration file for UrlRewriteFilter
+    http://tuckey.org/urlrewrite/
+
+-->
+<urlrewrite  use-query-string="true" >
+
+    <rule enabled="true">
+        <from>^/rest/getExperiments/query\?wsPassword=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getJsonExperiments.jsp\?wsPassword=$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <from>^/rest/getMeasurements/query\?password=([-\_a-zA-Z0-9]+)&amp;assayToken=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurements.jsp?password=$1&amp;assayToken=$2</to>
+    </rule>
+
+    <rule enabled="true" >
+        <from>^/rest/getExperimentAssays/query\?password=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getExperimentAssays.jsp?password=$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <from>^/rest/getMeasurementMetaData/query\?password=([-\_a-zA-Z0-9]+)&amp;assayToken=([-\_a-zA-Z0-9]+)&amp;measurementToken=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurementMetaData.jsp?password=$1&amp;assayToken=$2&amp;measurementToken=$3</to>
+    </rule>
+
+    <rule enabled="true">
+        <from>^/rest/getMeasurementData/query\?password=([-\_a-zA-Z0-9]+)&amp;assayToken=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurementData.jsp?password=$1&amp;assayToken=$2</to>
+    </rule>
+    
+    <rule enabled="true">
+        <from>^/rest/getMeasurementData/query\?wsPassword=([-\_a-zA-Z0-9]+)&amp;measurementToken=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurementDataProbeset.jsp?wsPassword=$1&amp;measurementToken=$2</to>
+    </rule>
+
+    <rule enabled="true">
+        <from>^/rest/getAssayURL/query\?password=([-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getAssayURL.jsp?password=$1</to>
+    </rule>
+
+</urlrewrite>
+
+

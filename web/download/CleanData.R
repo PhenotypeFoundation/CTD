@@ -285,7 +285,7 @@ NuGOMakeCleanData <- function(input.file.name, output.file.name)  {
         Descriptions <- as.data.frame(as.character(mget(featureNames(x.norm), get(sprintf("%sGENENAME", cdfname)))))
         Gene_Names <- as.data.frame(as.character(mget(featureNames(x.norm), get(sprintf("%sSYMBOL", cdfname)))))
         feature_names <- as.data.frame(featureNames(x.norm))
-        Tab_Data <- as.data.frame(2^exprs(x.norm))
+        Tab_Data <- as.data.frame(exprs(x.norm))
         Tab_Data <- cbind(feature_names, Descriptions, Tab_Data)
         cat("#1.2\n", file=sprintf("%s.gct", output.file.name))
         cat(dim(exprs(x.norm))[1], "\t", dim(exprs(x.norm))[2], "\n", file=sprintf("%s.gct", output.file.name), append = T)

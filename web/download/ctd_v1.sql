@@ -90,23 +90,6 @@ CREATE TABLE `expression` (
 /*!40000 ALTER TABLE `expression` ENABLE KEYS */;
 
 
---
--- Definition of table `procedure`
---
-
-DROP TABLE IF EXISTS `procedure`;
-CREATE TABLE `procedure` (
-  `ticket_id` int(10) unsigned NOT NULL,
-  `protocol_id` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `procedure`
---
-
-/*!40000 ALTER TABLE `procedure` DISABLE KEYS */;
-/*!40000 ALTER TABLE `procedure` ENABLE KEYS */;
-
 
 --
 -- Definition of table `protocol`
