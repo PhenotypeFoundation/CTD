@@ -21,15 +21,14 @@
     <body>
    
    
-    </p>
+  
     <table cellpadding="0" cellspacing="0" width="640" border="0">
       <tr>
         <td class="text_header_white"><span class="text_header_black">Query</span></td>
       </tr>
       <tr>
         <td class="text_normal"><br>
-          Download the scalable vector graphics plugin for several operating systems. (<a target="_blank" href="http://www.adobe.com/svg/viewer/install">link Adobe</a>)<br>
-          Firefox is standard svg enabled.</td>
+          Download the scalable vector graphics plugin. (<a target="_blank" href="http://www.adobe.com/svg/viewer/install">link Adobe</a>)<br></td>
       </tr>
     </table>
     <br>

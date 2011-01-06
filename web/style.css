@@ -23,3 +23,9 @@
 
 
  
+.small-text {
+	font-size: small;
+}
+.boldnumber {
+	font-weight: bold;
+}

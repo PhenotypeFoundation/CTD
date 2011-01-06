@@ -80,17 +80,20 @@ ln -s nugoctdwebapp ctd<br />
     <p><span class="text_header_black">1.</span><span class="text_normal"> Download and install the MySQL server if needed. (<a target="_blank" href="http://www.mysql.com/">link</a>)</span><br/>
       <span class="text_header_black">2.</span><span class="text_normal"> Create the database, named &quot;ctd&quot;, and run the <a target="content" href="download.jsp">sql-script</a> to restore the database tables.</span></p>
     <p><span class="header2">R</span></p>
-    <p class="text_normal"><span class="text_header_black">1.</span> Allow the webserver to run <a href="http://manpages.ubuntu.com/manpages/intrepid/man1/Rscript.1.html">Rscript</a>. <br />
-      <span class="text_header_black">2.</span> Provide the location of the <a href="download/CleanData.R">CleanData.R</a> script in the properties.settings file. It is located in the webapps subdirectory of your TomCat installation.</p>
+    <p class="text_normal"><span class="text_header_black">1.</span> Allow the user of the TomCat webserver to run <a href="http://manpages.ubuntu.com/manpages/intrepid/man1/Rscript.1.html">Rscript</a>. <br />
+      <span class="text_header_black">2.</span> Provide the location of the <a href="download/CleanData.R">CleanData.R</a> and <a href="download/CTD_Combat.R">CTD_Combat.R</a> scripts in the properties file.</p>
     <p class="header2">Secure FTP channel.</p>
-    <p><span class="text_header_black">1.</span><span class="text_normal"> The Ubuntu distribution of Linux allready has a standard sftp connection on port 22 for each user account. Create a new user:</span><br />
+    <p><span class="text_header_black">1.</span><span class="text_normal"> The Ubuntu distribution of Linux has a standard sftp connection on port 22 for each user account. Create a new user:</span><br />
       </p>
     <p><span class="text_normal">adduser cleandata</span>  <br />
       <span class="text_normal">cd /home/cleandata<br />
       su cleandata<br />
       mkdir data
-      </span><br />
-      <span class="text_normal">chmod 777 data </span></p>
+      <br />
+      mkdir clean_data_R
+       (Store the Rscripts here.)<br /></span>
+      <span class="text_normal">chmod 777 data </span><br />
+      <span class="text_normal1">chmod 777 clean_data_R</span>    </p>
     <p><span class="text_header_black">2.</span><span class="text_normal"> Ensure that the ftp-host, port number, username, password and remote data-folder are included in the  properties.settings file located at the client. These settings are confidential between the client and the server.</span><br/>
     </p></td>
   </tr>

@@ -28,18 +28,23 @@
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
           <td width="100" class="text_normal">JAR File:</td>
-          <td width="250"><a target="_blank" href="https://gforge.nbic.nl/frs/?group_id=76">nugoctdclient</a></td>
+          <td width="250"><a target="_blank" href="download/nugoctdclient.jar">nugoctdclient</a></td>
           <td width="250">The Client library </td>
         </tr>
         <tr>
           <td class="text_normal">WAR File:</td>
-          <td><a target="_blank" href="https://gforge.nbic.nl/frs/?group_id=75">nugoctdwebapp</a></td>
+          <td><a target="_blank" href="download/nugoctdwebapp.war">nugoctdwebapp</a></td>
           <td>The Server war file</td>
         </tr>
         <tr>
           <td class="text_normal">R script:</td>
           <td><a href="download/CleanData.R">CleanData.R</a></td>
           <td>The R-script for RMA and GRSN</td>
+        </tr>
+        <tr>
+          <td class="text_normal">&nbsp;</td>
+          <td><a href="download/CTD_Combat.R">CTD_Combat.R</a></td>
+          <td>Script for combining datasets </td>
         </tr>
         <tr>
           <td class="text_normal">SQL File:</td>
@@ -68,7 +73,6 @@
          String message = query.getDownloadData();
          out.println(message);
         %>
-       
       </table>
       <p class="text_header_black"><br/>
         <br/>

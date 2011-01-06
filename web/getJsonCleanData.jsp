@@ -9,7 +9,7 @@
    "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<jsp:useBean id="clean_data" scope="page" class="ctd.services.getCleanData"/>
+<jsp:useBean id="clean_data" scope="page" class="ctd.services.getJsonCleanData"/>
 <jsp:setProperty name="clean_data" property="*"/>
 
         <%

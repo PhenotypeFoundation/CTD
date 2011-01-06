@@ -1,0 +1,26 @@
+#accordion {
+	margin:20px 0px;
+}
+
+h3.toggler {
+	cursor: pointer;
+	border: 1px solid #0099CC;
+	border-right-color: #0099CC;
+	border-bottom-color: #0099CC;
+	font-family: Verdana, Geneva, sans-serif;
+	font-weight:bold;
+	font-size: 16px;
+	background: #0099CC;
+	color: #FFFFFF;
+	margin: 0 0 0px 0;
+	padding: 3px 5px 1px;
+}
+
+div.element p, div.element h4 {
+	margin:0px;
+	padding:4px;
+}
+
+blockquote {
+	padding:5px 20px;
+}
