@@ -41,9 +41,9 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getTicket {
+public class getJsonTicket {
 
-    private String password;
+    private String wsPassword;
 
     public String getTicket() throws SerializerException {
 
@@ -55,12 +55,14 @@ public class getTicket {
         String ftp_folder = res.getString("ws.ftp_folder");
         String prefix_ctd_reference = res.getString("ws.prefix_ticket_reference");
         String prefix_ftp_subfolder = res.getString("ws.prefix_ftp_subfolders");
+        String ftp_username = res.getString("ws.ftp_username");
+        String hostname = res.getString("ws.hostname");
 
         TicketClient ticket_client = new TicketClient();
         String new_folder = "";
         String message = "";
 
-        String password_client = getPassword();
+        String password_client = getWsPassword();
 
         if (webservice_password.equals(password_client)) {
             //open hibernate connection
@@ -118,8 +120,13 @@ public class getTicket {
                 child = Runtime.getRuntime().exec(command3);
                 child = Runtime.getRuntime().exec(command4);
             } catch (IOException ex) {
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(getJsonTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            //location ftp folder
+            String link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder+"/";
+            ticket_client.setLocationFTPFolder(link);
+
 
             Ticket ticket = new Ticket();
             ticket.setFolder(ctd_ftp_folder);
@@ -147,7 +154,7 @@ public class getTicket {
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
         } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getJsonTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
         message = trans.serializeToJsonString(ticket_client);
 
@@ -161,14 +168,14 @@ public class getTicket {
     /**
      * @return the password
      */
-    public String getPassword() {
-        return password;
+    public String getWsPassword() {
+        return wsPassword;
     }
 
     /**
      * @param password the password to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setWsPassword(String password) {
+        this.wsPassword = password;
     }
 }

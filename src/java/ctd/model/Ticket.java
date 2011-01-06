@@ -29,15 +29,12 @@ import java.util.Set;
  */
 public class Ticket  implements Serializable {
 
-
      private Integer id;
      private String ctdRef;
      private String folder;
      private String password;
      private String closed;
      private String title;
-
-    
 
      private List studySampleAssaies = new ArrayList();
 

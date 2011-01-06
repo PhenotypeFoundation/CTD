@@ -8,15 +8,14 @@ import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
 import com.skaringa.javaxml.SerializerException;
-import ctd.ws.model.ChipAnnotation;
-import ctd.ws.model.ProbeSetAnnotation;
+import ctd.model.Chip;
+import ctd.ws.model.ChipParameters;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.hibernate.SQLQuery;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -25,50 +24,39 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getChipAnnotation {
+public class getChips {
 
     private String wsPassword;
-    private String chipName;
 
-    public String getChipAnnotation() throws NoImplementationException, SerializerException {
+    public String getChips() throws NoImplementationException, SerializerException {
 
         String message = "";
-
         //init parameters
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String webservice_password = res.getString("ws.password");
 
 
-        ArrayList<ProbeSetAnnotation> apsa = new ArrayList<ProbeSetAnnotation>();
+        ArrayList<ChipParameters> chips = new ArrayList<ChipParameters>();
 
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
-
         String password_client = getWsPassword();
         if (webservice_password.equals(password_client)) {
-
-            SQLQuery q1 = session.createSQLQuery("Select probeset,gene_accession,gene_symbol,gene_description From chip,chip_annotation WHERE chip.id=chip_annotation.chip_id AND chip.name='" + getChipName() + "'");
+            Query q1 = session.createQuery("from Chip");
             Iterator it1 = q1.list().iterator();
 
             while (it1.hasNext()) {
-                Object[] data = (Object[]) it1.next();
-                ProbeSetAnnotation psa = new ProbeSetAnnotation();
-                String probeset = (String) data[0];
-                String gene_accession = (String) data[1];
-                String gene_symbol = (String) data[2];
-                String gene_description = (String) data[3];
+                Chip ch = (Chip) it1.next();
+                String name = ch.getName();
 
-                psa.setProbeSet(probeset);
-                psa.setGeneAccession(gene_accession);
-                psa.setGeneSymbol(gene_symbol);
-                psa.setGeneDescription(gene_description);
+                ChipParameters cp = new ChipParameters();
+                cp.setName(name);
 
-                apsa.add(psa);
+                chips.add(cp);
             }
         }
-
 
         session.close();
         sessionFactory.close();
@@ -80,10 +68,9 @@ public class getChipAnnotation {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(apsa);
+        message = trans.serializeToString(chips);
 
         return message;
-
     }
 
     /**
@@ -98,19 +85,5 @@ public class getChipAnnotation {
      */
     public void setWsPassword(String wsPassword) {
         this.wsPassword = wsPassword;
-    }
-
-    /**
-     * @return the chipName
-     */
-    public String getChipName() {
-        return chipName;
-    }
-
-    /**
-     * @param chipName the chipName to set
-     */
-    public void setChipName(String chipName) {
-        this.chipName = chipName;
     }
 }

@@ -25,7 +25,7 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getChipAnnotation {
+public class getJsonChipAnnotation {
 
     private String wsPassword;
     private String chipName;
@@ -33,11 +33,9 @@ public class getChipAnnotation {
     public String getChipAnnotation() throws NoImplementationException, SerializerException {
 
         String message = "";
-
         //init parameters
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String webservice_password = res.getString("ws.password");
-
 
         ArrayList<ProbeSetAnnotation> apsa = new ArrayList<ProbeSetAnnotation>();
 
@@ -68,8 +66,6 @@ public class getChipAnnotation {
                 apsa.add(psa);
             }
         }
-
-
         session.close();
         sessionFactory.close();
         ////////////////////
@@ -80,7 +76,7 @@ public class getChipAnnotation {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(apsa);
+        message = trans.serializeToJsonString(apsa);
 
         return message;
 

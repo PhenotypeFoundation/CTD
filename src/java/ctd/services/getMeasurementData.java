@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ctd.services;
 
 import com.skaringa.javaxml.NoImplementationException;
@@ -23,10 +22,7 @@ import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
 import ctd.ws.model.ProbeSetExpression;
-import ctd.ws.model.ProbeSetZscore;
-import ctd.ws.model.ZscoresDataSet;
 import java.util.ArrayList;
-
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,79 +36,62 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getZscoresByLocalAccession {
+public class getMeasurementData {
+
     private String password;
-    private String reference;
+    private String assayToken;
 
-
-
-
-    public String getZscoresByLocalAccession() throws NoImplementationException, SerializerException {
+    public String getMeasurementData() throws NoImplementationException, SerializerException {
         String message = "";
-        ArrayList<ProbeSetExpression> array = new ArrayList<ProbeSetExpression>();
-        ArrayList<ProbeSetZscore> array_new = new ArrayList<ProbeSetZscore>();
-        
-        ZscoresDataSet zs = new ZscoresDataSet();
+        ArrayList<Object> total = new ArrayList<Object>();
+        ArrayList<String> assaynames = new ArrayList<String>();
+        ArrayList<Integer> assayids = new ArrayList<Integer>();
+        ArrayList<String> probesetnames = new ArrayList<String>();
+        ArrayList<Double> values = new ArrayList<Double>();
+
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         Ticket ticket = null;
         Integer ssa_id = null;
-        Query q1 = session.createQuery("from Ticket where password='" + getPassword() + "'");
-        ticket = (Ticket) q1.uniqueResult();
+        Query q = session.createQuery("from Ticket where password='" + getPassword() + "'");
+        ticket = (Ticket) q.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
         while (it1.hasNext()) {
             StudySampleAssay ssa = (StudySampleAssay) it1.next();
             String name = ssa.getXREF();
-            if (name != null) {
-                if (name.equals(getReference())) {
-                    ssa_id = ssa.getId();
-                }
+            if (name.equals(getAssayToken())) {
+                Integer id = ssa.getId();
+                assayids.add(id);
+                assaynames.add(name);
             }
         }
 
-        //get the expression data
-        if (ssa_id != null) {
-            SQLQuery sql = session.createSQLQuery("SELECT expression.expression,probeset FROM expression,chip_annotation WHERE study_sample_assay_id="+ssa_id.toString()+" AND expression.chip_annotation_id=chip_annotation.id;");
+        Integer count = 0;
+        for (int i = 0; i < assayids.size(); i++) {
+            count++;
+            Integer assay_id = assayids.get(i);
+
+            SQLQuery sql = session.createSQLQuery("SELECT expression.expression,probeset FROM expression,chip_annotation WHERE study_sample_assay_id=" + assay_id.toString() + " AND expression.chip_annotation_id=chip_annotation.id;");
             Iterator it2 = sql.list().iterator();
             while (it2.hasNext()) {
                 Object[] data = (Object[]) it2.next();
                 String probeset = (String) data[1];
+                if (count==1) {
+                    probesetnames.add(probeset);
+                }
                 Double value = (Double) data[0];
-                ProbeSetExpression pse = new ProbeSetExpression();
-                pse.setLog2Value(value);
-                pse.setProbeSetName(probeset);
-                array.add(pse);
+                values.add(value);
             }
         }
-        //get the standard deviation and average. (from the log2 transformed expression values.)
-        if (ssa_id!=null){
-            Query q2 = session.createQuery("FROM StudySampleAssay WHERE id="+ssa_id.toString());
-            StudySampleAssay ssa = (StudySampleAssay) q2.uniqueResult();
-            Double average = ssa.getAverage();
-            Double std = ssa.getStd();
-            zs.setAverage(average);
-            zs.setStandardDeviation(std);
 
-            //convert raw data array to new one with z-scores
-            for (int i=0;i<array.size();i++){
-                ProbeSetExpression pse = array.get(i);
-                Double value = pse.getLog2Value();
-                String probeset = pse.getProbeSetName();
-
-                //z-score
-                Double zscore = (value - average) / std;
-                ProbeSetZscore psz = new ProbeSetZscore();
-                psz.setProbeSetName(probeset);
-                psz.setZScore(zscore);
-                array_new.add(psz);
-            }
-            zs.setProbeSetZscoreList(array_new);
-
-        }
         session.close();
+        total.add(assaynames);
+        total.add(probesetnames);
+        total.add(values);
+
         ////////////////////
         //SKARINGA
         ObjectTransformer trans = null;
@@ -121,7 +100,7 @@ public class getZscoresByLocalAccession {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(zs);
+        message = trans.serializeToJsonString(total);
 
         return message;
     }
@@ -141,16 +120,16 @@ public class getZscoresByLocalAccession {
     }
 
     /**
-     * @return the reference
+     * @return the assayToken
      */
-    public String getReference() {
-        return reference;
+    public String getAssayToken() {
+        return assayToken;
     }
 
     /**
-     * @param reference the reference to set
+     * @param assayToken the assayToken to set
      */
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setAssayToken(String assayToken) {
+        this.assayToken = assayToken;
     }
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package ctd.services;
 
 import com.skaringa.javaxml.NoImplementationException;
@@ -23,10 +22,7 @@ import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
 import ctd.ws.model.ProbeSetExpression;
-import ctd.ws.model.ProbeSetZscore;
-import ctd.ws.model.ZscoresDataSet;
 import java.util.ArrayList;
-
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,27 +36,24 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getZscoresByLocalAccession {
-    private String password;
+public class getJsonExpressionDataByLocalAccession {
+
+    private String ticketPassword;
     private String reference;
+   
 
-
-
-
-    public String getZscoresByLocalAccession() throws NoImplementationException, SerializerException {
+    public String getJsonExpressionDataByLocalAccession() throws NoImplementationException, SerializerException {
         String message = "";
         ArrayList<ProbeSetExpression> array = new ArrayList<ProbeSetExpression>();
-        ArrayList<ProbeSetZscore> array_new = new ArrayList<ProbeSetZscore>();
-        
-        ZscoresDataSet zs = new ZscoresDataSet();
+
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         Ticket ticket = null;
         Integer ssa_id = null;
-        Query q1 = session.createQuery("from Ticket where password='" + getPassword() + "'");
-        ticket = (Ticket) q1.uniqueResult();
+        Query q = session.createQuery("from Ticket where password='" + getTicketPassword() + "'");
+        ticket = (Ticket) q.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
         while (it1.hasNext()) {
@@ -73,7 +66,6 @@ public class getZscoresByLocalAccession {
             }
         }
 
-        //get the expression data
         if (ssa_id != null) {
             SQLQuery sql = session.createSQLQuery("SELECT expression.expression,probeset FROM expression,chip_annotation WHERE study_sample_assay_id="+ssa_id.toString()+" AND expression.chip_annotation_id=chip_annotation.id;");
             Iterator it2 = sql.list().iterator();
@@ -87,32 +79,9 @@ public class getZscoresByLocalAccession {
                 array.add(pse);
             }
         }
-        //get the standard deviation and average. (from the log2 transformed expression values.)
-        if (ssa_id!=null){
-            Query q2 = session.createQuery("FROM StudySampleAssay WHERE id="+ssa_id.toString());
-            StudySampleAssay ssa = (StudySampleAssay) q2.uniqueResult();
-            Double average = ssa.getAverage();
-            Double std = ssa.getStd();
-            zs.setAverage(average);
-            zs.setStandardDeviation(std);
-
-            //convert raw data array to new one with z-scores
-            for (int i=0;i<array.size();i++){
-                ProbeSetExpression pse = array.get(i);
-                Double value = pse.getLog2Value();
-                String probeset = pse.getProbeSetName();
-
-                //z-score
-                Double zscore = (value - average) / std;
-                ProbeSetZscore psz = new ProbeSetZscore();
-                psz.setProbeSetName(probeset);
-                psz.setZScore(zscore);
-                array_new.add(psz);
-            }
-            zs.setProbeSetZscoreList(array_new);
-
-        }
         session.close();
+
+
         ////////////////////
         //SKARINGA
         ObjectTransformer trans = null;
@@ -121,23 +90,23 @@ public class getZscoresByLocalAccession {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(zs);
-
+        message = trans.serializeToJsonString(array);
+        
         return message;
     }
 
     /**
-     * @return the password
+     * @return the ticketPassword
      */
-    public String getPassword() {
-        return password;
+    public String getTicketPassword() {
+        return ticketPassword;
     }
 
     /**
-     * @param password the password to set
+     * @param ticketPassword the ticketPassword to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setTicketPassword(String ticketPassword) {
+        this.ticketPassword = ticketPassword;
     }
 
     /**
@@ -153,4 +122,8 @@ public class getZscoresByLocalAccession {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+   
+
+    
 }

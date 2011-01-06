@@ -10,6 +10,7 @@ package ctd.ws.model;
  * @author kerkh010
  */
 public class ProbeSetAnnotation {
+    private String chipName;
     private String probeSet;
     private String geneAccession;
     private String geneSymbol;
@@ -69,6 +70,20 @@ public class ProbeSetAnnotation {
      */
     public void setGeneDescription(String geneDescription) {
         this.geneDescription = geneDescription;
+    }
+
+    /**
+     * @return the chipName
+     */
+    public String getChipName() {
+        return chipName;
+    }
+
+    /**
+     * @param chipName the chipName to set
+     */
+    public void setChipName(String chipName) {
+        this.chipName = chipName;
     }
 
 }

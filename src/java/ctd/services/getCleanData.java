@@ -58,7 +58,7 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class cleanData {
+public class getCleanData {
 
     private String password;
     private String CTD_REF;
@@ -119,7 +119,7 @@ public class cleanData {
                 if (file.contains("zip")) {
                     cel_zip_file = file;
                     zip_file = zip_folder + "/" + cel_zip_file;
-                    gct_file = zip_folder + "/gctfile";
+                    gct_file = zip_folder + "/gctfile_"+folder;
                 }
             }
             Process p3 = Runtime.getRuntime().exec("chmod 664 " + zip_file);
@@ -142,7 +142,7 @@ public class cleanData {
                         try {
                             Thread.sleep(5000);
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(cleanData.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(getCleanData.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -169,9 +169,7 @@ public class cleanData {
             //This is essential for normalization.
             //initiate check hashmap. This map contains all the unique chip definition file names. There should be only one per analysis.
 
-
             ArrayList<StudySampleAssay> map = new ArrayList<StudySampleAssay>();
-
 
             for (int i = 0; i < unziped_files.size(); i++) {
                 String cel_file = unziped_files.get(i);
@@ -199,7 +197,6 @@ public class cleanData {
             List<ChipAnnotation> chip_annotation = null;
 
             //check if cdf (chip definition file) is allready stored, if not, store it.
-
 
             Query q2 = session1.createQuery("from Chip Where Name='" + chip_file_db + "'");
             if (q2.uniqueResult() != null) {
@@ -233,7 +230,6 @@ public class cleanData {
             out = new FileOutputStream(data_file);
             pr = new PrintStream(out);
 
-
             //create array data input file for the database table, find correct foreign keys.
             //get the study_sample_assay id and the probeset ids.
             SessionFactory sessionFactory2 = new Configuration().configure().buildSessionFactory();
@@ -252,8 +248,6 @@ public class cleanData {
                 String ps = ca.getProbeset();
                 chip_annotation_ids.put(ps, id);
             }
-
-
 
             try {
 
@@ -304,10 +298,16 @@ public class cleanData {
             String[] commands = new String[]{"mysql", "-e", sql, u, p1};
 
             Process p4 = Runtime.getRuntime().exec(commands);
+
+           
+
             message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
 
             //close the ticket when finished, normalization can only be performed once by the client.
             CloseTicket();
+
+            //remove data_file
+            Process p5 = Runtime.getRuntime().exec("rm -f " + data_file);
 
         }
 
@@ -474,13 +474,11 @@ public class cleanData {
             String[] columns = line.split("\t");
             if (columns[0].equals("Name")) {
                 do_header = true;
-                name_column =
-                        0;
+                name_column = 0;
             }
 
             if (do_header) {
-                for (int i = 0; i <
-                        columns.length; i++) {
+                for (int i = 0; i <columns.length; i++) {
                     String header = columns[i].trim();
                     String xx = name_raw_file + ".CEL";
                     if (header.equals(xx)) {
@@ -500,13 +498,9 @@ public class cleanData {
                 String probesetid = columns[name_column];
 
                 Double value = Double.valueOf(columns[expression_column]);
-                value =
-                        Math.log10(value) / Math.log10(2);
-
+                
                 values.add(value);
-
                 String chip_annotation_id = chip_annotation_ids.get(probesetid);
-
                 String expr_line = ssa_id + "\t" + chip_annotation_id + "\t" + value.toString();
                 pr.println(expr_line);
             }

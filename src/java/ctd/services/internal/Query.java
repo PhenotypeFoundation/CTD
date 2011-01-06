@@ -59,7 +59,7 @@ public class Query {
 
         getExpressionByProbeSetId aa = new getExpressionByProbeSetId();
         aa.setProbeSetId(getProbesetId());
-        aa.setPassword(webservice_password);
+        aa.setWsPassword(webservice_password);
         ArrayList<ProbeSetExpressionInfo> psei = aa.getExpressionByProbeSetIdInternal();
         setExpressionInfo(psei);
 
@@ -87,12 +87,11 @@ public class Query {
 
         getExpressionByProbeSetId aa = new getExpressionByProbeSetId();
         aa.setProbeSetId(getProbesetId());
-        aa.setPassword(webservice_password);
+        aa.setWsPassword(webservice_password);
         ArrayList<ProbeSetExpressionInfo> psei = aa.getExpressionByProbeSetIdInternal();
 
         Iterator it1 = psei.iterator();
-        //String total = "<svg viewBox=\"0 0 100% 100%\" width=\""+String.valueOf(psei.size()*30)+"\" height=\"100pt\">";
-
+        
         int ori_x = 30;
         int ori_y = 60;
 
@@ -209,7 +208,7 @@ public class Query {
         String ftp_username = res.getString("ws.ftp_username");
         String ftp_folder = res.getString("ws.ftp_folder");
         String hostname = res.getString("ws.hostname");
-
+        
 
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();

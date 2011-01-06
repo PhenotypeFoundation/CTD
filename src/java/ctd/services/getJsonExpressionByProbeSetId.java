@@ -34,7 +34,7 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getExpressionByProbeSetId {
+public class getJsonExpressionByProbeSetId {
 
     private String probeSetId;
     private String wsPassword;
@@ -90,7 +90,7 @@ public class getExpressionByProbeSetId {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(pseia);
+        message = trans.serializeToJsonString(pseia);
         return message;
     }
 

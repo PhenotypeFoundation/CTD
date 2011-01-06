@@ -30,7 +30,6 @@ public class addTitle {
         Query q = session.createQuery("from Ticket where password='"+getPassword()+"'");
         Ticket ticket = (Ticket) q.uniqueResult();
 
-
         ticket.setTitle(getTitle());
 
         Transaction tr = session.beginTransaction();

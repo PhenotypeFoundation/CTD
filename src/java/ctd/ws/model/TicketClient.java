@@ -24,6 +24,8 @@ public class TicketClient {
     private String ctdRef;
     private String folder;
     private String password;
+    private String title;
+    private String locationFTPFolder;
 
     /**
      * @return the ctdRef
@@ -65,6 +67,34 @@ public class TicketClient {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @return the locationFTPFolder
+     */
+    public String getLocationFTPFolder() {
+        return locationFTPFolder;
+    }
+
+    /**
+     * @param locationFTPFolder the locationFTPFolder to set
+     */
+    public void setLocationFTPFolder(String locationFTPFolder) {
+        this.locationFTPFolder = locationFTPFolder;
     }
 
 

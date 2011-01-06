@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package ctd.services;
 
 import com.skaringa.javaxml.NoImplementationException;
@@ -21,8 +22,12 @@ import com.skaringa.javaxml.ObjectTransformerFactory;
 import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
+import ctd.ws.model.AssayInfo;
 import ctd.ws.model.ProbeSetExpression;
+import ctd.ws.model.ProbeSetZscore;
+import ctd.ws.model.ZscoresDataSet;
 import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,51 +41,42 @@ import org.hibernate.cfg.Configuration;
  *
  * @author kerkh010
  */
-public class getExpressionDataByLocalAccession {
+public class getJsonExperimentInfo {
 
     private String ticketPassword;
-    private String reference;
+    
 
-    public String getExpressionDataByLocalAccession() throws NoImplementationException, SerializerException {
+    public String getJsonExperimentInfo() throws NoImplementationException, SerializerException {
         String message = "";
-        ArrayList<ProbeSetExpression> array = new ArrayList<ProbeSetExpression>();
-
+        ArrayList<AssayInfo> array = new ArrayList<AssayInfo>();
+        
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         Ticket ticket = null;
-        Integer ssa_id = null;
-        Query q = session.createQuery("from Ticket where password='" + getPassword() + "'");
-        ticket = (Ticket) q.uniqueResult();
+        
+        Query q1 = session.createQuery("from Ticket where password='" + getTicketPassword() + "'");
+        ticket = (Ticket) q1.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
         while (it1.hasNext()) {
+            AssayInfo ai = new AssayInfo();
             StudySampleAssay ssa = (StudySampleAssay) it1.next();
-            String name = ssa.getXREF();
-            if (name != null) {
-                if (name.equals(getReference())) {
-                    ssa_id = ssa.getId();
-                }
-            }
-        }
+            String x_ref_name = ssa.getXREF();
+            String raw_name = ssa.getNameRawfile();
+            Double avg = ssa.getAverage();
+            Double std = ssa.getStd();
 
-        if (ssa_id != null) {
-            SQLQuery sql = session.createSQLQuery("SELECT expression.expression,probeset FROM expression,chip_annotation WHERE study_sample_assay_id="+ssa_id.toString()+" AND expression.chip_annotation_id=chip_annotation.id;");
-            Iterator it2 = sql.list().iterator();
-            while (it2.hasNext()) {
-                Object[] data = (Object[]) it2.next();
-                String probeset = (String) data[1];
-                Double value = (Double) data[0];
-                ProbeSetExpression pse = new ProbeSetExpression();
-                pse.setLog2Value(value);
-                pse.setProbeSetName(probeset);
-                array.add(pse);
-            }
+            ai.setAverage(avg);
+            ai.setNameRawfile(raw_name);
+            ai.setXREF(x_ref_name);
+            ai.setStd(std);
+
+            array.add(ai);
         }
         session.close();
-
-
+        sessionFactory.close();
         ////////////////////
         //SKARINGA
         ObjectTransformer trans = null;
@@ -89,36 +85,25 @@ public class getExpressionDataByLocalAccession {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToString(array);
-        
+        message = trans.serializeToJsonString(array);
+
+
         return message;
     }
 
     /**
      * @return the password
      */
-    public String getPassword() {
+    public String getTicketPassword() {
         return ticketPassword;
     }
 
     /**
      * @param password the password to set
      */
-    public void setPassword(String password) {
+    public void setTicketPassword(String password) {
         this.ticketPassword = password;
     }
 
-    /**
-     * @return the reference
-     */
-    public String getReference() {
-        return reference;
-    }
-
-    /**
-     * @param reference the reference to set
-     */
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
+   
 }
