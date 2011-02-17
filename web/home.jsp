@@ -52,7 +52,7 @@ a:active {
     
     <td width="120"><a target="subcontent" href="about.jsp"></a></td>
     <td width="10">&nbsp;</td>
-    <td  width="100">&nbsp;</td>
+    <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_groups.jsp">Set groups</a></td>
     <td  width="10">&nbsp;</td>
     <td bgcolor="#0099CC" width="120"><a target="subcontent" href="get_protocol.jsp">&nbsp;Get protocol</a></td>
     <td >&nbsp;</td>

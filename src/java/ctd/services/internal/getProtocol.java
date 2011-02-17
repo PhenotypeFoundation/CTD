@@ -125,8 +125,6 @@ public class getProtocol {
                     Protocol proto = (Protocol) it1.next();
                     descr = proto.getDescription();
                 }
-
-
             }
 
             session.close();

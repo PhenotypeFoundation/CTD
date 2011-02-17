@@ -160,13 +160,13 @@ public class getJsonCombatNormalization {
 
             //////////////////////////////////////////////////////////////////
             //Do a system call to normalize with ComBAT.
-            String args = "Rscript --vanilla " + rscript + " -w" + new_folder+" -o"+new_folder+"/Combat.out";
+            String args = "Rscript --vanilla " + rscript + " -w" + new_folder+" -o"+new_folder+"/Combat";
             Process p = Runtime.getRuntime().exec(args);
 
-            String link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder+"/Combat.out.gct";
+            String link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder+"/Combat.gct";
             info.setLocationFtpFile(link);
 
-            String command4 = "chown cleandata " + new_folder+"/Combat.out.gct";
+            String command4 = "chown cleandata " + new_folder+"/Combat.gct";
             child = Runtime.getRuntime().exec(command4);
 
             File f = new File(new_folder+"/Combat.out.gct");

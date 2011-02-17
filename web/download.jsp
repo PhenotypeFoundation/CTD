@@ -22,18 +22,18 @@
         <tr>
           <td width="100" class="text_normal">Download</td>
           <td width="250">&nbsp;</td>
-          <td width="250" class="text_normal"> &nbsp;&nbsp;&nbsp;&nbsp;Notes</td>
+          <td width="250" class="text_normal">&nbsp;&nbsp;&nbsp;&nbsp;Notes</td>
         </tr>
       </table>
       <table width="600" border="1" bordercolor="#CCCCCC" cellspacing="0" cellpadding="0">
         <tr>
-          <td width="100" class="text_normal">JAR File:</td>
-          <td width="250"><a target="_blank" href="download/nugoctdclient.jar">nugoctdclient</a></td>
+          <td width="100" class="text_normal">repository:</td>
+          <td width="250"><a target="_blank" href="https://trac.nbic.nl/nugoctdclient/">nugoctdclient</a></td>
           <td width="250">The Client library </td>
         </tr>
         <tr>
-          <td class="text_normal">WAR File:</td>
-          <td><a target="_blank" href="download/nugoctdwebapp.war">nugoctdwebapp</a></td>
+          <td class="text_normal">repository:</td>
+          <td><a target="_blank" href="https://trac.nbic.nl/nugoctdwebapp/">nugoctdwebapp</a></td>
           <td>The Server war file</td>
         </tr>
         <tr>

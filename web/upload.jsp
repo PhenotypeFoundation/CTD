@@ -157,12 +157,8 @@
                     <td>Step 2</td>
                     <td>Upload Data</td>
                     <td>
-
                         <a id="upload" name="upload" href="">upload link</a>
-
                     </td>
-
-
                     <td><a target="_blank" href="http://winscp.net/eng/docs/lang:nl">use winscp</a></td>
                 </tr>
                 <tr>
