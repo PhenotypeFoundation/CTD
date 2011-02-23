@@ -120,6 +120,7 @@ CREATE TABLE `study_sample_assay` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `X_REF` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
   `chip_time` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
+  `group_name` varchar(90) CHARACTER SET latin1 DEFAULT NULL,
   `name_RAWFILE` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
   `average` double DEFAULT NULL,
   `std` double DEFAULT NULL,

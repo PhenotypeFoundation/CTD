@@ -232,8 +232,6 @@ public class Query {
                  String link1 = "<a href=\""+link2+"\">link</a>";
                  table = table + "<tr><td>"+ctd_REF+"</td><td>"+title+"</td><td>"+link1+"</td></tr>";
             }
-
-
         }
         session.close();
         sessionFactory.close();
@@ -249,4 +247,6 @@ public class Query {
     public void setDownloadData(String downloadData) {
         this.downloadData = downloadData;
     }
+
+    
 }

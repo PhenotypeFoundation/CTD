@@ -21,8 +21,8 @@ import org.hibernate.cfg.Configuration;
 public class getProtocol {
 
     private String wsPassword = "";
-    private String names;
     private String selected_id = "1";
+    private String names;
     private String description;
     private String submit;
 

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*" errorPage="" %>
 
-<jsp:useBean id="qq" scope="session" class="ctd.services.internal.getProtocol"/>
-<jsp:setProperty name="qq" property="*"/>
+<jsp:useBean id="qqq" scope="session" class="ctd.services.internal.getProtocol"/>
+<jsp:setProperty name="qqq" property="*"/>
 
 
 
@@ -63,7 +63,7 @@
                 </tr>
                 <tr>
                     <td><label>
-                            <input name="wsPassword" type="text" id="wsPassword" value="<jsp:getProperty name="qq" property="wsPassword"/>" />
+                            <input name="wsPassword" type="text" id="wsPassword" value="<jsp:getProperty name="qqq" property="wsPassword"/>" />
                     </label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -76,7 +76,7 @@
                 <tr>
                     <td><label>
                             <select name="names" id="names" onchange="read_selection(this.value)">
-                                <jsp:getProperty name="qq" property="names"/>
+                                <jsp:getProperty name="qqq" property="names"/>
                             </select>
                             <input type="hidden" name="selected_id" id="selected_id" value="" />
                             <input type="submit" name="submit" id="submit" value="Get" />
@@ -90,7 +90,7 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td><textarea name="description" id="description" cols="70" rows="15" disabled="true"><jsp:getProperty name="qq" property="description"/></textarea></td>
+                    <td><textarea name="description" id="description" cols="70" rows="15" disabled="true"><jsp:getProperty name="qqq" property="description"/></textarea></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                 </tr>

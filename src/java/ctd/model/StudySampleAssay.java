@@ -24,6 +24,7 @@ public class StudySampleAssay  implements Serializable {
      private Ticket ticket;
      private String XREF;
      private String chipTime;
+     private String groupName;
      private String nameRawfile;
      private Double average;
      private Double std;
@@ -38,11 +39,12 @@ public class StudySampleAssay  implements Serializable {
         this.ticket = ticket;
         this.LIST_POS = LIST_POS;
     }
-    public StudySampleAssay(Integer id, Ticket ticket, String XREF, String chipTime, String nameRawfile, Double average, Double std, Integer LIST_POS) {
+    public StudySampleAssay(Integer id, Ticket ticket, String XREF, String chipTime,String groupName, String nameRawfile, Double average, Double std, Integer LIST_POS) {
        this.id = id;
        this.ticket = ticket;
        this.XREF = XREF;
        this.chipTime = chipTime;
+       this.groupName = groupName;
        this.nameRawfile = nameRawfile;
        this.average = average;
        this.std = std;
@@ -77,6 +79,21 @@ public class StudySampleAssay  implements Serializable {
     public void setChipTime(String chipTime) {
         this.chipTime = chipTime;
     }
+
+     /**
+     * @return the groupName
+     */
+    public String getGroupName() {
+        return groupName;
+    }
+
+    /**
+     * @param groupName the groupName to set
+     */
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     public String getNameRawfile() {
         return this.nameRawfile;
     }
@@ -105,6 +122,8 @@ public class StudySampleAssay  implements Serializable {
     public void setLIST_POS(Integer LIST_POS) {
         this.LIST_POS = LIST_POS;
     }
+
+   
 
 
 
