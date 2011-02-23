@@ -67,6 +67,11 @@
               <td><jsp:getProperty name="qq" property="tableSamples"/></td>
               <td>&nbsp;</td>
             </tr>
+            <tr>
+            <td></td>
+            <td></td>
+            <td>&nbsp;</td>
+            </tr>
           </table>
         </form>
 <p>&nbsp;</p>

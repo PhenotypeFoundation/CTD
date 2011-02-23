@@ -112,36 +112,38 @@ public class getGroups {
      */
     public String getTableSamples() {
 
-        String table = "<table class=\"text_normal\" width=\"600\" border=\"0\" cellspacing=\"2\" cellpadding=\"1\">";
 
-        //Add header columns
-        table=table+"<tr><td width=\"10\"></td><td width=\"100\">Sample name</td><td width=\"490\">Group name</td></tr>";
+        String table = "";
+        if (getButton().equals("Retrieve")) {
 
-        if (getTo_do().equals("show_samples")) {
+            table = "<table class=\"text_normal\" width=\"600\" border=\"0\" cellspacing=\"2\" cellpadding=\"1\">";
+            //Add header columns
+            table = table + "<tr><td width=\"100\">Sample name</td><td width=\"490\">Group name</td></tr>";
+
             //open hibernate connection
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
             Session session = sessionFactory.openSession();
 
-
-
-            Query q1 = session.createQuery("from Ticket where id="+getSelected_id());
-            Ticket ticket = (Ticket) q1.uniqueResult();//list().iterator();
-            Iterator it1 = ticket.getStudySampleAssaies().iterator();
-            while (it1.hasNext()){
+            Query q1 = session.createQuery("from StudySampleAssay where ticket_id=" + getSelected_id()+" order by nameRawfile");
+            Iterator it1 = q1.list().iterator();
+            
+            while (it1.hasNext()) {
                 StudySampleAssay ssa = (StudySampleAssay) it1.next();
                 Integer id = ssa.getId();
                 String groupname = ssa.getGroupName();
                 String rawfilename = ssa.getNameRawfile();
+                if (groupname == null) {
+                    groupname = "";
+                }
+                String textfield = "<input name=\"" + id.toString() + "\" type=\"text\" id=\"" + id.toString() + "\" size=\"45\" value=\"" + groupname + "\">";
 
-                String textfield = "<input name=\""+id.toString()+"\" type=\"text\" id=\""+id.toString()+"\" size=\"90\" value=\""+groupname+"\">";
-
-                table=table+"<tr><td width=\"10\"></td><td width=\"100\">"+rawfilename+"</td><td width=\"490\">"+textfield+"</td></tr>";
+                table = table + "<tr><td width=\"150\">" + rawfilename + "</td><td width=\"440\">" + textfield + "</td></tr>";
             }
 
-            table = table+"</table>";
+            table = table + "</table>";
         }
 
-        return tableSamples;
+        return table;
     }
 
     /**
