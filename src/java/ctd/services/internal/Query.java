@@ -106,9 +106,9 @@ public class Query {
         String xline = "<line x1=\"30\" y1=\"50\" x2=\"530\" y2=\"50\" stroke-width=\"4\" stroke=\"black\" />";
         total = total + xline;
         //Draw legenda X-bar
-        String legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA + GRSN (Log2)</text>";
+        String legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA (Log2)</text>";
         if (getZvalue().equals("zvalue")) {
-            legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA + GRSN (Log2, z-value)</text>";
+            legenda = "<text x=\"200\" y=\"18\" fill = \"black\" font-size = \"16\">RMA (Log2, z-value)</text>";
         }
         total = total + legenda;
 

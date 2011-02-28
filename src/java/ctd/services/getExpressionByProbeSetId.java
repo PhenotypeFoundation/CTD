@@ -111,7 +111,7 @@ public class getExpressionByProbeSetId {
             Session session = sessionFactory.openSession();
 
             String psi = getProbeSetId();
-            SQLQuery q = session.createSQLQuery("Select chip.name,expression.expression,study_sample_assay.X_REF,study_sample_assay.average,study_sample_assay.std,ticket.password FROM chip,chip_annotation,expression,study_sample_assay,ticket WHERE chip.id=chip_annotation.chip_id AND probeset='" + psi + "' AND chip_annotation.id=expression.chip_annotation_id AND expression.study_sample_assay_id=study_sample_assay.id AND study_sample_assay.ticket_id=ticket.id ORDER BY study_sample_assay.X_REF ASC");
+            SQLQuery q = session.createSQLQuery("Select chip.name,expression.expression,study_sample_assay.X_REF,study_sample_assay.average,study_sample_assay.std,ticket.password FROM chip,chip_annotation,expression,study_sample_assay,ticket WHERE chip.id=chip_annotation.chip_id AND probeset='" + psi + "' AND chip_annotation.id=expression.chip_annotation_id AND expression.study_sample_assay_id=study_sample_assay.id AND study_sample_assay.ticket_id=ticket.id ORDER BY study_sample_assay.ticket_id,study_sample_assay.group_name ASC");
 
             Iterator it1 = q.list().iterator();
             while (it1.hasNext()) {
