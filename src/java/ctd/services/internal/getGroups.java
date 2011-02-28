@@ -63,37 +63,25 @@ public class getGroups {
         Query q1 = (Query) session.createQuery("from Ticket Where title is not null");
         Iterator it1 = q1.list().iterator();
 
-        String listbox = "";
-        Boolean select_first = false;
-        if (getSelected_id().equals("")){
-            select_first=true;
-        }
 
+        String listbox = "";
 
         while (it1.hasNext()) {
             Ticket ticket = (Ticket) it1.next();
             String name = ticket.getTitle();
             Integer ticket_id = ticket.getId();
             String selected_id_match = String.valueOf(ticket_id);
-            if (select_first==false){
-                if (ticket_id.equals(selected_id_match)){
-                    listbox = listbox + "<option value=\"" + String.valueOf(ticket_id) + "\" selected>" + name + "</option>";
-                }
-                if (ticket_id.equals(selected_id_match)==false){
-                    listbox = listbox + "<option value=\"" + String.valueOf(ticket_id) + "\">" + name + "</option>";
-                }
-            }
-            
-            if (select_first) {
+            if (getSelected_id().equals(ticket_id.toString())) {
+
                 listbox = listbox + "<option value=\"" + String.valueOf(ticket_id) + "\" selected>" + name + "</option>";
+            }
+            if (getSelected_id().equals(ticket_id.toString()) == false) {
+                listbox = listbox + "<option value=\"" + String.valueOf(ticket_id) + "\">" + name + "</option>";
+            }
 
-                String fg = getFirstGroup(ticket_id.toString());
-                setCurrentGroup(fg);
-                setSelected_id(ticket_id.toString());
 
-                select_first=false;
-            } 
         }
+
 
         session.close();
         sessionFactory.close();
@@ -278,19 +266,21 @@ public class getGroups {
                 if (groupname != null) {
                     if (filter.contains(groupname) == false) {
                         filter.add(groupname);
-                        
-                        if (do_first_selection==false){
-                            if (current_group_name.equals(groupname)){
+
+                        if (do_first_selection == false) {
+                            if (current_group_name.equals(groupname)) {
                                 option = option + "<option value=\"" + groupname + "\" selected>" + groupname + "</option>";
                             }
-                            if (current_group_name.equals(groupname)==false){
+                            if (current_group_name.equals(groupname) == false) {
                                 option = option + "<option value=\"" + groupname + "\">" + groupname + "</option>";
                             }
                         }
 
 
                         if (do_first_selection) {
-                            option = option + "<option value=\"" + groupname + "\" selected>" + groupname + "</option>";
+                            if (groupname.equals("") == false) {
+                                option = option + "<option value=\"" + groupname + "\" selected>" + groupname + "</option>";
+                            }
                             do_first_selection = false;
                         }
 
@@ -298,7 +288,7 @@ public class getGroups {
                     }
                 }
             }
-           
+
 
 
             //set default group, first in list.
