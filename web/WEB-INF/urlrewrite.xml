@@ -7,6 +7,10 @@
     Configuration file for UrlRewriteFilter
     http://tuckey.org/urlrewrite/
 
+
+    Edited on 03-03-2011 by Taco Steemers and Tjeerd van Dijk
+    http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services
+
 -->
 <urlrewrite  use-query-string="true" >
 
@@ -43,6 +47,34 @@
     <rule enabled="true">
         <from>^/rest/getAssayURL/query\?password=([-\_a-zA-Z0-9]+)$</from>
         <to type="redirect">getAssayURL.jsp?password=$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <name>getMeasurementMetadata rule according to specification</name>
+        <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-4</note>
+        <from>^/rest/getMeasurementMetaData/query\?([&amp;=-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurementMetaData.jsp?$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <name>getMeasurements rule according to specification</name>
+        <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-3</note>
+        <from>^/rest/getMeasurements/query\?([&amp;=-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurements.jsp?$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <name>getMeasurementData rule according to specification</name>
+        <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-5</note>
+        <from>^/rest/getMeasurementData/query\?([&amp;=-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getMeasurementDataProbeset.jsp?$1</to>
+    </rule>
+
+    <rule enabled="true">
+        <name>getAssayURL rule according to specification</name>
+        <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-6</note>
+        <from>^/rest/getAssayURL/query\?([&amp;=-\_a-zA-Z0-9]+)$</from>
+        <to type="redirect">getAssayURL.jsp?$1</to>
     </rule>
 
 </urlrewrite>
