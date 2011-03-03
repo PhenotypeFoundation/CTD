@@ -34,26 +34,18 @@ a:active {
 </style></head>
 
 <body>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="2" cellpadding="0">
   <tr>
-    
-    <td bgcolor="#0099CC" width="120"><a target="subcontent" href="about.jsp">&nbsp;About the CTD</a></td>
-    <td width="10">&nbsp;</td>
-    <td bgcolor="#0099CC" width="100"><a target="subcontent" href="upload.jsp">&nbsp;Upload data</a></td>
-    <td  width="10">&nbsp;</td>
-    <td bgcolor="#0099CC" width="120"><a target="subcontent" href="add_protocol.jsp">&nbsp;Add protocol</a></td>
+    <td bgcolor="#0099CC"><a target="subcontent" href="about.jsp">&nbsp;About the CTD</a></td>
+    <td bgcolor="#0099CC"><a target="subcontent" href="upload.jsp">&nbsp;Upload data</a></td>
+    <td bgcolor="#0099CC"><a target="subcontent" href="add_protocol.jsp">&nbsp;Add protocol</a></td>
     <td >&nbsp;</td>
     <td >&nbsp;</td>
   </tr>
-</table>
-<br>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     
     <td width="120"><a target="subcontent" href="about.jsp"></a></td>
-    <td width="10">&nbsp;</td>
     <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_groups.jsp">Set groups</a></td>
-    <td  width="10">&nbsp;</td>
     <td bgcolor="#0099CC" width="120"><a target="subcontent" href="get_protocol.jsp">&nbsp;Get protocol</a></td>
     <td >&nbsp;</td>
     <td >&nbsp;</td>
