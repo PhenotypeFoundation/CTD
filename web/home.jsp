@@ -52,7 +52,7 @@ a:active {
   </tr>
 </table>
 <p>
-<iframe name="subcontent" src="about.jsp" width="100%" height="700" frameborder="0"  scrolling="auto">
+<iframe name="subcontent" src="about.jsp" width="100%" height="700" frameborder="0"  scrolling="no">
 </iframe>
 
 </body>
