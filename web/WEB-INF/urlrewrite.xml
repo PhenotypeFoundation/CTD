@@ -67,7 +67,7 @@
         <name>getMeasurementData rule according to specification</name>
         <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-5</note>
         <from>^/rest/getMeasurementData/query\?([&amp;=-\_a-zA-Z0-9]+)$</from>
-        <to type="redirect">getMeasurementDataProbeset.jsp?$1</to>
+        <to type="redirect">getMeasurementData.jsp?$1</to>
     </rule>
 
     <rule enabled="true">
