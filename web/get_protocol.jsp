@@ -63,8 +63,8 @@
                 </tr>
                 <tr>
                     <td><label>
-                            <input name="wsPassword" type="text" id="wsPassword" value="<jsp:getProperty name="qqq" property="wsPassword"/>" />
-                    </label></td>
+                            <input name="wsPassword" type="password" id="wsPassword" value="<jsp:getProperty name="qqq" property="wsPassword"/>" />
+                  </label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                 </tr>
