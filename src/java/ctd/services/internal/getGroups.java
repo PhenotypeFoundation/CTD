@@ -30,7 +30,7 @@ public class getGroups {
     private String[] selectedSamples;
     private String samplesNoGroupList;
     private String selectedGroup = "";
-    private String currentGroup;
+    
     private String groupList;
     private String[] selectedSamplesGroup;
     private String samplesGroupList;
@@ -148,11 +148,13 @@ public class getGroups {
 
         if (getButton().equals("Retrieve")) {
 
+            
+
             //open hibernate connection
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
             Session session = sessionFactory.openSession();
 
-            Query q1 = session.createQuery("from StudySampleAssay where ticket_id=" + getSelected_id() + " AND groupName='' OR groupName is null order by nameRawfile");
+            Query q1 = session.createQuery("from StudySampleAssay where ticket_id=" + getSelected_id() + " AND (groupName='' OR groupName is null) order by nameRawfile");
             Iterator it1 = q1.list().iterator();
 
             while (it1.hasNext()) {
@@ -205,6 +207,8 @@ public class getGroups {
 
         if (getButton().equals("Retrieve")) {
 
+
+
             //open hibernate connection
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
             Session session = sessionFactory.openSession();
@@ -213,10 +217,14 @@ public class getGroups {
             Iterator it1 = q1.list().iterator();
 
             ArrayList<String> filter = new ArrayList<String>();
-            String current_group_name = getCurrentGroup();
+            String current_group_name = getSelectedGroup();
             String selected = "";
             String selected_groupname = "";
 
+
+            if (getSelectedGroup().equals("")){
+                current_group_name = getFirstGroup(getSelected_id());
+            }
 
             while (it1.hasNext()) {
                 StudySampleAssay ssa = (StudySampleAssay) it1.next();
@@ -388,6 +396,8 @@ public class getGroups {
                 }
             }
 
+            setSelectedGroup("");
+
         }
 
         if (getTransactionType().equals("group")) {
@@ -398,12 +408,17 @@ public class getGroups {
                     String ssa_id = ssa_ids[i];
                     Query q1 = (Query) session.createQuery("from StudySampleAssay where id=" + ssa_id);
                     StudySampleAssay ssa = (StudySampleAssay) q1.uniqueResult();
-                    ssa.setGroupName(getCurrentGroup());
+                    ssa.setGroupName(getSelectedGroup());
                     session.update(ssa);
 
                 }
             }
         }
+
+        if (getTransactionType().equals("experiment")) {
+            setSelectedGroup("");
+        }
+
 
         tr.commit();
 
@@ -424,18 +439,5 @@ public class getGroups {
         this.transactionResult = transactionResult;
     }
 
-    /**
-     * @return the currentGroup
-     */
-    public String getCurrentGroup() {
-
-        return currentGroup;
-    }
-
-    /**
-     * @param currentGroup the currentGroup to set
-     */
-    public void setCurrentGroup(String currentGroup) {
-        this.currentGroup = currentGroup;
-    }
+   
 }
