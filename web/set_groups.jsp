@@ -51,39 +51,25 @@
                 document.getElementById('selectedGroup').selectedIndex=document.getElementById('selectedGroup').length-1;
 				
 				
-				document.forms["form1"].currentGroup.value = new_group;
-				
 				//empty grouped samples
 				for (var i=document.forms["form1"].selectedSamplesGroup.options.length-1; i>=0; i--){
 					document.forms["form1"].selectedSamplesGroup.remove(i);
-				}
-
-				
+				}				
             }
-
-
-			function setCurrentGroup(){
-				var cs = document.forms["form1"].selectedGroup.value;
-				document.forms["form1"].currentGroup.value = cs;
-				
-				}
-
-
-
 
         </script>
 
 
     </head>
     <body>
-        <table cellpadding="0" cellspacing="0" width="640" border="0">
+        <table cellpadding="0" cellspacing="0" width="650" border="0">
             <tr>
                 <td bgcolor="#0099CC" class="text_header_white"><span class="text_header_black"><span class="text_header_white">Set sample groups</span></span></td>
             </tr>
         </table>
         <br>
         <form name="form1" target="_self" method="post" action="set_groups.jsp">
-            <table class="text_normal" width="800" border="0" cellspacing="0" cellpadding="0">
+            <table class="text_normal" width="650" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                     <td width="5"><input type="hidden" name="transactionResult" id="transactionResult" value="<jsp:getProperty name="qq" property="transactionResult"/>"></td>
                     <td colspan="2" >Experiment list </td>
@@ -100,32 +86,33 @@
                     <td><input type="hidden" name="selected_id" id="selected_id" value="<jsp:getProperty name="qq" property="selected_id"/>"/></td>
                 </tr>
                 <tr>
+                  <td colspan="4"><hr></td>
+                </tr>
+                
+                <tr>
                     <td>&nbsp;</td>
-                    <td width="330">Groups</td>
-                    <td>&nbsp;</td>
+                    <td width="300">Groups</td>
+                    <td>New Group Name</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><select  name="selectedGroup" id="selectedGroup" onchange="setCurrentGroup();this.form.submit();">
+                    <td><select  name="selectedGroup" id="selectedGroup" onchange="this.form.submit();">
                             <jsp:getProperty name="qq" property="groupList"/>
                     </select></td>
-                    <td ><input type="hidden" name="currentGroup" id="currentGroup" value="<jsp:getProperty name="qq" property="currentGroup"/>"></td>
+                    <td ><input type="text" name="newGroup" id="newGroup"></td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td></td>
-                  <td>New Group Name</td>
-                  <td >&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td><input align="right" type="button"  name="AddGroup" id="AddGroup" value="Add" onClick="addNewGroup();"></td>
                   <td>&nbsp;</td>
                 </tr>
-                <tr>
-                  <td></td>
-                  <td><input type="text" name="newGroup" id="newGroup">
-                  <input align="right" type="button"  name="AddGroup" id="AddGroup" value="Add" onClick="addNewGroup();"></td>
-                  <td >&nbsp;</td>
-                  <td>&nbsp;</td>
+                <tr col>
+                  <td colspan="4"><hr></td>
                 </tr>
+                
                 <tr>
                     <td></td>
                     <td>Ungrouped Samples</td>
