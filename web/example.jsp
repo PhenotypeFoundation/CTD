@@ -102,6 +102,7 @@
           password_ticket2=&lt;password2&gt; (up to 5 tickets) </p></td>
         </tr>
       </table>
+      <div style="display:none">
       <p class="header1">Introduction</p>
       <p class="text_normal1">The CleanTranscriptomeAPI can be used as a library in any java application for handling the pre-processing of CEL-files derived from the Affymetrix mRNA-array platforms. <br />
         Define the connections with the server by using the right variables in the settings.properties file.</p>
@@ -114,6 +115,7 @@
         </table></td>
       </tr>
       </table>
+      
       <p class="text_normal"><span class="header2">Retrieve a ticket, send the CEL-files [zipped] and perform normalization.</span></p>
       <table  width="640" border="1" cellpadding="0" cellspacing="5">
         <tr>
@@ -264,6 +266,8 @@ Integer amount_probesets = info.getAmountProbes();</p></td>
     </p></td>
   </tr>
 </table>
+
+</div>
 <br />
 <p></p></td>
   </tr>

@@ -50,24 +50,28 @@
 <body>
 <table width="700" border="0" cellpadding="0" cellspacing="20">
   <tr>
-    <td><p class="header1">For programmers</p>
-      <p class="text_normal">There are two ways to get started with the clean transcriptome database, the easy way is to use the client library to upload CEL-files and download the normalized expression data. Just install the jar as a library in your java project and you are ready to implement the code provided on the example page. Parameters for the server connection are found in the settings.properties file. Contact the local administrator from the server you want to connect with to fill in these details.<br />
-        For installing the server one requiers a TomCat server, a MySQL database, a R installation for statistical computing and a sftp channel for sending files over the internet. <br />
+    <td>
+    <div style="display:none"><p class="header1">For programmers
       </p>
+      There are two ways to get started with the clean transcriptome database, the easy way is to use the client library to upload CEL-files and download the normalized expression data. Just install the jar as a library in your java project and you are ready to implement the code provided on the example page. Parameters for the server connection are found in the settings.properties file. Contact the local administrator from the server you want to connect with to fill in these details
+        <br />
+        </p>
+     
+      
       <table cellpadding="0" cellspacing="0" width="640" border="0">
         <tr>
           <td bgcolor="#0099CC" class="text_header_white">Client installation</td>
         </tr>
       </table>
       <p class="text_normal"><span class="text_header_black">1.</span> Download the client jar-library from the <a target="content" href="download.jsp">download page</a>.</p>
-      <p class="text_normal"><span class="text_header_black">2.</span> Edit the settings.properties file in the jar manually. There you find the webservice location, password and sftp parameters. Look at them carefully and manually edit it for the server you want to use. The default server is nbx13.nugo.org/ctd. (<a target="_blank" href="settings.properties">example</a>) </p>
+      <p class="text_normal"><span class="text_header_black">2.</span> Edit the settings.properties file in the jar manually. There you find the webservice location, password and sftp parameters. Look at them carefully and manually edit it for the server you want to use. The default server is nbx13.nugo.org/ctd. (<a target="_blank" href="settings.properties">example</a>) </p> </div>
       <table cellpadding="0" cellspacing="0" width="640" border="0">
         <tr>
-          <td bgcolor="#0099CC" class="text_header_white">Server installation</td>
+          <td bgcolor="#0099CC" class="text_header_white">Installation</td>
         </tr>
       </table>
       <p class="header2">TomCat webserver</p>
-    <p class="text_normal">Use an existing TomCat server on your system, download the <a target="content" href="download.jsp">war-file</a> and deploy it in the webapps folder of the installation directory. Otherwise download it and follow the installation instructions on the <a target="_blank" href="http://tomcat.apache.org/">project webpage</a>. Another installation protocol has been tested succesfully on an Ubuntu platform (<a target="_blank" href="http://www.howtogeek.com/howto/linux/installing-tomcat-6-on-ubuntu/">link</a>).<br />
+    <p class="text_normal">If the TomCat server is allready on your system, download the <a target="content" href="download.jsp">war-file</a> and deploy it in the webapps folder of the installation directory. Otherwise, download it and follow the installation instructions on the <a target="_blank" href="http://tomcat.apache.org/">project webpage</a>. Another installation protocol has been tested succesfully on an Ubuntu platform (<a target="_blank" href="http://www.howtogeek.com/howto/linux/installing-tomcat-6-on-ubuntu/">link</a>).<br />
       The war file is automatically deployed into the &quot;nugoctdwebapp&quot; folder. A virtual link should be made to the ctd folder where the client has its default webservice location.<br />
       </p>
     <p class="text_normal"><span class="text_header_black">1.</span> Place the war file into the webapps folder of your Tomcat installation, it is automatically deployed/unpacked.<br />
