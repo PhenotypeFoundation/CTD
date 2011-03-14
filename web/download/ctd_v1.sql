@@ -121,6 +121,8 @@ CREATE TABLE `study_sample_assay` (
   `X_REF` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
   `chip_time` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
   `group_name` varchar(90) CHARACTER SET latin1 DEFAULT NULL,
+  `sample_token` varchar(90) CHARACTER SET latin1 DEFAULT NULL,
+  `study_token` varchar(90) CHARACTER SET latin1 DEFAULT NULL,
   `name_RAWFILE` varchar(45) CHARACTER SET latin1 DEFAULT NULL,
   `average` double DEFAULT NULL,
   `std` double DEFAULT NULL,

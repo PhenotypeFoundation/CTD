@@ -50,16 +50,23 @@ a:active {
     <td>&nbsp;</td>
   </tr>
   <tr>
+    <td>&nbsp;</td>
+    <td bgcolor="#0099CC">&nbsp; <a target="subcontent" href="set_delete.jsp">Delete data</a></td>
+    <td></td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
     
     <td width="120"><a target="subcontent" href="about.jsp"></a></td>
-    <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_delete.jsp">Delete data</a></td>
+    <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_combat.jsp">ComBat</a></td>
     <td  width="120"></td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
   </tr>
 </table>
 <p>
-<iframe name="subcontent" src="about.jsp" width="100%" height="700" frameborder="0"  scrolling="no">
+<iframe name="subcontent" src="about.jsp" width="100%" height="700" frameborder="0" scrolling="no">
 </iframe>
 
 </body>

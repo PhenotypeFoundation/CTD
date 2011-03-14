@@ -17,6 +17,12 @@
     <property name="groupName" type="string">
       <column length="90" name="group_name"/>
     </property>
+    <property name="sampleToken" type="string">
+      <column length="90" name="sample_token"/>
+    </property>
+    <property name="studyToken" type="string">
+      <column length="90" name="study_token"/>
+    </property>
     <property name="nameRawfile" type="string">
       <column length="45" name="name_RAWFILE"/>
     </property>

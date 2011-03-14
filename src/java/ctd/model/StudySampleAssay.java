@@ -25,6 +25,8 @@ public class StudySampleAssay  implements Serializable {
      private String XREF;
      private String chipTime;
      private String groupName;
+     private String sampleToken;
+     private String studyToken;
      private String nameRawfile;
      private Double average;
      private Double std;
@@ -121,6 +123,34 @@ public class StudySampleAssay  implements Serializable {
     
     public void setLIST_POS(Integer LIST_POS) {
         this.LIST_POS = LIST_POS;
+    }
+
+    /**
+     * @return the sampleToken
+     */
+    public String getSampleToken() {
+        return sampleToken;
+    }
+
+    /**
+     * @param sampleToken the sampleToken to set
+     */
+    public void setSampleToken(String sampleToken) {
+        this.sampleToken = sampleToken;
+    }
+
+    /**
+     * @return the studyToken
+     */
+    public String getStudyToken() {
+        return studyToken;
+    }
+
+    /**
+     * @param studyToken the studyToken to set
+     */
+    public void setStudyToken(String studyToken) {
+        this.studyToken = studyToken;
     }
 
    
