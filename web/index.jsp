@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>JSP Page</title>
+        <title>Clean Transcriptome Database</title>
     <style type="text/css">
 <!--
 body {
@@ -49,22 +49,23 @@ a:active {
     <table width="800" border="0" align="center" cellpadding="0" cellspacing="0"s>
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
-        <td colspan="6" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right"><img src="images/logo.jpg" width="567" height="55" align="left"></td>
+        <td colspan="7" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right"><img src="images/logo.jpg" width="567" height="55" align="left"></td>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#000000">&nbsp;</td>
         <td width="100" bgcolor="#000000">&nbsp;&nbsp;&nbsp;<a target="content" href="home.jsp">Home</a></td>
+        <td width="100" bgcolor="#000000"><a target="content" href="overview.jsp">Overview</a></td>
         <td width="100" bgcolor="#000000"><a target="content" href="query.jsp">Query</a></td>
-        <td width="148" bgcolor="#000000"><a target="content" href="example.jsp">Code Examples</a></td>
-        <td width="116" bgcolor="#000000"><a target="content" href="installation.jsp">Installation</a></td>
+        <td width="100" bgcolor="#000000"><a target="content" href="example.jsp">Code Examples</a></td>
+        <td width="100" bgcolor="#000000"><a target="content" href="installation.jsp">Installation</a></td>
         <td width="100" bgcolor="#000000"><a target="content" href="contact.jsp">Contact</a></td>
-        <td width="116" bgcolor="#000000"><a target="content" href="download.jsp">Download</a></td>
-        <td width="116" bgcolor="#000000">&nbsp;</td>
+        <td width="100" bgcolor="#000000"><a target="content" href="download.jsp">Download</a></td>
+        <td bgcolor="#000000">&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" height="750" colspan="6" bgcolor="#FFFFFF"><iframe name="content" align="top"  frameborder="0" marginheight="20" hspace="0" overflow-x="hidden" scrolling="auto" width="700" height="750" src="home.jsp"></iframe></td>
+        <td width="700" height="750" colspan="7" bgcolor="#FFFFFF"><iframe name="content" align="top"  frameborder="0" marginheight="20" hspace="0" overflow-x="hidden" scrolling="auto" width="700" height="750" src="home.jsp"></iframe></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ctd.services;
 
 import com.skaringa.javaxml.NoImplementationException;
@@ -10,7 +6,11 @@ import com.skaringa.javaxml.ObjectTransformerFactory;
 import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
+import ctd.services.exceptions.*;
+import ctd.services.getTicket;
+import ctd.services.internal.GscfService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,16 +21,35 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 /**
- *
  * @author kerkh010
+ * @author Tjeerd van Dijk
+ * @author Taco Steemers
  */
 public class getMeasurements {
 
-    private String password;
-    private String assayToken;
+    private String strSessionToken;
+    private String strAssayToken;
 
-    public String getMeasurements() throws NoImplementationException, SerializerException {
-        String message = "";
+    public String[] getMeasurements() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception307TemporaryRedirect, Exception500InternalServerError, Exception403Forbidden, Exception404ResourceNotFound, Exception400BadRequest {
+
+        if(getAssayToken()==null || getSessionToken()==null){
+            throw new Exception400BadRequest();
+        }
+
+        GscfService objGSCFService = new GscfService();
+        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
+        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+            throw new Exception403Forbidden();
+        }
+
+        HashMap<String,String> objParam = new HashMap();
+        objParam.put("assayToken", strAssayToken);
+        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+            throw new Exception401Unauthorized();
+        }
+
+        String[] strReturn = new String [2];
         ArrayList<String> probesets = new ArrayList<String>();
 
         //open hibernate connection
@@ -39,7 +58,7 @@ public class getMeasurements {
 
         Ticket ticket = null;
         Integer ssa_id = null;
-        Query q = session.createQuery("from Ticket where password='" + getPassword() + "'");
+        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
         ticket = (Ticket) q.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
@@ -61,6 +80,10 @@ public class getMeasurements {
         }
         session.close();
 
+        if(probesets.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+
         ////////////////////
         //SKARINGA
         ObjectTransformer trans = null;
@@ -69,36 +92,37 @@ public class getMeasurements {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToJsonString(probesets);
+        strReturn[0] = "200";
+        strReturn[1] = trans.serializeToJsonString(probesets);
 
-        return message;
+        return strReturn;
     }
 
     /**
-     * @return the password
+     * @return the strSessionToken
      */
-    public String getPassword() {
-        return password;
+    public String getSessionToken() {
+        return strSessionToken;
     }
 
     /**
-     * @param password the password to set
+     * @param strSessionToken the strSessionToken to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSessionToken(String strSessionToken) {
+        this.strSessionToken = strSessionToken;
     }
 
     /**
-     * @return the assayToken
+     * @return the strAssayToken
      */
     public String getAssayToken() {
-        return assayToken;
+        return strAssayToken;
     }
 
     /**
-     * @param assayToken the assayToken to set
+     * @param strAssayToken the strAssayToken to set
      */
-    public void setAssayToken(String assayToken) {
-        this.assayToken = assayToken;
+    public void setAssayToken(String strAssayToken) {
+        this.strAssayToken = strAssayToken;
     }
 }

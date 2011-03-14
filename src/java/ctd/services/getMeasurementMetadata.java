@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ctd.services;
 
 import com.skaringa.javaxml.NoImplementationException;
@@ -11,9 +7,15 @@ import com.skaringa.javaxml.SerializerException;
 
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
+import ctd.services.exceptions.*;
+import ctd.services.getTicket;
+import ctd.services.internal.GscfService;
 import ctd.ws.model.ProbeSetAnnotation;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Query;
@@ -23,24 +25,48 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 /**
- *
  * @author kerkh010
+ * @author Tjeerd van Dijk
+ * @author Taco Steemers
  */
 public class getMeasurementMetadata {
 
-    private String password;
-    private String assayToken;
-    private String measurementToken;
+    private String strSessionToken;
+    private String strAssayToken;
+    private LinkedList<String> strMeasurementToken = new LinkedList<String>();
 
-    public String getMeasurementMetadata() throws SerializerException {
-        String message = "";
+    public String[] getMeasurementMetadata() throws SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
+
+        if(strAssayToken==null || strSessionToken==null){
+            throw new Exception400BadRequest();
+        }
+
+        GscfService objGSCFService = new GscfService();
+        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
+        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+            throw new Exception403Forbidden();
+        }
+
+        HashMap<String,String> objParam = new HashMap();
+        objParam.put("assayToken", strAssayToken);
+        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+            throw new Exception401Unauthorized();
+        }
+
+        String[] strReturn = new String [2];
         ArrayList<ProbeSetAnnotation> metadata = new ArrayList<ProbeSetAnnotation>();
 
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
-        SQLQuery sql = session.createSQLQuery("SELECT chip.name,chip_annotation.gene_accession,chip_annotation.gene_symbol,chip_annotation.gene_description FROM ticket,study_sample_assay, expression, chip,chip_annotation WHERE ticket.password='" + getPassword() + "' AND ticket.id=study_sample_assay.ticket_id AND study_sample_assay.X_REF='" + getAssayToken() + "' AND expression.study_sample_assay_id=study_sample_assay.id AND expression.chip_annotation_id=chip_annotation.id  AND chip_annotation.probeset='" + getMeasurementToken() + "' AND chip_annotation.chip_id=chip.id;");
+        String strMeasurementQuery = "";
+        if(!getMeasurementToken().equals("")) {
+            strMeasurementQuery += "AND chip_annotation.probeset IN(" + getMeasurementToken() + ")";
+        }
+
+        SQLQuery sql = session.createSQLQuery("SELECT chip.name,chip_annotation.gene_accession,chip_annotation.gene_symbol,chip_annotation.gene_description FROM ticket,study_sample_assay, expression, chip,chip_annotation WHERE ticket.password='" + getPassword() + "' AND ticket.id=study_sample_assay.ticket_id AND study_sample_assay.X_REF='" + getAssayToken() + "' AND expression.study_sample_assay_id=study_sample_assay.id AND expression.chip_annotation_id=chip_annotation.id "+strMeasurementQuery+" AND chip_annotation.chip_id=chip.id;");
         Iterator it2 = sql.list().iterator();
         while (it2.hasNext()) {
             ProbeSetAnnotation ca = new ProbeSetAnnotation();
@@ -60,6 +86,9 @@ public class getMeasurementMetadata {
 
         session.close();
 
+        if(metadata.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
 
         ////////////////////
         //SKARINGA
@@ -69,53 +98,61 @@ public class getMeasurementMetadata {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToJsonString(metadata);
+        strReturn[0] = "200";
+        strReturn[1] = trans.serializeToJsonString(metadata);
 
-        return message;
+        return strReturn;
 
 
 
     }
 
     /**
-     * @return the assayToken
+     * @return the strAssayToken
      */
     public String getAssayToken() {
-        return assayToken;
+        return strAssayToken;
     }
 
     /**
-     * @param assayToken the assayToken to set
+     * @param strAssayToken the strAssayToken to set
      */
     public void setAssayToken(String assayToken) {
-        this.assayToken = assayToken;
+        this.strAssayToken = assayToken;
     }
 
     /**
-     * @return the measurementToken
+     * @return the strMeasurementToken
      */
     public String getMeasurementToken() {
-        return measurementToken;
+        String strRet = "";
+        for(int i=0; i<strMeasurementToken.size(); i++) {
+            if(!strRet.equals("")) {
+                strRet += ",";
+            }
+            strRet += "'" + strMeasurementToken.get(i) + "'";
+        }
+        return strRet;
     }
 
     /**
-     * @param measurementToken the measurementToken to set
+     * @param strMeasurementToken the strMeasurementToken to set
      */
     public void setMeasurementToken(String measurementToken) {
-        this.measurementToken = measurementToken;
+        this.strMeasurementToken.add(measurementToken);
     }
 
     /**
-     * @return the password
+     * @return the strSessionToken
      */
     public String getPassword() {
-        return password;
+        return strSessionToken;
     }
 
     /**
-     * @param password the password to set
+     * @param strSessionToken the strSessionToken to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String strSessionToken) {
+        this.strSessionToken = strSessionToken;
     }
 }

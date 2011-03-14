@@ -21,9 +21,14 @@ import com.skaringa.javaxml.ObjectTransformerFactory;
 import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
 import ctd.model.Ticket;
+import ctd.services.getTicket;
+import ctd.services.exceptions.*;
+import ctd.services.internal.GscfService;
 import ctd.ws.model.ProbeSetExpression;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Query;
@@ -33,16 +38,38 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 /**
- *
  * @author kerkh010
+ * @author Tjeerd van Dijk
+ * @author Taco Steemers
  */
 public class getMeasurementData {
 
-    private String password;
-    private String assayToken;
+    private String strSessionToken;
+    private String strAssayToken;
+    private LinkedList<String> strMeasurementToken = new LinkedList<String>();
+    private LinkedList<String> strSampleToken = new LinkedList<String>();
+    private boolean blnVerbose = false;
 
-    public String getMeasurementData() throws NoImplementationException, SerializerException {
-        String message = "";
+    public String[] getMeasurementData() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
+
+        if(strAssayToken==null || strSessionToken==null){
+            throw new Exception400BadRequest();
+        }
+
+        GscfService objGSCFService = new GscfService();
+        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
+        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+            throw new Exception403Forbidden();
+        }
+
+        HashMap<String,String> objParam = new HashMap();
+        objParam.put("assayToken", strAssayToken);
+        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+            throw new Exception401Unauthorized();
+        }
+
+        String[] strReturn = new String [2];
         ArrayList<Object> total = new ArrayList<Object>();
         ArrayList<String> assaynames = new ArrayList<String>();
         ArrayList<Integer> assayids = new ArrayList<Integer>();
@@ -55,7 +82,7 @@ public class getMeasurementData {
 
         Ticket ticket = null;
         Integer ssa_id = null;
-        Query q = session.createQuery("from Ticket where password='" + getPassword() + "'");
+        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
         ticket = (Ticket) q.uniqueResult();
 
         Iterator it1 = ticket.getStudySampleAssaies().iterator();
@@ -92,6 +119,10 @@ public class getMeasurementData {
         total.add(probesetnames);
         total.add(values);
 
+        if(values.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+
         ////////////////////
         //SKARINGA
         ObjectTransformer trans = null;
@@ -100,36 +131,94 @@ public class getMeasurementData {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
-        message = trans.serializeToJsonString(total);
 
-        return message;
+        strReturn[0] = "200";
+        strReturn[1] = trans.serializeToJsonString(total);
+
+        return strReturn;
     }
 
     /**
-     * @return the password
+     * @return the strSessionToken
      */
-    public String getPassword() {
-        return password;
+    public String getSessionToken() {
+        return strSessionToken;
     }
 
     /**
-     * @param password the password to set
+     * @param strSessionToken the strSessionToken to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSessionToken(String strSessionToken) {
+        this.strSessionToken = strSessionToken;
     }
 
     /**
-     * @return the assayToken
+     * @return the strAssayToken
      */
     public String getAssayToken() {
-        return assayToken;
+        return strAssayToken;
     }
 
     /**
-     * @param assayToken the assayToken to set
+     * @param strAssayToken the strAssayToken to set
      */
     public void setAssayToken(String assayToken) {
-        this.assayToken = assayToken;
+        this.strAssayToken = assayToken;
+    }
+
+    /**
+     * @return the strMeasurementToken
+     */
+    public String getMeasurementToken() {
+        String strRet = "";
+        for(int i=0; i<strMeasurementToken.size(); i++) {
+            if(!strRet.equals("")) {
+                strRet += ",";
+            }
+            strRet += "'" + strMeasurementToken.get(i) + "'";
+        }
+        return strRet;
+    }
+
+    /**
+     * @param strMeasurementToken the strMeasurementToken to set
+     */
+    public void setMeasurementToken(String measurementToken) {
+        this.strMeasurementToken.add(measurementToken);
+    }
+
+    /**
+     * @return the strSampleToken
+     */
+    public String getSampleToken() {
+        String strRet = "";
+        for(int i=0; i<strSampleToken.size(); i++) {
+            if(!strRet.equals("")) {
+                strRet += ",";
+            }
+            strRet += "'" + strSampleToken.get(i) + "'";
+        }
+        return strRet;
+    }
+
+    /**
+     * @param strSampleToken the strSampleToken to set
+     */
+    public void setSampleToken(String sampleToken) {
+        this.strSampleToken.add(sampleToken);
+    }
+
+    /**
+     * @return the blnVerbose
+     */
+    public boolean getVerbose() {
+        return blnVerbose;
+    }
+
+    /**
+     * @param blnVerbose the blnVerbose to set
+     */
+    public void setVerbose(boolean blnVerbose) {
+        this.blnVerbose = blnVerbose;
     }
 }
