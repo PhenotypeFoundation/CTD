@@ -76,11 +76,11 @@
                   <td>&nbsp;</td>
                 </tr>
                 <tr>
-                  <td>&nbsp;</td>
+                  <td><input type="hidden" name="transactionType" id="transactionType"></td>
                   <td ><label>
                     <input name="wsPassword" type="password" id="wsPassword" value="">
                   </label></td>
-                  <td><input type="hidden" name="transactionType" id="transactionType"></td>
+                  <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td width="5"><input type="hidden" name="transactionResult" id="transactionResult" value="<jsp:getProperty name="qqqqq" property="transactionResult"/>"></td>
@@ -89,7 +89,7 @@
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
-                    <td><select   name="experiment_ids" id="experiment_ids" multiple>
+                    <td><select   name="experiment_ids" size="1" multiple id="experiment_ids">
                             <jsp:getProperty name="qqqqq" property="experiments"/>
                         </select>
                       <label>
