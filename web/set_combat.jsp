@@ -89,7 +89,7 @@
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
-                    <td><select   name="experiment_ids" size="1" multiple id="experiment_ids">
+                    <td><select   name="experiment_ids" size="10" multiple id="experiment_ids">
                             <jsp:getProperty name="qqqqq" property="experiments"/>
                         </select>
                       <label>
@@ -99,7 +99,7 @@
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
-                    <td>&nbsp;</td>
+                    <td><jsp:getProperty name="qqqqq" property="link"/></td>
                     <td>&nbsp;</td>
                 </tr>
             </table>

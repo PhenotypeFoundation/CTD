@@ -31,6 +31,7 @@ public class setCombat {
     private String transactionResult;
     private String experiments;
     private String button;
+    private String link = "";
 
     /**
      * @return the wsPassword
@@ -93,7 +94,7 @@ public class setCombat {
                 String folder = ticket.getFolder();
                 String gctfile = ftp_root + folder + "/gctfile_" + folder + ".gct";
                 files.add(gctfile);
-                dest_folder = dest_folder + "/" + folder;
+                dest_folder = dest_folder + "_" + folder;
 
             }
             //create destination folder
@@ -125,12 +126,12 @@ public class setCombat {
             String args = "Rscript --vanilla " + rscript + " -w" + new_folder + " -o" + new_folder + "/Combat";
             Process p = Runtime.getRuntime().exec(args);
 
-            link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder + "/Combat.gct";
+            link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder ;
 
             
 
-            
-
+            String link1 = "<a href=\""+link+"\">download normalized data (sftp)</a>";
+            setLink(link1);
             
 
             session.close();
@@ -210,5 +211,19 @@ public class setCombat {
      */
     public void setExperiment_ids(String[] experiment_ids) {
         this.experiment_ids = experiment_ids;
+    }
+
+    /**
+     * @return the link
+     */
+    public String getLink() {
+        return link;
+    }
+
+    /**
+     * @param link the link to set
+     */
+    public void setLink(String link) {
+        this.link = link;
     }
 }
