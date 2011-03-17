@@ -42,7 +42,7 @@ public class getAssayURL {
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
-        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }
 

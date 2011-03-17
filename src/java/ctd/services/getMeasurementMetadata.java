@@ -50,7 +50,7 @@ public class getMeasurementMetadata {
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
-        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }
 
@@ -63,24 +63,30 @@ public class getMeasurementMetadata {
 
         String strMeasurementQuery = "";
         if(!getMeasurementToken().equals("")) {
-            strMeasurementQuery += "AND chip_annotation.probeset IN(" + getMeasurementToken() + ")";
+            strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
         }
 
-        SQLQuery sql = session.createSQLQuery("SELECT chip.name,chip_annotation.gene_accession,chip_annotation.gene_symbol,chip_annotation.gene_description FROM ticket,study_sample_assay, expression, chip,chip_annotation WHERE ticket.password='" + getPassword() + "' AND ticket.id=study_sample_assay.ticket_id AND study_sample_assay.X_REF='" + getAssayToken() + "' AND expression.study_sample_assay_id=study_sample_assay.id AND expression.chip_annotation_id=chip_annotation.id "+strMeasurementQuery+" AND chip_annotation.chip_id=chip.id;");
+        SQLQuery sql = session.createSQLQuery("SELECT DISTINCT ca.probeset,ca.gene_accession,ca.gene_symbol,ca.gene_description"
+                + " FROM study_sample_assay ssa, expression ex, chip c,chip_annotation ca"
+                + " WHERE ssa.X_REF='" + getAssayToken() + "'"
+                + " AND ex.study_sample_assay_id=ssa.id"
+                + " AND ex.chip_annotation_id=ca.id "
+                + " AND ca.chip_id=c.id"
+                + strMeasurementQuery + ";");
         Iterator it2 = sql.list().iterator();
         while (it2.hasNext()) {
             ProbeSetAnnotation ca = new ProbeSetAnnotation();
             Object[] annotation = (Object[]) it2.next();
-            String chipname = (String) annotation[0];
-            String geneaccession = (String) annotation[1];
-            String genesymbol = (String) annotation[2];
-            String geneannotation = (String) annotation[3];
+            String strProbeset = (String) annotation[0];
+            String strGeneaccession = (String) annotation[1];
+            String strGenesymbol = (String) annotation[2];
+            String strGeneannotation = (String) annotation[3];
 
-            ca.setChipName(chipname);
-            ca.setGeneAccession(geneaccession);
-            ca.setGeneDescription(geneannotation);
-            ca.setGeneSymbol(genesymbol);
-            ca.setProbeSet(getAssayToken());
+            ca.setProbeSet(strProbeset);
+            ca.setGeneAccession(strGeneaccession);
+            ca.setGeneDescription(strGeneannotation);
+            ca.setGeneSymbol(strGenesymbol);
+            //ca.setProbeSet(getAssayToken());
             metadata.add(ca);
         }
 
@@ -145,14 +151,14 @@ public class getMeasurementMetadata {
     /**
      * @return the strSessionToken
      */
-    public String getPassword() {
+    public String getSessionToken() {
         return strSessionToken;
     }
 
     /**
      * @param strSessionToken the strSessionToken to set
      */
-    public void setPassword(String strSessionToken) {
+    public void setSessionToken(String strSessionToken) {
         this.strSessionToken = strSessionToken;
     }
 }

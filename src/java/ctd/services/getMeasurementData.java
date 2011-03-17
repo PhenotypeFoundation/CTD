@@ -65,7 +65,7 @@ public class getMeasurementData {
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
-        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }
 
@@ -80,39 +80,52 @@ public class getMeasurementData {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
-        Ticket ticket = null;
-        Integer ssa_id = null;
-        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
-        ticket = (Ticket) q.uniqueResult();
-
-        Iterator it1 = ticket.getStudySampleAssaies().iterator();
-        while (it1.hasNext()) {
-            StudySampleAssay ssa = (StudySampleAssay) it1.next();
-            String name = ssa.getXREF();
-            if (name.equals(getAssayToken())) {
-                Integer id = ssa.getId();
-                assayids.add(id);
-                assaynames.add(name);
-            }
+        String strMeasurementQuery = "";
+        if(!getMeasurementToken().equals("")) {
+            strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
         }
 
-        Integer count = 0;
-        for (int i = 0; i < assayids.size(); i++) {
-            count++;
-            Integer assay_id = assayids.get(i);
-
-            SQLQuery sql = session.createSQLQuery("SELECT expression.expression,probeset FROM expression,chip_annotation WHERE study_sample_assay_id=" + assay_id.toString() + " AND expression.chip_annotation_id=chip_annotation.id;");
-            Iterator it2 = sql.list().iterator();
-            while (it2.hasNext()) {
-                Object[] data = (Object[]) it2.next();
-                String probeset = (String) data[1];
-                if (count==1) {
-                    probesetnames.add(probeset);
-                }
-                Double value = (Double) data[0];
-                values.add(value);
-            }
+        String strSampleQuery = "";
+        if(!getMeasurementToken().equals("")) {
+            strSampleQuery += " AND ssa.sample_token IN(" + getSampleToken() + ") ";
         }
+
+//        Ticket ticket = null;
+//        Integer ssa_id = null;
+//        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
+//        ticket = (Ticket) q.uniqueResult();
+//
+//        Iterator it1 = ticket.getStudySampleAssaies().iterator();
+//        while (it1.hasNext()) {
+//            StudySampleAssay ssa = (StudySampleAssay) it1.next();
+//            String name = ssa.getXREF();
+//            if (name.equals(getAssayToken())) {
+//                Integer id = ssa.getId();
+//                assayids.add(id);
+//                assaynames.add(name);
+//            }
+//        }
+//
+//        Integer count = 0;
+//        for (int i = 0; i < assayids.size(); i++) {
+//            count++;
+//            Integer assay_id = assayids.get(i);
+
+        SQLQuery sql = session.createSQLQuery("SELECT ex.expression,ca.probeset,ssa.sample_token"
+                                            + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
+                                            + " WHERE ssa.X_REF=" + getAssayToken()
+                                            + " AND ex.chip_annotation_id=ca.id"
+                                            + " AND ex.study_sample_assay_id=ssa.id"
+                                            + strSampleQuery + strMeasurementQuery + ";");
+
+        Iterator it2 = sql.list().iterator();
+        while (it2.hasNext()) {
+            Object[] data = (Object[]) it2.next();
+            String probeset = (String) data[1];
+            Double value = (Double) data[0];
+            values.add(value);
+        }
+//        }
 
         session.close();
         total.add(assaynames);

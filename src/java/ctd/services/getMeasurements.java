@@ -45,7 +45,7 @@ public class getMeasurements {
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
-        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canRead") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1]).equals("canWrite"))) {
+        if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }
 
@@ -56,28 +56,34 @@ public class getMeasurements {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
-        Ticket ticket = null;
-        Integer ssa_id = null;
-        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
-        ticket = (Ticket) q.uniqueResult();
-
-        Iterator it1 = ticket.getStudySampleAssaies().iterator();
-        while (it1.hasNext()) {
-            StudySampleAssay ssa = (StudySampleAssay) it1.next();
-            String xref = ssa.getXREF();
-            if (getAssayToken().equals(xref)) {
-                ssa_id = ssa.getId();
-            }
-        }
-
-        if (ssa_id != null) {
-            SQLQuery sql = session.createSQLQuery("SELECT chip_annotation.probeset FROM expression,chip_annotation WHERE study_sample_assay_id=" + ssa_id.toString() + " AND expression.chip_annotation_id=chip_annotation.id;");
+//        Ticket ticket = null;
+//        Integer ssa_id = null;
+//        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
+//        ticket = (Ticket) q.uniqueResult();
+//
+//        Iterator it1 = ticket.getStudySampleAssaies().iterator();
+//        while (it1.hasNext()) {
+//            StudySampleAssay ssa = (StudySampleAssay) it1.next();
+//            String xref = ssa.getXREF();
+//            if (getAssayToken().equals(xref)) {
+//                ssa_id = ssa.getId();
+//            }
+//        }
+//
+//        if (ssa_id != null) {
+            String strQ = "SELECT DISTINCT ca.probeset"
+                        + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
+                        + " WHERE ex.study_sample_assay_id=ssa.id"
+                        + " AND ssa.X_REF='" + getAssayToken() + "'"
+                        + " AND ex.chip_annotation_id=ca.id;";
+            SQLQuery sql = session.createSQLQuery(strQ);
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, strQ);
             Iterator it2 = sql.list().iterator();
             while (it2.hasNext()) {
                 String probeset = (String) it2.next();
                 probesets.add(probeset);
             }
-        }
+//        }
         session.close();
 
         if(probesets.isEmpty()) {
