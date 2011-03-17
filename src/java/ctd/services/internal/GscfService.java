@@ -101,7 +101,7 @@ public class GscfService {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService");
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService.isUser");
         }
 
 
@@ -109,21 +109,21 @@ public class GscfService {
         return blnRet;
     }
 
-    public String getAuthorizationLevel(String strJSON){
-        String strRet = "";
+    public boolean getAuthorizationLevel(String strJSON, String strLevel){
+        boolean blnRet = false;
 
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
             Map objJSON = (Map) trans.deserializeFromJsonString(strJSON);
-            if(objJSON.containsKey("bla")) {
-                strRet = (String) objJSON.get("bla");
+            if(objJSON.containsKey(strLevel)) {
+                blnRet = objJSON.get(strLevel).toString().equals("true");
             }
         } catch (Exception ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService");
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService.getAuthorizationLevel");
         }
 
-        return strRet;
+        return blnRet;
     }
 
 }
