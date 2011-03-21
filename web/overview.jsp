@@ -23,11 +23,11 @@
           </tr>
         </table>
         <br>
-        <table cellpadding="0" cellspacing="0" width="640" border="1">
+        <table cellpadding="0" cellspacing="0" width="640" class="tableoverview">
           <tr>
-            <th bgcolor="#0099CC" class="text_header_white">Study name</th>
-            <th bgcolor="#0099CC" class="text_header_white">Assay name</th>
-            <th bgcolor="#0099CC" class="text_header_white">Number of samples (with data)</th>
+            <th bgcolor="#0099CC" class="thoverview">Study name</th>
+            <th bgcolor="#0099CC" class="thoverview">Assay name</th>
+            <th bgcolor="#0099CC" class="thoverview">Number of samples (with data)</th>
           </tr>
             <jsp:getProperty name="overview" property="content"/>
         </table>

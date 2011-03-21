@@ -35,13 +35,19 @@ public class Overview {
 
         SQLQuery sql = session.createSQLQuery("SELECT a.study_token, a.X_REF, COUNT(a.id) ,COUNT(b.study_sample_assay_id) FROM study_sample_assay a LEFT OUTER JOIN expression b ON a.id=b.study_sample_assay_id GROUP BY a.id LIMIT "+strOffset+", 20");
         Iterator it2 = sql.list().iterator();
+        int iRownr = 1;
         while (it2.hasNext()) {
             Object[] data = (Object[]) it2.next();
-            strRet += "<tr>";
-            strRet += "<td><a href='"+strGscfHome+"/study/showByToken/"+(String)data[0]+"'>"+(String)data[0]+"</a></td>";
-            strRet += "<td><a href='"+strGscfHome+"/assay/showByToken/"+(String)data[1]+"'>"+(String)data[1]+"</a></td>";
-            strRet += "<td>"+data[2].toString()+" ("+data[3].toString()+")</td>";
-            strRet += "</tr>";
+
+            String strClass = "odd";
+            if(iRownr%2==0) strClass = "even";
+            iRownr++;
+
+            strRet += "<tr class=\""+strClass+"\">\n";
+            strRet += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/study/showByToken/"+(String)data[0]+"'>"+(String)data[0]+"</a></td>\n";
+            strRet += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/assay/showByToken/"+(String)data[1]+"'>"+(String)data[1]+"</a></td>\n";
+            strRet += "\t<td class=\"tdoverview\">"+data[2].toString()+" ("+data[3].toString()+")</td>\n";
+            strRet += "</tr>\n";
         }
         session.close();
 

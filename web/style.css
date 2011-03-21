@@ -30,3 +30,35 @@
 .boldnumber {
 	font-weight: bold;
 }
+/** START :: OVERVIEW **/
+.tableoverview {
+	border: 1px solid #ccc;
+	width: 100%
+}
+
+.tdoverview {
+	font: 11px verdana, arial, helvetica, sans-serif;
+	line-height: 12px;
+	padding: 5px 6px;
+	text-align: left;
+	vertical-align: top;
+}
+
+.thoverview {
+        font: 11px verdana, arial, helvetica, sans-serif;
+	font-weight: bold;
+	line-height: 17px;
+	padding: 2px 6px;
+        color: #FFF;
+	text-align: left;
+}
+
+.odd {
+	background: #DDEFFF;
+        border: 0;
+}
+
+.even {
+	background: #ffffff;
+        border: 1;
+}
