@@ -24,21 +24,25 @@ import java.util.logging.Logger;
 public class GscfService {
 
     public GscfService() {
-
+        // empty constructor
     }
 
     /**
-    * Call GSCF Service via a secure call
+    * Call GSCF Service via a REST call
     *
-    * @param       sessionToken Session token for connection to GSCF
-    * @param       restMethod Method to call on GSCF rest controller
-    * @param       restParams Parameters to provide to the GSCF rest method
-    *
-    * @return      String
+    * @param       String sessionToken Session token for connection to GSCF
+    * @param       String restMethod Method to call on GSCF rest controller
+    * @param       HashMap<String, String> restParams Parameters to provide to the GSCF rest method
+    * @return      the String[] that contains the HTTP-status code
+    *              on the first position, and the response to the
+    *              query in the second position
+    * @throws      Exception500InternalServerError if something goes wrong while
+    *              making or processing the REST call to GSCF this exception is thrown
     */
     public String[] callGSCF(String sessionToken, String restMethod, HashMap<String, String> restParams) throws Exception500InternalServerError {
         String[] strRet = new String[2];
 
+        // Add all the parameters given in the map to the querystring
         String strParam = "";
         if(!restParams.isEmpty()) {
             for (Map.Entry<String, String> entry : restParams.entrySet()) {
@@ -47,10 +51,12 @@ public class GscfService {
         }
 
         try {
+            // Place the REST call
             URL urlURL = new URL(this.restURL()+restMethod+"/query?sessionToken="+sessionToken+strParam);
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
             strRet[0] = connection.getResponseCode()+"";
 
+            // Read the response body into a buffer and process it
             BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String strLine = "";
             strRet[1] = "";
