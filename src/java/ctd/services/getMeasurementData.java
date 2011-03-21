@@ -25,6 +25,7 @@ import ctd.services.getTicket;
 import ctd.services.exceptions.*;
 import ctd.services.internal.GscfService;
 import ctd.ws.model.ProbeSetExpression;
+import ctd.ws.model.ExpressionProbesetSample;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public class getMeasurementData {
     private boolean blnVerbose = false;
 
     public String[] getMeasurementData() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
-
+/*
         if(strAssayToken==null || strSessionToken==null){
             throw new Exception400BadRequest();
         }
@@ -67,14 +68,13 @@ public class getMeasurementData {
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
-        }
+        }*/
 
         String[] strReturn = new String [2];
         ArrayList<Object> total = new ArrayList<Object>();
-        ArrayList<String> assaynames = new ArrayList<String>();
-        ArrayList<Integer> assayids = new ArrayList<Integer>();
-        ArrayList<String> probesetnames = new ArrayList<String>();
-        ArrayList<Double> values = new ArrayList<Double>();
+        ArrayList<String> lstSampleToken = new ArrayList<String>();
+        ArrayList<String> lstMeasurementToken = new ArrayList<String>();
+        ArrayList<Double> lstExpressions = new ArrayList<Double>();
 
         //open hibernate connection
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
@@ -86,7 +86,7 @@ public class getMeasurementData {
         }
 
         String strSampleQuery = "";
-        if(!getMeasurementToken().equals("")) {
+        if(!getSampleToken().equals("")) {
             strSampleQuery += " AND ssa.sample_token IN(" + getSampleToken() + ") ";
         }
 
@@ -110,29 +110,58 @@ public class getMeasurementData {
 //        for (int i = 0; i < assayids.size(); i++) {
 //            count++;
 //            Integer assay_id = assayids.get(i);
-
-        SQLQuery sql = session.createSQLQuery("SELECT ex.expression,ca.probeset,ssa.sample_token"
-                                            + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
-                                            + " WHERE ssa.X_REF=" + getAssayToken()
-                                            + " AND ex.chip_annotation_id=ca.id"
-                                            + " AND ex.study_sample_assay_id=ssa.id"
-                                            + strSampleQuery + strMeasurementQuery + ";");
-
+        String strQuery = "SELECT ex.expression,ca.probeset,ssa.sample_token"
+                        + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
+                        + " WHERE ssa.X_REF='" + getAssayToken() +"'"
+                        + " AND ex.chip_annotation_id=ca.id"
+                        + " AND ex.study_sample_assay_id=ssa.id"
+                        + strSampleQuery + strMeasurementQuery
+                        + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
+        SQLQuery sql = session.createSQLQuery(strQuery);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Q: "+strQuery);
         Iterator it2 = sql.list().iterator();
-        while (it2.hasNext()) {
-            Object[] data = (Object[]) it2.next();
-            String probeset = (String) data[1];
-            Double value = (Double) data[0];
-            values.add(value);
+        if(!blnVerbose) {
+            HashMap<String, String> mapSampleToken = new HashMap<String, String>();
+            HashMap<String, String> mapMeasurementToken = new HashMap<String, String>();
+            while (it2.hasNext()) {
+                Object[] data = (Object[]) it2.next();
+                Double value = (Double) data[0];
+                String sMeasurementToken = (String) data[1];
+                String sSampleToken = (String) data[2];
+
+                if(!mapSampleToken.containsKey(sSampleToken)) {
+                    mapSampleToken.put(sSampleToken, "");
+                    lstSampleToken.add(sSampleToken);
+                }
+                if(!mapMeasurementToken.containsKey(sMeasurementToken)) {
+                    mapMeasurementToken.put(sMeasurementToken, "");
+                    lstMeasurementToken.add(sMeasurementToken);
+                }
+                lstExpressions.add(value);
+            }
+            if(lstExpressions.size()>0) {
+                total.add(lstSampleToken);
+                total.add(lstMeasurementToken);
+                total.add(lstExpressions);
+            }
+        } else {
+            while (it2.hasNext()) {
+                Object[] data = (Object[]) it2.next();
+                Double value = (Double) data[0];
+                String sMeasurementToken = (String) data[1];
+                String sSampleToken = (String) data[2];
+
+                ExpressionProbesetSample objNew = new ExpressionProbesetSample();
+                objNew.setMeasurementToken(sMeasurementToken);
+                objNew.setSampleToken(sSampleToken);
+                objNew.setValue(value);
+                total.add(objNew);
+            }
         }
-//        }
 
         session.close();
-        total.add(assaynames);
-        total.add(probesetnames);
-        total.add(values);
 
-        if(values.isEmpty()) {
+        if(total.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
