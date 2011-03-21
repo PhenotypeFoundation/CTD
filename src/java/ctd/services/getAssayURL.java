@@ -26,19 +26,21 @@ public class getAssayURL {
     private String strSessionToken;
     private String strAssayToken;
 
-
     public String[] getAssayURL() throws NoImplementationException, SerializerException, Exception400BadRequest, Exception500InternalServerError, Exception403Forbidden, Exception401Unauthorized, Exception404ResourceNotFound {
 
+        // Check if the minimal parameters are set
         if(getAssayToken()==null || getSessionToken()==null){
             throw new Exception400BadRequest();
         }
 
+        // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             throw new Exception403Forbidden();
         }
 
+        // Check if the provided sessionToken has access to the provided assayToken
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -46,6 +48,7 @@ public class getAssayURL {
             throw new Exception401Unauthorized();
         }
 
+        // init parameters
         String[] strReturn = new String [2];
 
         //init parameters
@@ -78,14 +81,15 @@ public class getAssayURL {
             throw new Exception404ResourceNotFound();
         }
 
-        ////////////////////
-        //SKARINGA
+        // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(url);
 

@@ -52,24 +52,28 @@ public class getMeasurementData {
     private boolean blnVerbose = false;
 
     public String[] getMeasurementData() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
-/*
+
+        // Check if the minimal parameters are set
         if(strAssayToken==null || strSessionToken==null){
             throw new Exception400BadRequest();
         }
 
+        // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             throw new Exception403Forbidden();
         }
 
+        // Check if the provided sessionToken has access to the provided assayToken
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
-        }*/
+        }
 
+        // init parameters
         String[] strReturn = new String [2];
         ArrayList<Object> total = new ArrayList<Object>();
         ArrayList<String> lstSampleToken = new ArrayList<String>();
@@ -80,11 +84,15 @@ public class getMeasurementData {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
+        // If the optional parameter measurementToken is set, then we prepare
+        // an extra condition for the query
         String strMeasurementQuery = "";
         if(!getMeasurementToken().equals("")) {
             strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
         }
 
+        // If the optional parameter sampleToken is set, then we prepare
+        // an extra condition for the query
         String strSampleQuery = "";
         if(!getSampleToken().equals("")) {
             strSampleQuery += " AND ssa.sample_token IN(" + getSampleToken() + ") ";
@@ -118,11 +126,17 @@ public class getMeasurementData {
                         + strSampleQuery + strMeasurementQuery
                         + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
         SQLQuery sql = session.createSQLQuery(strQuery);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Q: "+strQuery);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Q: "+strQuery);
         Iterator it2 = sql.list().iterator();
         if(!blnVerbose) {
+            // If the Verbose parameter is false or not set, then the first
+            // line of the JSON should be all sampleTokens, the second line
+            // all measurementTokens and the third line all values
+
+            // These hashmaps are used to make sure that a token is only reported once
             HashMap<String, String> mapSampleToken = new HashMap<String, String>();
             HashMap<String, String> mapMeasurementToken = new HashMap<String, String>();
+
             while (it2.hasNext()) {
                 Object[] data = (Object[]) it2.next();
                 Double value = (Double) data[0];
@@ -130,21 +144,29 @@ public class getMeasurementData {
                 String sSampleToken = (String) data[2];
 
                 if(!mapSampleToken.containsKey(sSampleToken)) {
+                    // if this is the first occurence of a sampleToken
                     mapSampleToken.put(sSampleToken, "");
                     lstSampleToken.add(sSampleToken);
                 }
                 if(!mapMeasurementToken.containsKey(sMeasurementToken)) {
+                    // if this is the first occurence of a measurementToken
                     mapMeasurementToken.put(sMeasurementToken, "");
                     lstMeasurementToken.add(sMeasurementToken);
                 }
+                // add the expression
                 lstExpressions.add(value);
             }
             if(lstExpressions.size()>0) {
+                // if the query returned results lstExpressions should be
+                // bigger than zero
                 total.add(lstSampleToken);
                 total.add(lstMeasurementToken);
                 total.add(lstExpressions);
             }
         } else {
+            // if the parameter Verbose is set to true every line in the JSON
+            // message should report a sampleToken, a measurementToken and a
+            // value
             while (it2.hasNext()) {
                 Object[] data = (Object[]) it2.next();
                 Double value = (Double) data[0];
@@ -159,14 +181,15 @@ public class getMeasurementData {
             }
         }
 
+        // Close hibernate session
         session.close();
 
+        // If no data is found, then a 404 is thrown
         if(total.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
-        ////////////////////
-        //SKARINGA
+        // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
@@ -174,6 +197,7 @@ public class getMeasurementData {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(total);
 

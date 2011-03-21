@@ -37,16 +37,19 @@ public class getMeasurementMetadata {
 
     public String[] getMeasurementMetadata() throws SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
 
+        // Check if the minimal parameters are set
         if(strAssayToken==null || strSessionToken==null){
             throw new Exception400BadRequest();
         }
 
+        // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             throw new Exception403Forbidden();
         }
 
+        // Check if the provided sessionToken has access to the provided assayToken
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -54,6 +57,7 @@ public class getMeasurementMetadata {
             throw new Exception401Unauthorized();
         }
 
+        // init parameters
         String[] strReturn = new String [2];
         ArrayList<ProbeSetAnnotation> metadata = new ArrayList<ProbeSetAnnotation>();
 
@@ -61,6 +65,8 @@ public class getMeasurementMetadata {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
+        // If the optional parameter measurementToken is set, then we prepare
+        // an extra condition for the query
         String strMeasurementQuery = "";
         if(!getMeasurementToken().equals("")) {
             strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
@@ -82,6 +88,7 @@ public class getMeasurementMetadata {
             String strGenesymbol = (String) annotation[2];
             String strGeneannotation = (String) annotation[3];
 
+            // All available metadata of a measurement is reported
             ca.setProbeSet(strProbeset);
             ca.setGeneAccession(strGeneaccession);
             ca.setGeneDescription(strGeneannotation);
@@ -90,20 +97,23 @@ public class getMeasurementMetadata {
             metadata.add(ca);
         }
 
+        // Close hibernate session
         session.close();
 
+        // If no data is found, then a 404 is thrown
         if(metadata.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
-        ////////////////////
-        //SKARINGA
+        // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(metadata);
 

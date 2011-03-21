@@ -32,16 +32,19 @@ public class getMeasurements {
 
     public String[] getMeasurements() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception307TemporaryRedirect, Exception500InternalServerError, Exception403Forbidden, Exception404ResourceNotFound, Exception400BadRequest {
 
+        // Check if the minimal parameters are set
         if(getAssayToken()==null || getSessionToken()==null){
             throw new Exception400BadRequest();
         }
 
+        // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             throw new Exception403Forbidden();
         }
 
+        // Check if the provided sessionToken has access to the provided assayToken
         HashMap<String,String> objParam = new HashMap();
         objParam.put("assayToken", strAssayToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -49,6 +52,7 @@ public class getMeasurements {
             throw new Exception401Unauthorized();
         }
 
+        // init parameters
         String[] strReturn = new String [2];
         ArrayList<String> probesets = new ArrayList<String>();
 
@@ -84,20 +88,24 @@ public class getMeasurements {
                 probesets.add(probeset);
             }
 //        }
+
+        // Close hibernate session
         session.close();
 
+        // If no probesets are found, then a 404 is thrown
         if(probesets.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
-        ////////////////////
-        //SKARINGA
+        // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(probesets);
 
