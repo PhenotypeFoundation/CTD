@@ -73,6 +73,9 @@ public class getAssayURL {
         //location ftp folder
         String link = "sftp://" + ftp_username + "@" + hostname + ":" +ftp_folder + folder + "/";
 
+        // The link is now hardwired to the CTD home because there doesn't excist a page for assay details
+        link = res.getString("ctd.moduleURL");
+
         HashMap<String,String> url = new HashMap<String,String>();
 
         url.put("url", link);
