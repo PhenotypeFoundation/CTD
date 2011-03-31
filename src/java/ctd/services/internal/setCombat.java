@@ -5,7 +5,6 @@
 package ctd.services.internal;
 
 import ctd.model.Ticket;
-import ctd.services.getJsonCombatNormalization;
 import ctd.services.getTicket;
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +67,8 @@ public class setCombat {
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String ws_password = res.getString("ws.password");
         String ftp_root = res.getString("ws.ftp_folder");
-        String rscript = res.getString("ws.rscript_combat");
+        String rscript_combat = res.getString("ws.rscript_combat");
+        String rscript = res.getString("ws.rscript");
         String ftp_username = res.getString("ws.ftp_username");
         String hostname = res.getString("ws.hostname");
 
@@ -103,8 +103,8 @@ public class setCombat {
             //copy gct files to destination folder
             //Adjust permissions
             String command1 = "chown cleandata " + new_folder;
-            String command2 = "chgrp cleandata " + new_folder;
-            String command3 = "chmod 777 " + new_folder;
+            String command2 = "chgrp ctd " + new_folder;
+            String command3 = "chmod 700 " + new_folder;
             Process child;
             try {
                 child = Runtime.getRuntime().exec(command1);
@@ -121,23 +121,53 @@ public class setCombat {
                 child = Runtime.getRuntime().exec(command);
             }
 
-            //////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////
             //Do a system call to normalize with ComBAT.
-            String args = "Rscript --vanilla " + rscript + " -w" + new_folder + " -o" + new_folder + "/Combat";
+            String args = rscript + " --vanilla " + rscript_combat + " -w" + new_folder + " -o" + new_folder + "/Combat";
             Process p = Runtime.getRuntime().exec(args);
 
-            link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder ;
+            File f = new File(new_folder + "/Combat.gct");
+            while (f.exists() == false) {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(setCombat.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
 
-            
+            link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder + "/Combat.gct";
 
-            String link1 = "<a href=\""+link+"\">download normalized data (sftp)</a>";
+
+
+            String link1 = "<a href=\"" + link + "\">download normalized data (sftp)</a>";
             setLink(link1);
-            
+
 
             session.close();
             sessionFactory.close();
+
+            //set permissions folder
+            String command1_1 = "chmod 500 "+new_folder;
+            String command1_2 = "chmod +t " + new_folder;
+            Process p2 = Runtime.getRuntime().exec(command1_2);
+            Process p1 = Runtime.getRuntime().exec(command1_1);
+            
+
+            //set permissions combat-file
+            String command2_1 = "chmod 040 "+new_folder +"/Combat.gct";
+            String command2_2 = "chown robertk "+new_folder+"/Combat.gct";
+            String command2_3 = "chgrp ctd "+new_folder+"/Combat.gct";
+
+            Process  p4_1 = Runtime.getRuntime().exec(command2_1);
+            Process  p4_2 = Runtime.getRuntime().exec(command2_2);
+            Process  p4_3 = Runtime.getRuntime().exec(command2_3);
+
+
         }
-        
+
+
+
+
 
         return link;
     }
