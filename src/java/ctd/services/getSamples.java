@@ -89,8 +89,9 @@ public class getSamples {
 
         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): list length: "+lstGSCFResponse.size());
 
-        strReturn += "<table border='1'>";
+        strReturn += "<h2>4. Link files to samples</h2><div id='drag'><table border='1'>";
 
+        LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
             // Open the ZIP file
             ZipFile zf = new ZipFile("C:/temp/uploads/"+strFilename);
@@ -99,19 +100,57 @@ public class getSamples {
             for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
                 // Get the entry name
                 String zipEntryName = ((ZipEntry)entries.nextElement()).getName();
-                System.out.println(zipEntryName);
+                lstFilenames.add(zipEntryName);
             }
         } catch (IOException e) {
             System.out.println(e);
         }
 
+
+        //From samples to filenames
+        HashMap<Integer, Integer> results = new HashMap<Integer, Integer>();
+        boolean[] used = new boolean[lstFilenames.size()];
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
+            String name = map.get("name").replace(" ", "").toLowerCase();
+            String event = map.get("event").replace(" ", "").toLowerCase();
+            String subject = map.get("subject").replace(" ", "").toLowerCase();
+            int highest_match = -1;
+            int highest_match_score = -1;
+            for(int j = 0; j < lstFilenames.size(); j++){
+                if(!used[j]){
+                    String fn = lstFilenames.get(j).replace(" ", "").toLowerCase();
+                    int score = 0;
+                    if(fn.contains(name)){
+                        score+=3;
+                    }
+                    if(fn.contains(event)){
+                        score+=1;
+                    }
+                    if(fn.contains(subject)){
+                        score+=2;
+                    }
+                    if(score>highest_match_score){
+                        highest_match = j;
+                        highest_match_score = score;
+                    }
+                }
+            }
+            used[highest_match]=true;
+            results.put(i,highest_match);
+            // What if there are more of the one than there are of the other?
+
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
+        }
+
+        for(int i = 0; i < lstGSCFResponse.size(); i++){
+            int fn = results.get(i);
+            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
-            strReturn += "<tr><td class='forbid' style='width:200px'>dunno lollol</td><td style='width:200px'><div class='drag'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div></td></tr>";
+            strReturn += "<tr><td class='forbid' style='width:200px'>"+lstFilenames.get(fn)+"</td><td style='width:200px'><div class='drag'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div></td></tr>";
         }
         strReturn += "<tr><td colspan='2' style='height:100px'><div class='drag'>sample4</div><div class='drag'>sample5</div></td></tr>";
-        strReturn += "</table>";
+        strReturn += "</table></div><a href='#' onClick='init_step5();'>Ok</a>";
 
         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): result: "+strReturn);
         return strReturn;

@@ -62,8 +62,8 @@ function init_step4() {
           url: "./getSamples.jsp?assayToken="+st2+"&filename="+fn,
           context: document.body,
           success: function(data){
-            $('#drag').html(data);
             alert(data);
+            document.getElementById("step4").innerHTML = data;
             REDIPS.drag.init();
           }
         });
