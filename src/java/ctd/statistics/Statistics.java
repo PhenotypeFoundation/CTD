@@ -16,6 +16,7 @@
 package ctd.statistics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 
@@ -30,6 +31,19 @@ public class Statistics {
     
 
     public Statistics() {
+    }
+
+    public Double getHigh(){
+        Collections.sort(data);
+        Double value = data.get(0);
+        return value;
+    }
+
+    public Double getLow(){
+        Collections.sort(data);
+        int s = data.size();
+        Double value = data.get(s-1);
+        return value;
     }
 
     public Double getAverage(){
