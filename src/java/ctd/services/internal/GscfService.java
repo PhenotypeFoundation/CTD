@@ -44,15 +44,18 @@ public class GscfService {
 
         // Add all the parameters given in the map to the querystring
         String strParam = "";
-        if(!restParams.isEmpty()) {
+        if(!(restParams==null) && !restParams.isEmpty()) {
             for (Map.Entry<String, String> entry : restParams.entrySet()) {
-                strParam = "&"+entry.getKey()+"="+entry.getValue();
+                strParam += "&"+entry.getKey()+"="+entry.getValue();
             }
         }
-
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF: about to place restcall");
         try {
             // Place the REST call
-            URL urlURL = new URL(this.restURL()+restMethod+"/query?sessionToken="+sessionToken+strParam);
+            URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken+strParam);
+
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GSCF service: "+this.restURL()+restMethod+"/query?sessionToken="+sessionToken+strParam);
+
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
             strRet[0] = connection.getResponseCode()+"";
 
@@ -90,7 +93,7 @@ public class GscfService {
      */
     public String urlAuthRemote(String strToken, String strReturnURL) {
         ResourceBundle res = ResourceBundle.getBundle("settings");
-        return res.getString("gscf.baseURL") + "/login/auth_remote?moduleURL="+res.getString("ctd.moduleURL")+"&consumer="+res.getString("ctd.consumerID")+"&token="+strToken+"&returnURL="+strReturnURL;
+        return res.getString("gscf.baseURL") + "/login/auth_remote?moduleURL="+res.getString("ctd.moduleURL")+"&consumer="+res.getString("ctd.consumerID")+"&token="+strToken+"&returnUrl="+strReturnURL;
     }
 
     public boolean isUser(String strJSON) {
@@ -131,5 +134,32 @@ public class GscfService {
 
         return blnRet;
     }
-
+    
+    public String getAssayName(String strAssayToken, String strStudyToken, String strSessionToken) {
+        String[] strGSCFRespons = new String[2];
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        String strModuleVal = res.getString("ctd.moduleURL");
+        HashMap<String, String> restParams = new HashMap<String, String>();
+        String strConsumerVal = res.getString("ctd.consumerID");
+        restParams.put("consumer", strConsumerVal);
+        restParams.put("assayToken", strAssayToken);
+        restParams.put("studyToken",strStudyToken);
+        restParams.put("moduleURL", strModuleVal);
+        try {
+            strGSCFRespons = this.callGSCF(strSessionToken,"getAssays",restParams);
+        } catch (Exception500InternalServerError e) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GscfService: getAssayName ERROR (getAssay): "+e.getError());
+        }
+        ObjectTransformer trans = null;
+        HashMap objJSON = new HashMap();
+        try {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GscfService: "+strGSCFRespons[1]);
+            trans = ObjectTransformerFactory.getInstance().getImplementation();
+            LinkedList lstJSON = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
+            objJSON = (HashMap) lstJSON.get(0);
+        } catch (Exception e) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GscfService: getAssayName ERROR (JSON): "+e.getLocalizedMessage());
+        }
+        return (String) objJSON.get("name");
+    }
 }
