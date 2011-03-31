@@ -59,7 +59,7 @@ a:active {
   <tr>
     
     <td width="120"><a target="subcontent" href="about.jsp"></a></td>
-    <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_combat.jsp">ComBat</a></td>
+    <td bgcolor="#0099CC" width="100">&nbsp; <a target="subcontent" href="set_combat.jsp">GRSN</a></td>
     <td  width="120"></td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
