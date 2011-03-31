@@ -2,4 +2,13 @@
 <jsp:useBean id="query" scope="session" class="ctd.services.internal.Query"/>
 <jsp:setProperty name="query" property="*"/>
 
-<jsp:getProperty name="query" property="svg"/>
+<% if (query.getGraphType().equals("ungrouped")){
+    String message = query.getSvg();
+    out.println(message);
+}%>
+
+<% if (query.getGraphType().equals("grouped")){
+    String message = query.getSvgGroups();
+    out.println(message);
+}%>
+
