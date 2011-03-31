@@ -33,11 +33,13 @@ public class CtdService {
      */
     public String[] ProcessRestCall(String strRestService, String strQuerystring) throws Exception {
         String[] strRet = new String[2];
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "CTD service: "+strRestService+" "+strQuerystring);
 
         try {
             // Decoding the Querystring, sorry for the ugly hack
             URI objURI = new URI("http://www.example.com/dummy?"+strQuerystring);
             strQuerystring = objURI.getQuery();
+
 
             String strClassBase = "ctd.services.";
 
@@ -118,7 +120,7 @@ public class CtdService {
             } else {
                 strRet[0] = "500";
                 strRet[1] = "Internal Server Error: Unknown InvocationTargetException"+" "+cause.toString();
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Internal Server Error: "+cause.toString()+"\n"+cause.getMessage());
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Internal Server Error (invocation): "+cause.toString()+"\n"+cause.getMessage());
             }
         } catch (Exception e) {
             //throw new Exception(e);

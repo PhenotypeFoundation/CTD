@@ -8,10 +8,12 @@ import ctd.model.Ticket;
 import ctd.services.exceptions.*;
 import ctd.services.internal.GscfService;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -40,9 +42,21 @@ public class getAssayURL {
             throw new Exception403Forbidden();
         }
 
+        //open hibernate connection
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
         // Check if the provided sessionToken has access to the provided assayToken
+        // This needs to be verified with the studyToken
+        String strQ = "SELECT DISTINCT study_token FROM study_sample_assay WHERE X_REF ='"+getAssayToken()+"'";
+        SQLQuery sql = session.createSQLQuery(strQ);
+        String strStudyToken = "";
+        Iterator it1 = sql.list().iterator();
+        while (it1.hasNext()) {
+            strStudyToken = (String) it1.next();
+        }
         HashMap<String,String> objParam = new HashMap();
-        objParam.put("assayToken", strAssayToken);
+        objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();

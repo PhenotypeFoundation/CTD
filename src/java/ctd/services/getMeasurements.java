@@ -44,9 +44,21 @@ public class getMeasurements {
             throw new Exception403Forbidden();
         }
 
+        //open hibernate connection
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
         // Check if the provided sessionToken has access to the provided assayToken
+        // This needs to be verified with the studyToken
+        String strQ = "SELECT DISTINCT study_token FROM study_sample_assay WHERE X_REF ='"+getAssayToken()+"'";
+        SQLQuery sql = session.createSQLQuery(strQ);
+        String strStudyToken = "";
+        Iterator it1 = sql.list().iterator();
+        while (it1.hasNext()) {
+            strStudyToken = (String) it1.next();
+        }
         HashMap<String,String> objParam = new HashMap();
-        objParam.put("assayToken", strAssayToken);
+        objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
@@ -55,10 +67,6 @@ public class getMeasurements {
         // init parameters
         String[] strReturn = new String [2];
         ArrayList<String> probesets = new ArrayList<String>();
-
-        //open hibernate connection
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
 
 //        Ticket ticket = null;
 //        Integer ssa_id = null;
@@ -75,14 +83,14 @@ public class getMeasurements {
 //        }
 //
 //        if (ssa_id != null) {
-            String strQ = "SELECT DISTINCT ca.probeset"
+            String strQ2 = "SELECT DISTINCT ca.probeset"
                         + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
                         + " WHERE ex.study_sample_assay_id=ssa.id"
                         + " AND ssa.X_REF='" + getAssayToken() + "'"
                         + " AND ex.chip_annotation_id=ca.id;";
-            SQLQuery sql = session.createSQLQuery(strQ);
+            SQLQuery sql2 = session.createSQLQuery(strQ2);
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, strQ);
-            Iterator it2 = sql.list().iterator();
+            Iterator it2 = sql2.list().iterator();
             while (it2.hasNext()) {
                 String probeset = (String) it2.next();
                 probesets.add(probeset);

@@ -49,9 +49,21 @@ public class getMeasurementMetadata {
             throw new Exception403Forbidden();
         }
 
+        //open hibernate connection
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
         // Check if the provided sessionToken has access to the provided assayToken
+        // This needs to be verified with the studyToken
+        String strQ = "SELECT DISTINCT study_token FROM study_sample_assay WHERE X_REF ='"+getAssayToken()+"'";
+        SQLQuery sql = session.createSQLQuery(strQ);
+        String strStudyToken = "";
+        Iterator it1 = sql.list().iterator();
+        while (it1.hasNext()) {
+            strStudyToken = (String) it1.next();
+        }
         HashMap<String,String> objParam = new HashMap();
-        objParam.put("assayToken", strAssayToken);
+        objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
@@ -61,10 +73,6 @@ public class getMeasurementMetadata {
         String[] strReturn = new String [2];
         ArrayList<ProbeSetAnnotation> metadata = new ArrayList<ProbeSetAnnotation>();
 
-        //open hibernate connection
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
-
         // If the optional parameter measurementToken is set, then we prepare
         // an extra condition for the query
         String strMeasurementQuery = "";
@@ -72,14 +80,14 @@ public class getMeasurementMetadata {
             strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
         }
 
-        SQLQuery sql = session.createSQLQuery("SELECT DISTINCT ca.probeset,ca.gene_accession,ca.gene_symbol,ca.gene_description"
+        SQLQuery sql2 = session.createSQLQuery("SELECT DISTINCT ca.probeset,ca.gene_accession,ca.gene_symbol,ca.gene_description"
                 + " FROM study_sample_assay ssa, expression ex, chip c,chip_annotation ca"
                 + " WHERE ssa.X_REF='" + getAssayToken() + "'"
                 + " AND ex.study_sample_assay_id=ssa.id"
                 + " AND ex.chip_annotation_id=ca.id "
                 + " AND ca.chip_id=c.id"
                 + strMeasurementQuery + ";");
-        Iterator it2 = sql.list().iterator();
+        Iterator it2 = sql2.list().iterator();
         while (it2.hasNext()) {
             ProbeSetAnnotation ca = new ProbeSetAnnotation();
             Object[] annotation = (Object[]) it2.next();
@@ -116,11 +124,7 @@ public class getMeasurementMetadata {
         // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(metadata);
-
         return strReturn;
-
-
-
     }
 
     /**

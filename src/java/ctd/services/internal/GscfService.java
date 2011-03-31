@@ -42,6 +42,20 @@ public class GscfService {
     public String[] callGSCF(String sessionToken, String restMethod, HashMap<String, String> restParams) throws Exception500InternalServerError {
         String[] strRet = new String[2];
 
+        if(restParams==null) {
+            restParams = new HashMap<String, String>();
+        }
+
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        String strModuleVal = res.getString("ctd.moduleURL");
+        String strConsumerVal = res.getString("ctd.consumerID");
+        if(!restParams.containsKey("consumer")) {
+            restParams.put("consumer", strConsumerVal);
+        }
+        if(!restParams.containsKey("moduleURL")) {
+            restParams.put("moduleURL", strModuleVal);
+        }
+
         // Add all the parameters given in the map to the querystring
         String strParam = "";
         if(!(restParams==null) && !restParams.isEmpty()) {
@@ -69,6 +83,7 @@ public class GscfService {
             connection.disconnect();
         } catch(Exception e) {
             // If something goes wrong we throw an exception
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: "+e.getLocalizedMessage());
             throw new Exception500InternalServerError(e.getMessage());
         }
 
@@ -137,14 +152,10 @@ public class GscfService {
     
     public String getAssayName(String strAssayToken, String strStudyToken, String strSessionToken) {
         String[] strGSCFRespons = new String[2];
-        ResourceBundle res = ResourceBundle.getBundle("settings");
-        String strModuleVal = res.getString("ctd.moduleURL");
+
         HashMap<String, String> restParams = new HashMap<String, String>();
-        String strConsumerVal = res.getString("ctd.consumerID");
-        restParams.put("consumer", strConsumerVal);
         restParams.put("assayToken", strAssayToken);
         restParams.put("studyToken",strStudyToken);
-        restParams.put("moduleURL", strModuleVal);
         try {
             strGSCFRespons = this.callGSCF(strSessionToken,"getAssays",restParams);
         } catch (Exception500InternalServerError e) {

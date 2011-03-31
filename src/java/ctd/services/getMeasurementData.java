@@ -65,9 +65,21 @@ public class getMeasurementData {
             throw new Exception403Forbidden();
         }
 
+        //open hibernate connection
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
         // Check if the provided sessionToken has access to the provided assayToken
+        // This needs to be verified with the studyToken
+        String strQ = "SELECT DISTINCT study_token FROM study_sample_assay WHERE X_REF ='"+getAssayToken()+"'";
+        SQLQuery sql = session.createSQLQuery(strQ);
+        String strStudyToken = "";
+        Iterator it1 = sql.list().iterator();
+        while (it1.hasNext()) {
+            strStudyToken = (String) it1.next();
+        }
         HashMap<String,String> objParam = new HashMap();
-        objParam.put("assayToken", strAssayToken);
+        objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
@@ -79,10 +91,6 @@ public class getMeasurementData {
         ArrayList<String> lstSampleToken = new ArrayList<String>();
         ArrayList<String> lstMeasurementToken = new ArrayList<String>();
         ArrayList<Double> lstExpressions = new ArrayList<Double>();
-
-        //open hibernate connection
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        Session session = sessionFactory.openSession();
 
         // If the optional parameter measurementToken is set, then we prepare
         // an extra condition for the query
@@ -118,16 +126,16 @@ public class getMeasurementData {
 //        for (int i = 0; i < assayids.size(); i++) {
 //            count++;
 //            Integer assay_id = assayids.get(i);
-        String strQuery = "SELECT ex.expression,ca.probeset,ssa.sample_token"
+        String strQuery2 = "SELECT ex.expression,ca.probeset,ssa.sample_token"
                         + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
                         + " WHERE ssa.X_REF='" + getAssayToken() +"'"
                         + " AND ex.chip_annotation_id=ca.id"
                         + " AND ex.study_sample_assay_id=ssa.id"
                         + strSampleQuery + strMeasurementQuery
                         + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
-        SQLQuery sql = session.createSQLQuery(strQuery);
+        SQLQuery sql2 = session.createSQLQuery(strQuery2);
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Q: "+strQuery);
-        Iterator it2 = sql.list().iterator();
+        Iterator it2 = sql2.list().iterator();
         if(!blnVerbose) {
             // If the Verbose parameter is false or not set, then the first
             // line of the JSON should be all sampleTokens, the second line
