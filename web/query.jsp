@@ -57,7 +57,16 @@
         </tr>
         <tr>
           <td>&nbsp;</td>
+          <td><label>
+            <input name="graphType" type="radio" id="graphType" value="grouped" checked>
+          <span class="text_normal">Group samples</span></label></td>
           <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td><label>
+            <input type="radio" name="graphType" id="graphType" value="ungrouped">
+          <span class="text_normal"><span class="text_normal">ungroup samples</span></span></label></td>
           <td>&nbsp;</td>
         </tr>
         <tr>
@@ -70,11 +79,14 @@
    
 
     
-    <IFRAME SRC="svg.jsp?probesetId=<jsp:getProperty name="query" property="probesetId"/>" scrolling="auto" width="700" height="<jsp:getProperty name="query" property="amountValues" />" frameborder="0" >
+    <IFRAME SRC="svg.jsp?probesetId=<jsp:getProperty name="query" property="probesetId"/>" scrolling="auto" width="700" height="<jsp:getProperty name="query" property="amountValues"/>" frameborder="0" >
     <p>&nbsp;</p>
     <p><br>
     </p>
     </IFRAME>
     
     </body>
+
+    
+
 </html>
