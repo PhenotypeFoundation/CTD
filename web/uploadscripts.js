@@ -36,19 +36,37 @@ function init_step2() {
 }
 
 function init_step3() {
+    var st = document.getElementById("selectStudy").selectedIndex;
+    var st2 = document.getElementById("selectStudy").options[st].value;
     $.ajax({
-      url: "./getStudies.jsp",
+      url: "./getAssays.jsp?studyToken="+st2,
       context: document.body,
       success: function(data){
         $("#selectAssay").html(data);
+        $('#step3').show('slow');
       }
     });
-    $('#step3').show('slow');
 }
 
 function init_step4() {
     if(upload_ready && step_3_ready) {
+        $('#step4').html("Please wait...");
         $('#step4').show('slow');
+        var st = document.getElementById("selectAssay").selectedIndex;
+        //alert("./getSamples.jsp?assayToken="+st);
+        var st2 = document.getElementById("selectAssay").options[st].value;
+        //alert("./getSamples.jsp?assayToken="+st2);
+        var fn = document.getElementById("filename").innerHTML;
+        alert(fn);
+        $.ajax({
+          url: "./getSamples.jsp?assayToken="+st2+"&filename="+fn,
+          context: document.body,
+          success: function(data){
+            $('#drag').html(data);
+            alert(data);
+            REDIPS.drag.init();
+          }
+        });
     }
 }
 

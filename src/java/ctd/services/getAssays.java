@@ -15,55 +15,56 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author Tjeerd
+ * @author Taco
  */
-public class getStudies {
-    private String strAssayToken;
+public class getAssays {
+    private String strStudyToken;
     private String strSessionToken;
 
-    public String getStudies(String t) throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
+    public String getAssays(String t, String studyToken) throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
+        strStudyToken = studyToken;
         strSessionToken = t;
         String strReturn = "";
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getStudies()...");
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getAssays()...");
 
         // Check if the minimal parameters are set
         if(strSessionToken==null){
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken==null");
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken==null");
+            throw new Exception400BadRequest();
+        }
+        if(strStudyToken==null){
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strStudyToken==null");
             throw new Exception400BadRequest();
         }
 
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken=="+strSessionToken);
-
         // Check if the provided sessionToken is valid
-         GscfService objGSCFService = new GscfService();
+        GscfService objGSCFService = new GscfService();
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String strConsumerVal = res.getString("ctd.consumerID");
+        String strModuleVal = res.getString("ctd.moduleURL");
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("consumer", strConsumerVal);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): about to call isUser()");
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): about to call isUser()");
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): just called isUser()");
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): just called isUser()");
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+strSessionToken);
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
         }
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken is valid: "+strSessionToken);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken is valid: "+strSessionToken);
 
-        strReturn = "<option value='none'>Select a study...</option>";
+        strReturn = "<option value='none'>Select an assay...</option>";
         objGSCFService = new GscfService();
-        res = ResourceBundle.getBundle("settings");
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): about to call getStudies()");
-        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getStudies",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): just called getStudies(): "+strGSCFRespons[1]);
+        restParams = new HashMap<String, String>();
+        restParams.put("studyToken", strStudyToken);
+        restParams.put("consumer", strConsumerVal);
+        restParams.put("moduleURL", strModuleVal);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): about to call getAssays()");
+        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAssays",restParams);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): just called getAssays(): "+strGSCFRespons[0]+" and "+strGSCFRespons[1]);
 
-        LinkedList lstStudies = new LinkedList();
         LinkedList lstGSCFResponse = new LinkedList();
 
 
@@ -79,18 +80,17 @@ public class getStudies {
             Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): list length: "+lstGSCFResponse.size());
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): list length: "+lstGSCFResponse.size());
 
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): map contains "+map.toString());
-            strReturn += "<option value="+map.get("studyToken")+">"+map.get("code")+" - "+map.get("title")+"</option>";
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): map contains "+map.toString());
+            strReturn += "<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): result: "+strReturn);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): result: "+strReturn);
         return strReturn;
     }
-    
     /**
      * @return the strSessionToken
      */
@@ -108,15 +108,15 @@ public class getStudies {
     /**
      * @return the strAssayToken
      */
-    public String getAssayToken() {
-        return strAssayToken;
+    public String getStudyToken() {
+        return strStudyToken;
     }
 
     /**
-     * @param strAssayToken the strAssayToken to set
+     * @param studyToken the strStudyToken to set
      */
-    public void setAssayToken(String assayToken) {
-        this.strAssayToken = assayToken;
+    public void setStudyToken(String studyToken) {
+        this.strStudyToken = studyToken;
     }
 
 }

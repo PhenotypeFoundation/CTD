@@ -14,7 +14,7 @@ page import="com.oreilly.servlet.*" %><%!
 
 	//
 	//	constants
-	String dirName = "G:/temp/uploads";
+	String dirName = "C:/temp/uploads";
 	int maxPostSizeBytes = 10 * 1024 * 1024;
 %><%
 	//
@@ -91,7 +91,7 @@ page import="com.oreilly.servlet.*" %><%!
 				}
 				%>
 			</table>
-		</p>
+		<p/>
 		
 		<h3>Parameters</h3>
 		<p>
