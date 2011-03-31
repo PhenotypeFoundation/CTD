@@ -62,7 +62,7 @@ public class getAssayURL {
             throw new Exception401Unauthorized();
         }
 
-        // init parameters
+        // init parameters  
         String[] strReturn = new String [2];
 
         //init parameters
