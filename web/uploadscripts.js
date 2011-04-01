@@ -57,12 +57,10 @@ function init_step4() {
         var st2 = document.getElementById("selectAssay").options[st].value;
         //alert("./getSamples.jsp?assayToken="+st2);
         var fn = document.getElementById("filename").innerHTML;
-        alert(fn);
         $.ajax({
           url: "./getSamples.jsp?assayToken="+st2+"&filename="+fn,
           context: document.body,
           success: function(data){
-            alert(data);
             document.getElementById("step4").innerHTML = data;
             REDIPS.drag.init();
           }

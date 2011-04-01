@@ -10,7 +10,6 @@ page contentType="text/html; charset=UTF-8" %><%@
 page import="java.io.*" %><%@ 
 page import="java.net.*" %><%@ 
 page import="java.util.*" %><%@
-page import="java.util.ResourceBundle" %><%
 page import="com.oreilly.servlet.*" %><%!
 
 	//
