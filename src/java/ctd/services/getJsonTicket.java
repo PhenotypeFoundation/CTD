@@ -56,6 +56,7 @@ public class getJsonTicket {
         String prefix_ctd_reference = res.getString("ws.prefix_ticket_reference");
         String prefix_ftp_subfolder = res.getString("ws.prefix_ftp_subfolders");
         String ftp_username = res.getString("ws.ftp_username");
+        String group = res.getString("ws.group");
         String hostname = res.getString("ws.hostname");
 
         TicketClient ticket_client = new TicketClient();
@@ -109,16 +110,17 @@ public class getJsonTicket {
             //change owner from root to cleandata for this new directory
 
             //Adjust permissions
-            String command1 = "chown cleandata " + new_folder;
-            String command2 = "chgrp cleandata " + new_folder;
-            String command3 = "chmod 777 " + new_folder;
-            String command4 = "chmod +t " + new_folder;
+            String command1 = "chown "+ftp_username+" " + new_folder;
+            String command4 = "chgrp "+group+" " + new_folder;
+            String command2 = "chmod 700 " + new_folder;
+            String command3 = "chmod +t " + new_folder;
+
             Process child;
             try {
                 child = Runtime.getRuntime().exec(command1);
+                child = Runtime.getRuntime().exec(command4);
                 child = Runtime.getRuntime().exec(command2);
                 child = Runtime.getRuntime().exec(command3);
-                child = Runtime.getRuntime().exec(command4);
             } catch (IOException ex) {
                 Logger.getLogger(getJsonTicket.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -126,7 +128,6 @@ public class getJsonTicket {
             //location ftp folder
             String link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder+"/";
             ticket_client.setLocationFTPFolder(link);
-
 
             Ticket ticket = new Ticket();
             ticket.setFolder(ctd_ftp_folder);
@@ -160,10 +161,6 @@ public class getJsonTicket {
 
         return message;
     }
-
-
-   
-
 
     /**
      * @return the password
