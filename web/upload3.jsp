@@ -21,15 +21,14 @@
               'cancelImg'    : './uploadify/cancel.png',
               'displayData'  : 'percentage',
               'onSelectOnce' : function() {init_step2()},
-              'onComplete': function(event, queueID, fileObj, response, data) {
-                  document.getElementById("filename").innerHTML=fileObj.name;
-                  upload_ready = true;
-                  init_step4()
-              },
+              'onComplete'   : function(event, queueID, fileObj, response, data) {
+                                  document.getElementById("filename").innerHTML=fileObj.name;
+                                  upload_ready = true;
+                                  init_step4()
+                              },
               'fileExt'      : '*.zip;*.cel;*.7z',
               'fileDesc'     : '.cel or .zip files',
               'buttonText'   : 'Click here',
-              'width'        : 400,
               'auto'         : true,
               'queueSizeLimit':1
             });
@@ -52,14 +51,10 @@
         <div id="step2" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
         <div id="step3" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>3. Select an assay:</h2><span id="spanstep2"><select id='selectAssay' name='selectAssay' onChange='assay_selected();'></select></span></div>
         <div id="step4" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF">
-            <h2>4. Link files to samples</h2>
+            <h2>4. Link files to samples</h2><br />
+            You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.
             <div id="drag">
-                <table border="1">
-                    <tr><td class="forbid" style="width:200px">Filename1</td><td style="width:200px"><div class="drag">sample1</div></td></tr>
-                    <tr><td class="forbid" style="width:200px">Filename2</td><td style="width:200px"><div class="drag">sample2</div></td></tr>
-                    <tr><td class="forbid" style="width:200px">Filename3</td><td style="width:200px"><div class="drag">sample3</div></td></tr>
-                    <tr><td colspan="2" style="height:100px"><div class="drag">sample4</div><div class="drag">sample5</div></td></tr>
-                </table>
+                ...
             </div>
             <a href="#" onClick="init_step5();">Ok</a>
         </div>

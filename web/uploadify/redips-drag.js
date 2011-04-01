@@ -89,11 +89,11 @@ REDIPS.drag = (function () {
 		mark = {action: 'deny',
 				cname: 'mark',
 				exception: []},
-		border = 'solid',			// (string) border style for enabled element
+		border = 'dashed',			// (string) border style for enabled element
 		border_disabled = 'dotted',	// (string) border style for disabled element
 		trash = 'trash',			// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,			// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
-		drop_option = 'multiple',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
+		drop_option = 'switch',	// (string) drop_option has the following options: multiple, single, switch, switching and overwrite
 		delete_cloned = true,		// (boolean) delete cloned div if the cloned div is dragged outside of any table
 		source_cell = null,			// (object) source table cell (defined in onmousedown and in onmouseup)
 		current_cell = null,		// (object) current table cell (defined in onmousemove)

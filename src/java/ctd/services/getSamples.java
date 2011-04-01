@@ -33,7 +33,7 @@ public class getSamples {
         strAssayToken = assayToken;
         strFilename = filename;
         String strReturn = "";
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+strFilename);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+strFilename);
 
         // Check if the minimal parameters are set
         if(strSessionToken==null){
@@ -50,27 +50,24 @@ public class getSamples {
         // Check if the provided sessionToken is valid
          GscfService objGSCFService = new GscfService();
         ResourceBundle res = ResourceBundle.getBundle("settings");
-        String strConsumerVal = res.getString("ctd.consumerID");
-        String strModuleVal = res.getString("ctd.moduleURL");
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("assayToken", strAssayToken);
-        restParams.put("consumer", strConsumerVal);
-        restParams.put("moduleURL", strModuleVal);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call isUser()");
+
+       //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call isUser()");
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called isUser()");
+       //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called isUser()");
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
         }
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken is valid: "+strSessionToken);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken is valid: "+strSessionToken);
 
         strReturn = "";
         objGSCFService = new GscfService();
         res = ResourceBundle.getBundle("settings");
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call getSamples()");
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call getSamples()");
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getSamples",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called getSamples(): "+strGSCFRespons[1]);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called getSamples(): "+strGSCFRespons[1]);
 
         LinkedList lstGSCFResponse = new LinkedList();
 
@@ -87,9 +84,10 @@ public class getSamples {
             Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): list length: "+lstGSCFResponse.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): list length: "+lstGSCFResponse.size());
 
-        strReturn += "<h2>4. Link files to samples</h2><div id='drag'><table border='1'>";
+        strReturn += "<table>";
+        strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
 
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
@@ -142,15 +140,21 @@ public class getSamples {
 
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
         }
-
         for(int i = 0; i < lstGSCFResponse.size(); i++){
+            String strColor = "#DDEFFF";
+            if(i%2==0) {
+                strColor = "#FFFFFF";
+            }
             int fn = results.get(i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
-            strReturn += "<tr><td class='forbid' style='width:200px'>"+lstFilenames.get(fn)+"</td><td style='width:200px'><div class='drag'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div></td></tr>";
+            strReturn += "<tr><td class='forbid' style='width:50%; background-color:"+strColor+";'>"+lstFilenames.get(fn)+"</td><td style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 10px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div></td></tr>";
         }
-        strReturn += "<tr><td colspan='2' style='height:100px'><div class='drag'>sample4</div><div class='drag'>sample5</div></td></tr>";
-        strReturn += "</table></div><a href='#' onClick='init_step5();'>Ok</a>";
+        strReturn += "<tr class='fs_th'><td colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
+        strReturn += "<tr><td colspan='2'>"
+                + "<div class='drag' style='padding: 10px'>sample4</div>"
+                + "<div class='drag' style='padding: 10px'>sample5</div></td></tr>";
+        strReturn += "</table>";
 
         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): result: "+strReturn);
         return strReturn;

@@ -62,3 +62,16 @@
 	background: #ffffff;
         border: 1;
 }
+
+/** START :: getSamples **/
+.fs_odd {
+    background-color: #00FF00;
+}
+
+.fs_even {
+    background-color: #0000FF;
+}
+
+.fs_th {
+    font-weight: bold;
+}

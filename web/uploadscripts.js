@@ -50,8 +50,6 @@ function init_step3() {
 
 function init_step4() {
     if(upload_ready && step_3_ready) {
-        $('#step4').html("Please wait...");
-        $('#step4').show('slow');
         var st = document.getElementById("selectAssay").selectedIndex;
         //alert("./getSamples.jsp?assayToken="+st);
         var st2 = document.getElementById("selectAssay").options[st].value;
@@ -61,7 +59,8 @@ function init_step4() {
           url: "./getSamples.jsp?assayToken="+st2+"&filename="+fn,
           context: document.body,
           success: function(data){
-            document.getElementById("step4").innerHTML = data;
+            document.getElementById("drag").innerHTML = data;
+            $('#step4').show('slow');
             REDIPS.drag.init();
           }
         });
