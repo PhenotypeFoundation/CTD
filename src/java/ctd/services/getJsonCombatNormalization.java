@@ -45,7 +45,8 @@ public class getJsonCombatNormalization {
         String ftp_root = res.getString("ws.ftp_folder");
         String ftp_username = res.getString("ws.ftp_username");
         String hostname = res.getString("ws.hostname");
-        String rscript = res.getString("ws.rscript_combat");
+        String rscript_combat = res.getString("ws.rscript_combat");
+        String rscript = res.getString("ws.rscript");
 
         String password_client = getWsPassword();
 
@@ -160,7 +161,7 @@ public class getJsonCombatNormalization {
 
             //////////////////////////////////////////////////////////////////
             //Do a system call to normalize with ComBAT.
-            String args = "Rscript --vanilla " + rscript + " -w" + new_folder+" -o"+new_folder+"/Combat";
+            String args = rscript+" --vanilla " + rscript_combat + " -w" + new_folder+" -o"+new_folder+"/Combat";
             Process p = Runtime.getRuntime().exec(args);
 
             String link = "sftp://" + ftp_username + "@" + hostname + ":" + new_folder+"/Combat.gct";
@@ -169,7 +170,7 @@ public class getJsonCombatNormalization {
             String command4 = "chown cleandata " + new_folder+"/Combat.gct";
             child = Runtime.getRuntime().exec(command4);
 
-            File f = new File(new_folder+"/Combat.out.gct");
+            File f = new File(new_folder+"/Combat.gct");
             while (f.exists()==false){
                 try {
                     Thread.sleep(5000);
@@ -178,7 +179,7 @@ public class getJsonCombatNormalization {
                 }
             }
 
-            String command5 = "chmod 755 " + new_folder+"/Combat.out.gct";
+            String command5 = "chmod 755 " + new_folder+"/Combat.gct";
             child = Runtime.getRuntime().exec(command5);
 
             //close hibernate.
