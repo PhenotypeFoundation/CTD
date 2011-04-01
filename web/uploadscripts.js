@@ -36,10 +36,9 @@ function init_step2() {
 }
 
 function init_step3() {
-    var st = document.getElementById("selectStudy").selectedIndex;
-    var st2 = document.getElementById("selectStudy").options[st].value;
+    var st = document.getElementById("selectStudy").value;
     $.ajax({
-      url: "./getAssays.jsp?studyToken="+st2,
+      url: "./getAssays.jsp?studyToken="+st,
       context: document.body,
       success: function(data){
         $("#selectAssay").html(data);
@@ -50,17 +49,14 @@ function init_step3() {
 
 function init_step4() {
     if(upload_ready && step_3_ready) {
-        var st = document.getElementById("selectAssay").selectedIndex;
-        //alert("./getSamples.jsp?assayToken="+st);
-        var st2 = document.getElementById("selectAssay").options[st].value;
-        //alert("./getSamples.jsp?assayToken="+st2);
+        $('#step4').show('slow');
+        var at = document.getElementById("selectAssay").value;
         var fn = document.getElementById("filename").innerHTML;
         $.ajax({
-          url: "./getSamples.jsp?assayToken="+st2+"&filename="+fn,
+          url: "./getSamples.jsp?assayToken="+at+"&filename="+fn,
           context: document.body,
           success: function(data){
             document.getElementById("drag").innerHTML = data;
-            $('#step4').show('slow');
             REDIPS.drag.init();
           }
         });
@@ -68,8 +64,34 @@ function init_step4() {
 }
 
 function init_step5() {
-    $("#spanstep1").html("bestandsnaam");
+    $("#spanstep1").html(document.getElementById('filename').innerHTML);
     $("#spanstep2").html(document.getElementById('selectStudy').value);
     $("#spanstep3").html(document.getElementById('selectAssay').value);
     $('#step5').show('slow');
+}
+
+function savedata()  {
+    var m = document.getElementById("drag").innerHTML;
+    var spl1 = m.split("<input type='hidden' value='");
+    $.ajax({
+      url: "./retrieveMatches.jsp?matches="+m,
+      context: document.body,
+      success: function(data){
+        document.getElementById("matches").innerHTML = data;
+        REDIPS.drag.init();
+      }
+    });
+}
+
+function savedatasend()  {
+    var st = document.getElementById("selectStudy").value;
+    var at = document.getElementById("selectAssay").value;
+    var fn = document.getElementById("filename").innerHTML;
+    var m = document.getElementById("filename").innerHTML;
+    $.ajax({
+      url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+fn+"&matches="+m,
+      context: document.body,
+      success: function(data){
+      }
+    });
 }

@@ -59,7 +59,8 @@
             </div>
             <a href="#" onClick="init_step5();">Ok</a>
         </div>
-        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2><input type="submit" value="Save data"/></div>
+        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2><input type="submit" value="Save data" onClick="savedata()"/></div>
         <div id="filename" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"></div>
+        <div id="matches" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"></div>
     </body>
 </html> 
