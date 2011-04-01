@@ -41,7 +41,7 @@
     <form action="" target="_self" method="get" enctype="multipart/form-data" name="form1">
       <table width="423" border="0" cellspacing="0" cellpadding="0">
         <tr>
-          <td width="106" class="text_normal">Probeset Id </td>
+          <td width="106" class="text_normal">Probeset Id  </td>
           <td width="165"><input type="text" name="probesetId" value="<jsp:getProperty name="query" property="probesetId"/>" id="probesetId"></td>
           <td width="152" class="text_normal">e.g. 19013_at</td>
         </tr>
