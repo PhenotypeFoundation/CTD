@@ -67,9 +67,12 @@ public class setCombat {
         ResourceBundle res = ResourceBundle.getBundle("settings");
         String ws_password = res.getString("ws.password");
         String ftp_root = res.getString("ws.ftp_folder");
+        String ftp_username = res.getString("ws.ftp_username");
+        String owner = res.getString("ws.owner");
+        String group = res.getString("ws.group");
         String rscript_combat = res.getString("ws.rscript_combat");
         String rscript = res.getString("ws.rscript");
-        String ftp_username = res.getString("ws.ftp_username");
+        
         String hostname = res.getString("ws.hostname");
 
         String prefix_ftp_subfolder = res.getString("ws.prefix_ftp_subfolders");
@@ -102,8 +105,8 @@ public class setCombat {
             boolean success = (new File(new_folder)).mkdir();
             //copy gct files to destination folder
             //Adjust permissions
-            String command1 = "chown cleandata " + new_folder;
-            String command2 = "chgrp ctd " + new_folder;
+            String command1 = "chown "+ftp_username+" " + new_folder;
+            String command2 = "chgrp "+group+" " + new_folder;
             String command3 = "chmod 700 " + new_folder;
             Process child;
             try {
@@ -147,20 +150,20 @@ public class setCombat {
             sessionFactory.close();
 
             //set permissions folder
-            String command1_1 = "chmod 500 "+new_folder;
+            String command1_1 = "chmod 500 " + new_folder;
             String command1_2 = "chmod +t " + new_folder;
             Process p2 = Runtime.getRuntime().exec(command1_2);
             Process p1 = Runtime.getRuntime().exec(command1_1);
-            
+
 
             //set permissions combat-file
-            String command2_1 = "chmod 040 "+new_folder +"/Combat.gct";
-            String command2_2 = "chown robertk "+new_folder+"/Combat.gct";
-            String command2_3 = "chgrp ctd "+new_folder+"/Combat.gct";
+            String command2_1 = "chmod 040 " + new_folder + "/Combat.gct";
+            String command2_2 = "chown "+owner+" " + new_folder + "/Combat.gct";
+            String command2_3 = "chgrp "+group+" " + new_folder + "/Combat.gct";
 
-            Process  p4_1 = Runtime.getRuntime().exec(command2_1);
-            Process  p4_2 = Runtime.getRuntime().exec(command2_2);
-            Process  p4_3 = Runtime.getRuntime().exec(command2_3);
+            Process p4_1 = Runtime.getRuntime().exec(command2_1);
+            Process p4_2 = Runtime.getRuntime().exec(command2_2);
+            Process p4_3 = Runtime.getRuntime().exec(command2_3);
 
 
         }
