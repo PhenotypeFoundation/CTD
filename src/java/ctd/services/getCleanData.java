@@ -75,6 +75,7 @@ public class getCleanData {
 
         //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
         String ftp_folder = res.getString("ws.ftp_folder");
+        String rscript_cleandata = res.getString("ws.rscript_cleandata");
         String rscript = res.getString("ws.rscript");
         //db
         String db_username = res.getString("db.username");
@@ -122,11 +123,11 @@ public class getCleanData {
                     gct_file = zip_folder + "/gctfile_"+folder;
                 }
             }
-            Process p3 = Runtime.getRuntime().exec("chmod 664 " + zip_file);
+            Process p3 = Runtime.getRuntime().exec("chmod 777 " + zip_file);
 
             //////////////////////////////////////////////////////////////////
             //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
-            String args = "Rscript --vanilla " + rscript + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
+            String args = rscript+" --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
             Process p = Runtime.getRuntime().exec(args);
 
             //Check if CEL files are unzipped allready
@@ -224,7 +225,7 @@ public class getCleanData {
             }
 
             //create the temp file for storage of the data_insert file.
-            String data_file = zip_folder + "/data.txt";
+            String data_file = zip_folder + "/expression.txt";
             FileOutputStream out = null;
             PrintStream pr = null;
             out = new FileOutputStream(data_file);
@@ -292,15 +293,13 @@ public class getCleanData {
 
             session2.close();
 
-            String sql = "LOAD DATA LOCAL INFILE '" + data_file + "' INTO TABLE " + db_database + ".expression";
             String u = "--user=" + db_username;
-            String p1 = "--password=" + db_password;
-            String[] commands = new String[]{"mysql", "-e", sql, u, p1};
+            String passw = "--password=" + db_password;
+            String[] commands = new String[]{"mysqlimport", u, passw, "--local", db_database,data_file};
 
             Process p4 = Runtime.getRuntime().exec(commands);
 
-           
-
+          
             message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
 
             //close the ticket when finished, normalization can only be performed once by the client.
@@ -308,6 +307,9 @@ public class getCleanData {
 
             //remove data_file
             Process p5 = Runtime.getRuntime().exec("rm -f " + data_file);
+            Process p6 = Runtime.getRuntime().exec("rm -f " + zip_folder + "/*.CEL");
+
+
 
         }
 
