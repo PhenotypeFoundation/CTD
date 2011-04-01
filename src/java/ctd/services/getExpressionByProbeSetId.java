@@ -111,7 +111,7 @@ public class getExpressionByProbeSetId {
             Session session = sessionFactory.openSession();
 
             String psi = getProbeSetId();
-            SQLQuery q = session.createSQLQuery("Select chip.name,expression.expression,study_sample_assay.X_REF,study_sample_assay.average,study_sample_assay.std,ticket.password FROM chip,chip_annotation,expression,study_sample_assay,ticket WHERE chip.id=chip_annotation.chip_id AND probeset='" + psi + "' AND chip_annotation.id=expression.chip_annotation_id AND expression.study_sample_assay_id=study_sample_assay.id AND study_sample_assay.ticket_id=ticket.id ORDER BY study_sample_assay.ticket_id,study_sample_assay.group_name ASC");
+            SQLQuery q = session.createSQLQuery("Select chip.name,expression.expression,study_sample_assay.X_REF,study_sample_assay.average,study_sample_assay.std,ticket.password,ticket.title,ticket.id,study_sample_assay.group_name FROM chip,chip_annotation,expression,study_sample_assay,ticket WHERE chip.id=chip_annotation.chip_id AND probeset='" + psi + "' AND chip_annotation.id=expression.chip_annotation_id AND expression.study_sample_assay_id=study_sample_assay.id AND study_sample_assay.ticket_id=ticket.id ORDER BY study_sample_assay.ticket_id,study_sample_assay.group_name ASC");
 
             Iterator it1 = q.list().iterator();
             while (it1.hasNext()) {
@@ -123,6 +123,9 @@ public class getExpressionByProbeSetId {
                 Double average = (Double) data[3];
                 Double std = (Double) data[4];
                 String password = (String) data[5];
+                String title = (String) data[6];
+                Integer ticket_id = (Integer) data[7];
+                String group_name = (String) data[8];
 
                 psei.setChipName(chip_name);
                 psei.setLog2Value(log2value);
@@ -130,6 +133,9 @@ public class getExpressionByProbeSetId {
                 psei.setSTD(std);
                 psei.setAverage(average);
                 psei.setTicketPassword(password);
+                psei.setTitle(title);
+                psei.setGroupName(group_name);
+                psei.setTicketId(ticket_id);
 
                 pseia.add(psei);
             }
