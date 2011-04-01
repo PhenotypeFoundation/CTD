@@ -94,7 +94,7 @@ public class getSamples {
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
             // Open the ZIP file
-            ZipFile zf = new ZipFile("C:/temp/uploads/"+strFilename);
+            ZipFile zf = new ZipFile(res.getString("ws.upload_folder")+strFilename);
 
             // Enumerate each entry
             for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
