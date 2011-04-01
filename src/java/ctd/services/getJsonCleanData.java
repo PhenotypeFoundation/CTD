@@ -74,6 +74,8 @@ public class getJsonCleanData {
 
         //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
         String ftp_folder = res.getString("ws.ftp_folder");
+        String owner = res.getString("ws.owner");
+        String group = res.getString("ws.group");
         String rscript_cleandata = res.getString("ws.rscript_cleandata");
         String rscript = res.getString("ws.rscript");
         //db
@@ -325,13 +327,12 @@ public class getJsonCleanData {
 
             //set permissions gct-file
             String command2 = "chmod 040 "+gct_file +".gct";
-            String command3 = "chown robertk "+gct_file+".gct";
-            String command4 = "chgrp ctd "+gct_file+".gct";
+            String command3 = "chown "+owner+" "+gct_file+".gct";
+            String command4 = "chgrp "+group+" "+gct_file+".gct";
 
             Process  p4_1 = Runtime.getRuntime().exec(command2);
             Process  p4_2 = Runtime.getRuntime().exec(command3);
             Process  p4_3 = Runtime.getRuntime().exec(command4);
-
         }
 
         ////////////////////
