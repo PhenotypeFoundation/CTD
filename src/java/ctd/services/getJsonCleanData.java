@@ -61,7 +61,6 @@ import org.hibernate.cfg.Configuration;
 public class getJsonCleanData {
 
     private String ticketPassword;
-   
 
     public String cleanData() throws IOException, NoImplementationException, SerializerException {
 
@@ -75,6 +74,7 @@ public class getJsonCleanData {
 
         //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
         String ftp_folder = res.getString("ws.ftp_folder");
+        String rscript_cleandata = res.getString("ws.rscript_cleandata");
         String rscript = res.getString("ws.rscript");
         //db
         String db_username = res.getString("db.username");
@@ -119,14 +119,16 @@ public class getJsonCleanData {
                 if (file.contains("zip")) {
                     cel_zip_file = file;
                     zip_file = zip_folder + "/" + cel_zip_file;
-                    gct_file = zip_folder + "/gctfile_"+folder;
+                    gct_file = zip_folder + "/gctfile_" + folder;
                 }
             }
-            Process p3 = Runtime.getRuntime().exec("chmod 664 " + zip_file);
+            Process p3_0 = Runtime.getRuntime().exec("chmod 040 " + zip_file);
+            Process p3_1 = Runtime.getRuntime().exec("chown robertk.ctd " + zip_file);
+            
 
             //////////////////////////////////////////////////////////////////
             //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
-            String args = "Rscript --vanilla " + rscript + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
+            String args = rscript + " --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
             Process p = Runtime.getRuntime().exec(args);
 
             //Check if CEL files are unzipped allready
@@ -134,10 +136,10 @@ public class getJsonCleanData {
             while (do_loop) {
                 File dir2 = new File(zip_folder);
                 String[] files2 = dir2.list();
-                //Check if CEL files are allready there
+                //Check if Job is allready done, if gct-file is there.
                 for (int i = 0; i < files2.length; i++) {
                     String file = files2[i];
-                    if (file.endsWith("chip")) {
+                    if (file.endsWith("gct")) {
                         do_loop = false;
                         try {
                             Thread.sleep(5000);
@@ -147,6 +149,9 @@ public class getJsonCleanData {
                     }
                 }
             }
+
+            
+           
 
             File dir2 = new File(zip_folder);
             String[] files2 = dir2.list();
@@ -182,6 +187,11 @@ public class getJsonCleanData {
                 ssa.setNameRawfile(name);
                 ssa.setXREF(name);
                 map.add(ssa);
+
+                String command = "rm "+cel_file_path;
+                Process  pr = Runtime.getRuntime().exec(command);
+
+
             }
 
             ticket.getStudySampleAssaies().addAll(map);
@@ -224,7 +234,7 @@ public class getJsonCleanData {
             }
 
             //create the temp file for storage of the data_insert file.
-            String data_file = zip_folder + "/data.txt";
+            String data_file = zip_folder + "/expression.txt";
             FileOutputStream out = null;
             PrintStream pr = null;
             out = new FileOutputStream(data_file);
@@ -279,7 +289,6 @@ public class getJsonCleanData {
                     ssa.setStd(std);
                 }
 
-                
             } catch (IOException e) {
             }
             pr.close();
@@ -292,28 +301,38 @@ public class getJsonCleanData {
 
             session2.close();
 
-            String sql = "LOAD DATA LOCAL INFILE '" + data_file + "' INTO TABLE " + db_database + ".expression";
             String u = "--user=" + db_username;
-            String p1 = "--password=" + db_password;
-            String[] commands = new String[]{"mysql", "-e", sql, u, p1};
+            String passw = "--password=" + db_password;
+            String[] commands = new String[]{"mysqlimport", u, passw, "--local", db_database, data_file};
 
             Process p4 = Runtime.getRuntime().exec(commands);
 
-           
-
             message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
-
             //close the ticket when finished, normalization can only be performed once by the client.
             CloseTicket();
 
             //remove data_file
             Process p5 = Runtime.getRuntime().exec("rm -f " + data_file);
+            
+
+            //set permissions folder
+            String command1 = "chmod 500 " + zip_folder;
+            String command1_1 = "chmod +t " + zip_folder;
+
+            Process  p4_0_1 = Runtime.getRuntime().exec(command1_1);
+            Process  p4_0 = Runtime.getRuntime().exec(command1);
+            
+
+            //set permissions gct-file
+            String command2 = "chmod 040 "+gct_file +".gct";
+            String command3 = "chown robertk "+gct_file+".gct";
+            String command4 = "chgrp ctd "+gct_file+".gct";
+
+            Process  p4_1 = Runtime.getRuntime().exec(command2);
+            Process  p4_2 = Runtime.getRuntime().exec(command3);
+            Process  p4_3 = Runtime.getRuntime().exec(command4);
 
         }
-
-
-
-
 
         ////////////////////
         //SKARINGA
@@ -442,8 +461,6 @@ public class getJsonCleanData {
         this.ticketPassword = password;
     }
 
-    
-
     private ArrayList<Double> writeFile(PrintStream pr, HashMap<String, String> chip_annotation_ids, String ssa_id, String gct_file_generated, String name_raw_file) throws FileNotFoundException, IOException {
 
         BufferedReader input = new BufferedReader(new FileReader(gct_file_generated));
@@ -466,7 +483,7 @@ public class getJsonCleanData {
             }
 
             if (do_header) {
-                for (int i = 0; i <columns.length; i++) {
+                for (int i = 0; i < columns.length; i++) {
                     String header = columns[i].trim();
                     String xx = name_raw_file + ".CEL";
                     if (header.equals(xx)) {
@@ -486,7 +503,7 @@ public class getJsonCleanData {
                 String probesetid = columns[name_column];
 
                 Double value = Double.valueOf(columns[expression_column]);
-                
+
                 values.add(value);
                 String chip_annotation_id = chip_annotation_ids.get(probesetid);
                 String expr_line = ssa_id + "\t" + chip_annotation_id + "\t" + value.toString();
