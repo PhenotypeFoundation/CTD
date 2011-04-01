@@ -1,9 +1,6 @@
 package ctd.services;
 
 import ctd.services.exceptions.Exception307TemporaryRedirect;
-import ctd.services.exceptions.Exception400BadRequest;
-import ctd.services.exceptions.Exception401Unauthorized;
-import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
 import java.util.ResourceBundle;
@@ -17,6 +14,7 @@ import java.util.logging.Logger;
 public class loginGSCF {
 
     private String strSessionToken;
+    private String strReturnScript = "";
 
     public void loginGSCF() throws Exception307TemporaryRedirect {
         GscfService objGSCFService = new GscfService();
@@ -28,7 +26,7 @@ public class loginGSCF {
         }
         if (!objGSCFService.isUser(strGSCFRespons[1])) {
             ResourceBundle res = ResourceBundle.getBundle("settings");
-            String urlAuthRemote = objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/upload3.jsp");
+            String urlAuthRemote = objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/"+getReturnScript());
             throw new Exception307TemporaryRedirect(urlAuthRemote);
         }
     }
@@ -45,5 +43,19 @@ public class loginGSCF {
      */
     public void setSessionToken(String strSessionToken) {
         this.strSessionToken = strSessionToken;
+    }
+
+    /**
+     * @return the strSessionToken
+     */
+    public String getReturnScript() {
+        return strReturnScript;
+    }
+
+    /**
+     * @param strSessionToken the strSessionToken to set
+     */
+    public void setReturnScript(String strReturnScript) {
+        this.strReturnScript = strReturnScript;
     }
 }

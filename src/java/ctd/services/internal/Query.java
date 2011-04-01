@@ -19,6 +19,8 @@ import com.skaringa.javaxml.DeserializerException;
 import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.SerializerException;
 import ctd.model.Ticket;
+import ctd.services.exceptions.Exception307TemporaryRedirect;
+import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.getExpressionByProbeSetId;
 import ctd.statistics.Statistics;
 import ctd.ws.model.ProbeSetExpressionInfo;
@@ -50,6 +52,7 @@ public class Query {
     private String zvalue = "";
     private String downloadData = "";
     private String graphType = "";
+    private String strSessionToken = "";
 
     /**
      * @return the probesetId
@@ -112,9 +115,12 @@ public class Query {
     /**
      * @return the svgGroups
      */
-    public String getSvgGroups() {
+    public String getSvgGroups() throws Exception307TemporaryRedirect {
 
         String image = "";
+
+        // Check if the user is logged in
+        Userlogin();
 
         //init parameters
         ResourceBundle res = ResourceBundle.getBundle("settings");
@@ -322,9 +328,26 @@ public class Query {
     }
 
     /**
+     * @param strSessionToken the strSessionToken to set
+     */
+    public void setSessionToken(String strSessionToken) {
+        this.strSessionToken = strSessionToken;
+    }
+
+        /**
+     * @param svgGroups the svgGroups to set
+     */
+    public String getSessionToken() {
+        return strSessionToken;
+    }
+
+    /**
      * @return the svg
      */
-    public String getSvg() throws MalformedURLException, NoImplementationException, IOException, DeserializerException, SerializerException {
+    public String getSvg() throws Exception307TemporaryRedirect, MalformedURLException, NoImplementationException, IOException, DeserializerException, SerializerException {
+
+        // Check if the user is logged in
+        Userlogin();
 
         String image = "";
 
@@ -530,5 +553,22 @@ public class Query {
      */
     public void setGraphType(String graphType) {
         this.graphType = graphType;
+    }
+
+    private void Userlogin() throws Exception307TemporaryRedirect {
+        //Check if the user is logged in
+        GscfService objGSCFService = new GscfService();
+        String[] strGSCFRespons = new String[2];
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        try {
+            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",null);
+        } catch (Exception500InternalServerError e) {
+            Logger.getLogger(Query.class.getName()).log(Level.SEVERE, "QUERY ERROR (isUser): "+e.getError());
+        }
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "isUser Response: "+strGSCFRespons[1]+" "+objGSCFService.isUser(strGSCFRespons[1]));
+        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+            String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/overview.jsp");
+            throw new Exception307TemporaryRedirect(urlAuthRemote);
+        }
     }
 }

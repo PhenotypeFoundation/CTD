@@ -40,6 +40,7 @@
         <%
         try {
             login.setSessionToken(request.getSession().getId());
+            login.setReturnScript("upload3.jsp");
             login.loginGSCF();
         } catch (Exception307TemporaryRedirect e) {
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());

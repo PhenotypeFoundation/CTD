@@ -3,6 +3,7 @@
     Created on : 24-mrt-2010, 15:59:27
     Author     : kerkh010
 --%>
+<%@page import="ctd.services.exceptions.Exception307TemporaryRedirect"%>
 <%@ page language="java" import="java.util.*" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="query" scope="session" class="ctd.services.internal.Query"/>
@@ -19,7 +20,17 @@
         
     </head>
     <body>
-   
+           <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
+        <%
+        try {
+            login.setSessionToken(request.getSession().getId());
+            login.setReturnScript("query.jsp");
+            login.loginGSCF();
+        } catch (Exception307TemporaryRedirect e) {
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
+            response.sendRedirect(e.getError());
+        }
+        %>
    
   
     <table cellpadding="0" cellspacing="0" width="640" border="0">
