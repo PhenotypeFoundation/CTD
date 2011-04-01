@@ -21,7 +21,8 @@ import java.util.zip.ZipFile;
 
 /**
  *
- * @author Taco
+ * @author Taco Steemers
+ * @author Tjeerd van Dijk
  */
 public class getSamples {
     private String strAssayToken;
@@ -67,10 +68,9 @@ public class getSamples {
         res = ResourceBundle.getBundle("settings");
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call getSamples()");
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getSamples",restParams);
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called getSamples(): "+strGSCFRespons[1]);
+//        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called getSamples(): "+strGSCFRespons[1]);
 
         LinkedList lstGSCFResponse = new LinkedList();
-
 
         ObjectTransformer trans = null;
         try {
@@ -84,7 +84,7 @@ public class getSamples {
             Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): sample list length: "+lstGSCFResponse.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): sample list length: "+lstGSCFResponse.size());
 
         strReturn += "<table>";
         strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
@@ -104,14 +104,14 @@ public class getSamples {
             System.out.println(e);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename list length: "+lstGSCFResponse.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename list length: "+lstGSCFResponse.size());
 
 
         //From samples to filenames
         HashMap<Integer, Integer> results = new HashMap<Integer, Integer>();
         boolean[] used = new boolean[lstFilenames.size()];
         for(int i = 0; i < lstGSCFResponse.size() && i<lstFilenames.size(); i++){
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): i="+i);
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): i="+i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             String name = map.get("name").replace(" ", "").toLowerCase();
             String event = map.get("event").replace(" ", "").toLowerCase();
@@ -120,7 +120,7 @@ public class getSamples {
             int highest_match_score = -1;
             for(int j = 0; j < lstFilenames.size(); j++){
                 if(!used[j]){
-                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): j="+j);
+                    //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): j="+j);
                     String fn = lstFilenames.get(j).replace(" ", "").toLowerCase();
                     int score = 0;
                     if(fn.contains(name)){
@@ -143,20 +143,21 @@ public class getSamples {
 
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
         }
-        for(int i = 0; i < results.size(); i++){
+        for(int i = 0; i < results.size() && i < lstGSCFResponse.size(); i++){
             String strColor = "#DDEFFF";
             if(i%2==0) {
                 strColor = "#FFFFFF";
             }
             int fn = results.get(i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
             strReturn += "<tr><td class='forbid' style='width:50%; background-color:"+strColor+";'>"+lstFilenames.get(fn)+"<input type='hidden' value='"+lstFilenames.get(fn)+"'/></td><td style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 10px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
+            lstGSCFResponse.remove(i);
             lstGSCFResponse.remove(i);
         }
 
         // Add remainder of samples
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): adding remainder of samples: "+lstGSCFResponse.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): adding remainder of samples: "+lstGSCFResponse.size());
         strReturn += "<tr class='fs_th'><td colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
         strReturn += "<tr><td colspan='2'>";
         strReturn += "<tr><td colspan='2' style='height:100px'>";

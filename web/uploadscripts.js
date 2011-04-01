@@ -64,34 +64,33 @@ function init_step4() {
 }
 
 function init_step5() {
-    $("#spanstep1").html(document.getElementById('filename').innerHTML);
-    $("#spanstep2").html(document.getElementById('selectStudy').value);
-    $("#spanstep3").html(document.getElementById('selectAssay').value);
+    //$("#spanstep1").html(document.getElementById('filename').innerHTML);
+    //$("#spanstep2").html(document.getElementById('selectStudy').value);
+    //$("#spanstep3").html(document.getElementById('selectAssay').value);
     $('#step5').show('slow');
 }
 
 function savedata()  {
-    var m = document.getElementById("drag").innerHTML;
-    var spl1 = m.split("<input type='hidden' value='");
-    $.ajax({
-      url: "./retrieveMatches.jsp?matches="+m,
-      context: document.body,
-      success: function(data){
-        document.getElementById("matches").innerHTML = data;
-        REDIPS.drag.init();
-      }
-    });
-}
+    lstInputs = document.getElementsByTagName("input");
+    res = "";
+    for(i=0; i<lstInputs.length; i++) {
+        if(lstInputs[i].getAttribute("type")=="hidden") {
+            //alert(lstInputs[i].getAttribute("value"));
+            if(res.length>0) res += ",";
+            res += lstInputs[i].getAttribute("value");
+        }
+    }
 
-function savedatasend()  {
     var st = document.getElementById("selectStudy").value;
     var at = document.getElementById("selectAssay").value;
     var fn = document.getElementById("filename").innerHTML;
-    var m = document.getElementById("filename").innerHTML;
+    var m = res;
+    alert(res + "\n"+ st + "\n"+ at + "\n"+fn);
     $.ajax({
       url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+fn+"&matches="+m,
       context: document.body,
       success: function(data){
+          alert(data);
       }
     });
 }

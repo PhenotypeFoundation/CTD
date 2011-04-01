@@ -29,6 +29,9 @@ public class setData {
     private String sampletokens;
 
     public String setData() {
+
+        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData INPUT: "+getPassword()+" "+getFolder()+" "+getCdRef()+" "+getStudytoken()+" "+getSampletokens());
+
         String strRet = "";
 
         //open hibernate connection
@@ -38,6 +41,7 @@ public class setData {
 
         Ticket objTicket = new Ticket(getCdRef(), getFolder(), getPassword());
 
+        objTicket.setClosed("no");
         session.saveOrUpdate(objTicket);
         session.persist(objTicket);
         tr.commit();
@@ -47,8 +51,8 @@ public class setData {
         getCleanData2 objCommitData = new getCleanData2();
         objCommitData.setCTD_REF(getCdRef());
         objCommitData.setPassword(getPassword());
-        objCommitData.setStudytoken(getStudytoken());
 
+        objCommitData.setStudytoken(getStudytoken());
         HashMap<String, String> objMatches = new HashMap();
         String[] arrMatches = getSampletokens().split(",");
         for(int i=0; i<arrMatches.length; i=i+2) {
@@ -59,7 +63,7 @@ public class setData {
         try {
             strRet = objCommitData.cleanData();
         } catch (Exception e) {
-            strRet = "Saving Failed";
+            strRet = "Saving Failed: "+e.toString()+" \n"+e.getMessage();
             Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData ERROR: Internal Service Error");
         }
 
