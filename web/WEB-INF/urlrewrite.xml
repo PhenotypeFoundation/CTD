@@ -43,28 +43,28 @@
     <rule enabled="true">
         <name>getMeasurementMetadata rule according to specification</name>
         <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-4</note>
-        <from>^/rest/getMeasurementMetaData/query\?([&amp;=-\_%a-zA-Z0-9]+)$</from>
+        <from>^/rest/getMeasurementMetaData/query\?(.*)$</from>
         <to type="redirect">getMeasurementMetaData.jsp?$1</to>
     </rule>
 
     <rule enabled="true">
         <name>getMeasurements rule according to specification</name>
         <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-3</note>
-        <from>^/rest/getMeasurements/query\?([&amp;=-\_%a-zA-Z0-9]+)$</from>
+        <from>^/rest/getMeasurements/query\?(.*)$</from>
         <to type="redirect">getMeasurements.jsp?$1</to>
     </rule>
 
     <rule enabled="true">
         <name>getMeasurementData rule according to specification</name>
         <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-5</note>
-        <from>^/rest/getMeasurementData/query\?([&amp;=-\_%a-zA-Z0-9]+)$</from>
+        <from>^/rest/getMeasurementData/query\?(.*)$</from>
         <to type="redirect">getMeasurementData.jsp?$1</to>
     </rule>
 
     <rule enabled="true">
         <name>getAssayURL rule according to specification</name>
         <note>http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services#section-6</note>
-        <from>^/rest/getAssayURL/query\?([&amp;=-\_%a-zA-Z0-9]+)$</from>
+        <from>^/rest/getAssayURL/query\?(.*)$</from>
         <to type="redirect">getAssayURL.jsp?$1</to>
     </rule>
 
