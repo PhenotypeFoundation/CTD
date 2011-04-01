@@ -1,3 +1,4 @@
+<%@page import="ctd.services.exceptions.Exception307TemporaryRedirect"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
@@ -13,19 +14,6 @@
         <script type="text/javascript" src="./uploadify/jquery.uploadify.v2.1.4.min.js"></script>
         <script type="text/javascript" src="./uploadify/redips-drag-min.js"></script>
         <script type="text/javascript">
-          function init_step0(){
-            $.ajax({
-              url: "./login.jsp",
-              context: document.body,
-              success: function(data){
-                if(data.match("login/auth_remote")){
-                    window.location = data.toString();
-                } else {
-                    init_step1();
-                }
-              }
-            });
-          }
           $(document).ready(function() {
             $('#file_upload').uploadify({
               'uploader'     : './uploadify/uploadify.swf',
@@ -48,7 +36,17 @@
           });
         </script>
     </head>
-    <body onLoad="init_step0()">
+    <body onLoad="init_step1();">
+        <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
+        <%
+        try {
+            login.setSessionToken(request.getSession().getId());
+            login.loginGSCF();
+        } catch (Exception307TemporaryRedirect e) {
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
+            response.sendRedirect(e.getError());
+        }
+        %>
         <h1>Upload Data</h1>
         <div id="step1" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a .zip containing .cel files:</h2><span id="spanstep1"><input type='file' id='file_upload' name='file_upload' /></span></div>
         <div id="step2" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
