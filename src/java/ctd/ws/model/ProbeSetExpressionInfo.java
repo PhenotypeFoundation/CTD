@@ -27,6 +27,9 @@ public class ProbeSetExpressionInfo {
     private String ticketPassword;
     private Double average;
     private Double STD;
+    private String title;
+    private String groupName;
+    private Integer ticketId;
 
     /**
      * @return the log2Value
@@ -110,5 +113,47 @@ public class ProbeSetExpressionInfo {
      */
     public void setSTD(Double STD) {
         this.STD = STD;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @return the groupName
+     */
+    public String getGroupName() {
+        return groupName;
+    }
+
+    /**
+     * @param groupName the groupName to set
+     */
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    /**
+     * @return the ticketId
+     */
+    public Integer getTicketId() {
+        return ticketId;
+    }
+
+    /**
+     * @param ticketId the ticketId to set
+     */
+    public void setTicketId(Integer ticketId) {
+        this.ticketId = ticketId;
     }
 }
