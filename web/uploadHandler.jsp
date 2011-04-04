@@ -16,7 +16,7 @@ page import="com.oreilly.servlet.*" %><%!
 	//	constants
         ResourceBundle res = ResourceBundle.getBundle("settings");
 	String dirName = res.getString("ws.upload_folder");
-	int maxPostSizeBytes = 10 * 1024 * 1024;
+	int maxPostSizeBytes = 10 * 1024 * 1024 * 1024 * 1024;
 %><%
 	//
 	//	initialize the multipart request which will handle file retrieval

@@ -151,7 +151,7 @@ public class getSamples {
             int fn = results.get(i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
-            strReturn += "<tr><td class='forbid' style='width:50%; background-color:"+strColor+";'>"+lstFilenames.get(fn)+"<input type='hidden' value='"+lstFilenames.get(fn)+"'/></td><td style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 10px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
+            strReturn += "<tr><td class='forbid' style='width:50%; background-color:"+strColor+"; font-size:small;'>"+lstFilenames.get(fn)+"<input type='hidden' value='"+lstFilenames.get(fn)+"'/></td><td style='width:50%; background-color:"+strColor+"; font-size:small;'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
             lstGSCFResponse.remove(i);
             lstGSCFResponse.remove(i);
         }
@@ -160,10 +160,10 @@ public class getSamples {
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): adding remainder of samples: "+lstGSCFResponse.size());
         strReturn += "<tr class='fs_th'><td colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
         strReturn += "<tr><td colspan='2'>";
-        strReturn += "<tr><td colspan='2' style='height:100px'>";
+        strReturn += "<tr><td colspan='2' style='height:100px; font-size:small;'>";
         while(lstGSCFResponse.size()>0){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.pop();
-            strReturn += "<div class='drag' style='padding: 10px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div>";
+            strReturn += "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div>";
         }
 
         strReturn += "</table>";
