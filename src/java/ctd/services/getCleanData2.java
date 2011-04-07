@@ -82,7 +82,7 @@ public class getCleanData2 {
             ResourceBundle cdf_list = ResourceBundle.getBundle("cdf");
 
             //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
-            String ftp_folder = res.getString("ws.upload_folder");
+            String ftp_folder = res.getString("ws.temp_folder");
             String rscript_cleandata = res.getString("ws.rscript_cleandata");
             String rscript = res.getString("ws.rscript");
             //db
@@ -111,60 +111,56 @@ public class getCleanData2 {
                 ticket = null;
             }
 
-            regelnum = 99;
-
             if (ticket != null) {
                 //get the folder
                 String folder = ticket.getFolder();
                 //create subfolder containing the derived zip file
+                //String zip_folder = ftp_folder + folder;
                 String zip_folder = ftp_folder + folder+"/";
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0: "+zip_folder);
                 //get content
                 File dir = new File(zip_folder);
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.05: just checked folder");
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.06: just checked dir: "+dir.canExecute()+" "+dir.canWrite()+" "+dir.canRead());
+
+                Process lutser = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
+
+                //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.05: just checked folder");
                 File[] files = dir.listFiles(new FileFilter() {
                     public boolean accept(File pathname) {
                         return pathname.isFile();
                     }
                 });
-                //String[] files = dir.list();
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t01: "+files.length);
+
                 //find the zip file.
                 String cel_zip_file = "";
                 String zip_file = "";
                 String gct_file = "";
 
-
-            regelnum = 666;
-
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t1: "+zip_folder);
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t2: "+dir.list().toString());
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t3: %^"+dir.toString());
-
-            for (int i = 0; i < files.length; i++) {
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\tOh hai there! "+files[i]);
-            }
+                for (int i = 0; i < files.length; i++) {
+                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\tPrinting file: "+files[i]);
+                }
                 for (int i = 0; i < files.length; i++) {
                     String file = files[i].getName();
                     regelnum++;
                     if (file.contains("zip")) {
                         cel_zip_file = file;
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "FFS nieuwe editie: "+zip_folder + "/" + cel_zip_file+" -*- "+zip_folder + "/gctfile_"+folder);
+                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + "/" + cel_zip_file+" -*- "+zip_folder + "/gctfile_"+folder);
                         zip_file = zip_folder + "/" + cel_zip_file;
                         gct_file = zip_folder + "/gctfile_"+folder;
                     }
                 }
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "bacon+ei");
-            regelnum = 21;
+
+                regelnum = 1;
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "einde zip");
+                regelnum = 2;
                 Process p3 = Runtime.getRuntime().exec("chmod 777 " + zip_file);
-                regelnum = 22;
+                regelnum = 3;
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "permissions gezet");
 
                 //////////////////////////////////////////////////////////////////
                 //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
                 String args = rscript+" --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
                 Process p = Runtime.getRuntime().exec(args);
-regelnum = 23;
+                regelnum = 4;
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "rscript setup gedaan, checken of de boel klaar is");
                 //Check if CEL files are unzipped allready
                 boolean do_loop = true;
                 while (do_loop) {
@@ -184,27 +180,25 @@ regelnum = 23;
                         }
                     }
                 }
-
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "kennelijk was het klaar");
+                regelnum = 5;
                 File dir2 = new File(zip_folder);
-                regelnum = 25;
                 String[] files2 = dir2.list();
                 String chip_file = "";
                 String chip_file_db = "";
                 ArrayList<String> unziped_files = new ArrayList<String>();
+                regelnum = 6;
                 for (int i = 0; i < files2.length; i++) {
                     String file = files2[i];
-                    regelnum = 26;
                     if (file.endsWith("CEL")) {
                         unziped_files.add(file);
                     }
                     if (file.endsWith("chip")) {
                         chip_file = file;
-
-            regelnum = 3;
-
                         chip_file_db = chip_file.split("_CDF_")[1];
                     }
                 }
+                regelnum = 7;
 
                 //Check if all CEL files are derived from the same chip.
                 //This is essential for normalization.
