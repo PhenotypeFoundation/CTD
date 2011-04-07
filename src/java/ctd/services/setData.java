@@ -64,7 +64,7 @@ public class setData {
             strRet = objCommitData.cleanData();
         } catch (Exception e) {
             strRet = "Saving Failed: "+e.toString()+" \n"+e.getMessage();
-            Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData ERROR: Internal Service Error");
+            Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData ERROR: Internal Service Error: "+e.toString());
         }
 
         return strRet;

@@ -93,7 +93,8 @@ public class Query {
             ArrayList<String> groups = new ArrayList<String>();
             for (int i = 0; i < psei.size(); i++) {
                 ProbeSetExpressionInfo ei = psei.get(i);
-                String groupname = ei.getGroupName();
+                //String groupname = ei.getGroupName();
+                String groupname = "";
                 if (groups.contains(groupname) == false) {
                     groups.add(groupname);
                 }
@@ -150,8 +151,10 @@ public class Query {
         Integer counter_title = 0;
         while (it_groups.hasNext()) {
             ProbeSetExpressionInfo info = (ProbeSetExpressionInfo) it_groups.next();
-            String groupname = info.getGroupName();
-            String title = info.getTitle();
+            //String groupname = info.getGroupName();
+            String groupname = "";
+            //String title = info.getTitle();
+            String title = "";
 
             if (groupname != null) {
                 if (groups.containsKey(title)) {

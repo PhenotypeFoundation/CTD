@@ -34,7 +34,7 @@ public class getSamples {
         strAssayToken = assayToken;
         strFilename = filename;
         String strReturn = "";
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+strFilename);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+strFilename);
 
         // Check if the minimal parameters are set
         if(strSessionToken==null){
@@ -90,21 +90,24 @@ public class getSamples {
         strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
 
         LinkedList<String> lstFilenames = new LinkedList<String>();
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename: "+strFilename);
         try {
             // Open the ZIP file
-            ZipFile zf = new ZipFile(res.getString("ws.upload_folder")+strFilename);
+            ZipFile zf = new ZipFile(res.getString("ws.temp_folder")+strFilename);
 
             // Enumerate each entry
             for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
                 // Get the entry name
                 String zipEntryName = ((ZipEntry)entries.nextElement()).getName();
-                lstFilenames.add(zipEntryName);
+                //if(!zipEntryName.equals(".") && !zipEntryName.equals("..")){
+                    lstFilenames.add(zipEntryName);
+                //}
             }
         } catch (IOException e) {
             System.out.println(e);
         }
 
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename list length: "+lstGSCFResponse.size());
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename list length: "+lstFilenames.size());
 
 
         //From samples to filenames

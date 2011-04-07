@@ -52,8 +52,9 @@ function init_step4() {
         $('#step4').show('slow');
         var at = document.getElementById("selectAssay").value;
         var fn = document.getElementById("filename").innerHTML;
+        var tf = document.getElementById("tempfolder").innerHTML;
         $.ajax({
-          url: "./getSamples.jsp?assayToken="+at+"&filename="+fn,
+          url: "./getSamples.jsp?assayToken="+at+"&filename="+tf+"/"+fn,
           context: document.body,
           success: function(data){
             document.getElementById("drag").innerHTML = data;
@@ -83,14 +84,13 @@ function savedata()  {
 
     var st = document.getElementById("selectStudy").value;
     var at = document.getElementById("selectAssay").value;
-    var fn = document.getElementById("filename").innerHTML;
+    var tf = jQuery.trim(document.getElementById("tempfolder").innerHTML);
     var m = res;
-    alert(res + "\n"+ st + "\n"+ at + "\n"+fn);
     $.ajax({
-      url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+fn+"&matches="+m,
+      url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+tf+"&matches="+m,
       context: document.body,
       success: function(data){
-          alert(data);
+          alert("st: "+st+"\nat: "+st+"\ntf: ["+tf+"]\nres: "+res+"\ndata: "+data);
       }
     });
 }
