@@ -116,7 +116,7 @@ public class getCleanData2 {
                 String folder = ticket.getFolder();
                 //create subfolder containing the derived zip file
                 //String zip_folder = ftp_folder + folder;
-                String zip_folder = ftp_folder + folder+"/";
+                String zip_folder = ftp_folder + folder;
                 //get content
                 File dir = new File(zip_folder);
 
@@ -137,12 +137,13 @@ public class getCleanData2 {
                 for (int i = 0; i < files.length; i++) {
                     Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\tPrinting file: "+files[i]);
                 }
+                
                 for (int i = 0; i < files.length; i++) {
                     String file = files[i].getName();
                     regelnum++;
                     if (file.contains("zip")) {
                         cel_zip_file = file;
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + "/" + cel_zip_file+" -*- "+zip_folder + "/gctfile_"+folder);
+                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + cel_zip_file+" -*- "+zip_folder + "gctfile_"+folder);
                         zip_file = zip_folder + "/" + cel_zip_file;
                         gct_file = zip_folder + "/gctfile_"+folder;
                     }
@@ -157,10 +158,10 @@ public class getCleanData2 {
 
                 //////////////////////////////////////////////////////////////////
                 //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
-                String args = rscript+" --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
+                String args = rscript+" --verbose --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
                 Process p = Runtime.getRuntime().exec(args);
                 regelnum = 4;
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "rscript setup gedaan, checken of de boel klaar is");
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "rscript setup gedaan, checken of de boel klaar is. Commando was "+args);
                 //Check if CEL files are unzipped allready
                 boolean do_loop = true;
                 while (do_loop) {
@@ -180,7 +181,7 @@ public class getCleanData2 {
                         }
                     }
                 }
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "kennelijk was het klaar");
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Kennelijk is het klaar");
                 regelnum = 5;
                 File dir2 = new File(zip_folder);
                 String[] files2 = dir2.list();
