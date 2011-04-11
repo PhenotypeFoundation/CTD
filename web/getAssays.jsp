@@ -1,8 +1,14 @@
+<%--
+    Document   : getAssays
+    Created on : apr 2011
+    Author     : Tjeerd van Dijk and Taco Steemers
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="assays" scope="page" class="ctd.services.getAssays"/>
-<jsp:setProperty name="assays" property="*"/>
 
 <%
-String message = assays.getAssays(request.getSession().getId(), request.getParameter("studyToken"));
+assays.setSessionToken(request.getSession().getId());
+assays.setStudyToken(request.getParameter("studyToken"));
+String message = assays.getAssays();
 out.println(message);
 %>

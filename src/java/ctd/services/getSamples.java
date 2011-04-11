@@ -20,55 +20,56 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- *
- * @author Taco Steemers
  * @author Tjeerd van Dijk
+ * @author Taco Steemers
  */
 public class getSamples {
     private String strAssayToken;
     private String strSessionToken;
     private String strFilename;
 
-    public String getSamples(String t, String assayToken, String filename) throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
-        strSessionToken = t;
-        strAssayToken = assayToken;
-        strFilename = filename;
+    /***
+     * This function gets all available Assaytokens from GSCF that can be linked
+     * to a specific assay. It also gets a filename of a zip containing .cel files
+     *
+     * TODO: comment
+     *
+     * @return the table with filenames and sampletokens
+     * @throws Exception400BadRequest
+     * @throws Exception403Forbidden
+     * @throws Exception500InternalServerError
+     */
+
+    public String getSamples() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
         String strReturn = "";
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+strFilename);
+        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+getFilename());
 
         // Check if the minimal parameters are set
-        if(strSessionToken==null){
+        if(getSessionToken()==null){
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken==null");
             throw new Exception400BadRequest();
         }
-        if(strAssayToken==null){
+        if(getAssayToken()==null){
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strAssayToken==null");
             throw new Exception400BadRequest();
         }
 
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken=="+strSessionToken);
-
         // Check if the provided sessionToken is valid
-         GscfService objGSCFService = new GscfService();
+        GscfService objGSCFService = new GscfService();
         ResourceBundle res = ResourceBundle.getBundle("settings");
         HashMap<String, String> restParams = new HashMap<String, String>();
-        restParams.put("assayToken", strAssayToken);
+        restParams.put("assayToken", getAssayToken());
 
-       //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call isUser()");
-        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",restParams);
-       //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called isUser()");
+        String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",restParams);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken invalid: "+strSessionToken);
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken invalid: "+getSessionToken());
             throw new Exception403Forbidden();
         }
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken is valid: "+strSessionToken);
 
         strReturn = "";
         objGSCFService = new GscfService();
         res = ResourceBundle.getBundle("settings");
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): about to call getSamples()");
-        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getSamples",restParams);
-//        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): just called getSamples(): "+strGSCFRespons[1]);
+        strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getSamples",restParams);
 
         LinkedList lstGSCFResponse = new LinkedList();
 
@@ -76,21 +77,18 @@ public class getSamples {
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
         } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
             lstGSCFResponse = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
         } catch (DeserializerException ex) {
-            Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): sample list length: "+lstGSCFResponse.size());
 
         strReturn += "<table>";
         strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
 
         LinkedList<String> lstFilenames = new LinkedList<String>();
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename: "+strFilename);
         try {
             // Open the ZIP file
             ZipFile zf = new ZipFile(res.getString("ws.temp_folder")+strFilename);
@@ -107,14 +105,10 @@ public class getSamples {
             System.out.println(e);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): filename list length: "+lstFilenames.size());
-
-
         //From samples to filenames
         HashMap<Integer, Integer> results = new HashMap<Integer, Integer>();
         boolean[] used = new boolean[lstFilenames.size()];
         for(int i = 0; i < lstGSCFResponse.size() && i<lstFilenames.size(); i++){
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): i="+i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             String name = map.get("name").replace(" ", "").toLowerCase();
             String event = map.get("event").replace(" ", "").toLowerCase();
@@ -123,7 +117,6 @@ public class getSamples {
             int highest_match_score = -1;
             for(int j = 0; j < lstFilenames.size(); j++){
                 if(!used[j]){
-                    //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): j="+j);
                     String fn = lstFilenames.get(j).replace(" ", "").toLowerCase();
                     int score = 0;
                     if(fn.contains(name)){
@@ -144,7 +137,6 @@ public class getSamples {
             used[highest_match]=true;
             results.put(i,highest_match);
 
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
         }
         for(int i = 0; i < results.size() && i < lstGSCFResponse.size(); i++){
             String strColor = "#DDEFFF";
@@ -153,15 +145,13 @@ public class getSamples {
             }
             int fn = results.get(i);
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): map contains "+map.toString());
             strReturn += "<tr><td class='forbid' style='width:50%; background-color:"+strColor+"; font-size:small;'>"+lstFilenames.get(fn)+"<input type='hidden' value='"+lstFilenames.get(fn)+"'/></td><td style='width:50%; background-color:"+strColor+"; font-size:small;'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
             lstGSCFResponse.remove(i);
             lstGSCFResponse.remove(i);
         }
 
         // Add remainder of samples
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): adding remainder of samples: "+lstGSCFResponse.size());
-        strReturn += "<tr class='fs_th'><td colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
+        strReturn += "<tr class='fs_th'><td colspan='2' class='forbid'><br />The following sampletokens are not matched with a file.</td></tr>";
         strReturn += "<tr><td colspan='2'>";
         strReturn += "<tr><td colspan='2' style='height:100px; font-size:small;'>";
         while(lstGSCFResponse.size()>0){
@@ -171,7 +161,6 @@ public class getSamples {
 
         strReturn += "</table>";
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): result: "+strReturn);
         return strReturn;
     }
 
@@ -201,6 +190,20 @@ public class getSamples {
      */
     public void setAssayToken(String assayToken) {
         this.strAssayToken = assayToken;
+    }
+
+    /**
+     * @return the strFilename
+     */
+    public String getFilename() {
+        return strFilename;
+    }
+
+    /**
+     * @param strFilename the strFilename to set
+     */
+    public void setFilename(String strFilename) {
+        this.strFilename = strFilename;
     }
 
 }

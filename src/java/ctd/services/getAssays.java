@@ -16,16 +16,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Taco
+ * @author Taco Steemers
+ * @author Tjeerd van Dijk
  */
 public class getAssays {
     private String strStudyToken;
     private String strSessionToken;
 
-    public String getAssays(String t, String studyToken) throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
-        strStudyToken = studyToken;
-        strSessionToken = t;
+    /***
+     * TODO COMMENT
+     * 
+     * @return
+     * @throws Exception400BadRequest
+     * @throws Exception403Forbidden
+     * @throws Exception500InternalServerError
+     */
+
+    public String getAssays() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
         String strReturn = "";
         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getAssays()...");
 

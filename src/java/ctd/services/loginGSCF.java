@@ -16,6 +16,14 @@ public class loginGSCF {
     private String strSessionToken;
     private String strReturnScript = "";
 
+    /***
+     * This function checkes is a certain strSessionToken is authenticated in GSCF.
+     * When this is not the case it throws a redirectexception containing a url
+     * to GSCF. This url also contains a returnurl with strReturnScript.
+     * 
+     * @throws Exception307TemporaryRedirect
+     */
+
     public void loginGSCF() throws Exception307TemporaryRedirect {
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = new String[2];

@@ -1,3 +1,8 @@
+<%--
+    Document   : setData
+    Created on : apr 2011
+    Author     : Tjeerd van Dijk and Taco Steemers
+--%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="setData" scope="page" class="ctd.services.setData"/>
 

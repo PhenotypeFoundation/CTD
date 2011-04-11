@@ -15,21 +15,24 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author Tjeerd
+ * @author Tjeerd van Dijk
+ * @author Taco Steemers
  */
 public class getStudies {
     private String strAssayToken;
     private String strSessionToken;
 
-    public String getStudies(String t) throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
-        strSessionToken = t;
+    /***
+     * TODO: COMMENT
+     * 
+     * @return
+     * @throws Exception400BadRequest
+     * @throws Exception403Forbidden
+     * @throws Exception500InternalServerError
+     */
+
+    public String getStudies() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
         String strReturn = "";
         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getStudies()...");
 

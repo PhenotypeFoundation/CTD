@@ -28,9 +28,20 @@ public class setData {
     private String studytoken;
     private String sampletokens;
 
+    /***
+     * This function tries to collect all data submitted in the upload process,
+     * process it and save it to the database. It therefore creates a ticket and
+     * converts the filename-sampletoken matchings into a hashmap. Then it creates
+     * an getCleanData2 object that handles all data.
+     *
+     * @return the result of the getCleanData2 object
+     */
+
     public String setData() {
 
-        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData INPUT: "+getPassword()+" "+getFolder()+" "+getCdRef()+" "+getStudytoken()+" "+getSampletokens());
+        //Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData INPUT: "+getPassword()+" "+getFolder()+" "+getCdRef()+" "+getStudytoken()+" "+getSampletokens());
+
+        // TODO: add checks if all needed information is set and correct
 
         String strRet = "";
 
@@ -39,25 +50,26 @@ public class setData {
         Session session = sessionFactory.openSession();
         Transaction tr = session.beginTransaction();
 
+        // Create a ticket and store some information
         Ticket objTicket = new Ticket(getCdRef(), getFolder(), getPassword());
-
         objTicket.setClosed("no");
         session.saveOrUpdate(objTicket);
         session.persist(objTicket);
         tr.commit();
         session.close();
 
-
-        getCleanData2 objCommitData = new getCleanData2();
-        objCommitData.setCTD_REF(getCdRef());
-        objCommitData.setPassword(getPassword());
-
-        objCommitData.setStudytoken(getStudytoken());
+        // Convert the filename-sampletoken matches into a hashmap
         HashMap<String, String> objMatches = new HashMap();
         String[] arrMatches = getSampletokens().split(",");
         for(int i=0; i<arrMatches.length; i=i+2) {
             objMatches.put(arrMatches[i], arrMatches[i+1]);
         }
+
+        // Create an getCleanData2 object and store some information
+        getCleanData2 objCommitData = new getCleanData2();
+        objCommitData.setCTD_REF(getCdRef());
+        objCommitData.setPassword(getPassword());
+        objCommitData.setStudytoken(getStudytoken());
         objCommitData.setSampletokens(objMatches);
 
         try {
