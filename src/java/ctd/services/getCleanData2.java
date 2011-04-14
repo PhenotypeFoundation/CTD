@@ -70,10 +70,8 @@ public class getCleanData2 {
 
     public String cleanData(){
         String message = "";
-        int regelnum = 0;
         try{
             CleanDataResult result = new CleanDataResult();
-            regelnum = 1;
 
             //String message = "";
             String error_message = "";
@@ -82,7 +80,7 @@ public class getCleanData2 {
             ResourceBundle cdf_list = ResourceBundle.getBundle("cdf");
 
             //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
-            String ftp_folder = res.getString("ws.temp_folder");
+            String ftp_folder = res.getString("ws.upload_folder");
             String rscript_cleandata = res.getString("ws.rscript_cleandata");
             String rscript = res.getString("ws.rscript");
             //db
@@ -120,7 +118,7 @@ public class getCleanData2 {
                 //get content
                 File dir = new File(zip_folder);
 
-                //Process lutser = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
+                //Process p100 = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
 
                 //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.05: just checked folder");
                 File[] files = dir.listFiles(new FileFilter() {
@@ -140,7 +138,6 @@ public class getCleanData2 {
                 
                 for (int i = 0; i < files.length; i++) {
                     String file = files[i].getName();
-                    regelnum++;
                     if (file.contains("zip")) {
                         cel_zip_file = file;
                         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + cel_zip_file+" -*- "+zip_folder + "gctfile_"+folder);
@@ -149,25 +146,21 @@ public class getCleanData2 {
                     }
                 }
 
-                regelnum = 1;
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "einde zip");
-                regelnum = 2;
                 Process p3 = Runtime.getRuntime().exec("chmod 777 " + zip_file);
-                regelnum = 3;
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "permissions gezet");
 
                 //////////////////////////////////////////////////////////////////
                 //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
                 String args = rscript+" --verbose --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "args: "+args);
                 Process p = Runtime.getRuntime().exec(args);
-                regelnum = 4;
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "rscript setup gedaan, checken of de boel klaar is. Commando was "+args);
                 //Check if CEL files are unzipped allready
                 boolean do_loop = true;
                 while (do_loop) {
                     File dir2 = new File(zip_folder);
                     String[] files2 = dir2.list();
-                    regelnum = 24;
                     //Check if CEL files are allready there
                     for (int i = 0; i < files2.length; i++) {
                         String file = files2[i];
@@ -182,13 +175,11 @@ public class getCleanData2 {
                     }
                 }
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Kennelijk is het klaar");
-                regelnum = 5;
                 File dir2 = new File(zip_folder);
                 String[] files2 = dir2.list();
                 String chip_file = "";
                 String chip_file_db = "";
                 ArrayList<String> unziped_files = new ArrayList<String>();
-                regelnum = 6;
                 for (int i = 0; i < files2.length; i++) {
                     String file = files2[i];
                     if (file.endsWith("CEL")) {
@@ -199,7 +190,6 @@ public class getCleanData2 {
                         chip_file_db = chip_file.split("_CDF_")[1];
                     }
                 }
-                regelnum = 7;
 
                 //Check if all CEL files are derived from the same chip.
                 //This is essential for normalization.
@@ -214,9 +204,9 @@ public class getCleanData2 {
                     // Open the file that is the first
                     // command line parameter
                     String cel_file_path = zip_folder + "/" + cel_file;
-                    String name = cel_file.replaceAll(".CEL", "");
+                    String name = cel_file;
                     ssa.setNameRawfile(name);
-                    ssa.setXREF(name+"!!!");
+                    ssa.setXREF(getCTD_REF());
                     map.add(ssa);
                 }
 
@@ -244,8 +234,6 @@ public class getCleanData2 {
                     //Add this chip and its annotation
                     Chip chip_new = new Chip();
                     chip_new.setName(chip_file_db);
-
-            regelnum = 4;
 
                     //read chip file
                     String chip_file_path = zip_folder + "/" + chip_file;
@@ -293,7 +281,6 @@ public class getCleanData2 {
 
                     ticket = null;
 
-            regelnum = 5;
                     if (qt.list().size() != 0) {
                         ticket = (Ticket) qt.list().get(0);
                     }
@@ -307,14 +294,14 @@ public class getCleanData2 {
                         error_message = error_message + name_raw_file;
 
                         String gct_file_generated = gct_file + ".gct";
-                        ArrayList<Double> values = writeFile(pr, chip_annotation_ids, ssa_id, gct_file_generated, name_raw_file);
+                        ArrayList<Double> values = writeFile(pr, chip_annotation_ids, ssa_id, gct_file_generated, name_raw_file.replaceAll(".CEL", ""));
 
                         Statistics stat = new Statistics();
                         stat.setData(values);
                         Double average = stat.getAverage();
                         Double std = stat.getSTD();
 
-                        ssa.setXREF(name_raw_file);
+                        ssa.setXREF(getCTD_REF());
                         ssa.setAverage(average);
                         ssa.setStudyToken(getStudytoken());
                         ssa.setSampleToken(sampleToken);
@@ -323,6 +310,7 @@ public class getCleanData2 {
 
 
                 } catch (IOException e) {
+                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.getMessage()+"  "+e.getLocalizedMessage());
                 }
                 pr.close();
                 out.close();
@@ -341,26 +329,23 @@ public class getCleanData2 {
                 Process p4 = Runtime.getRuntime().exec(commands);
 
 
-            regelnum = 6;
                 message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
 
                 //close the ticket when finished, normalization can only be performed once by the client.
                 CloseTicket();
-                regelnum = 16;
+
                 //remove data_file
-                Process p5 = Runtime.getRuntime().exec("rm -f " + data_file);
-                regelnum = 26;
-                Process p6 = Runtime.getRuntime().exec("rm -f " + zip_folder + "/*.CEL");
-                regelnum = 36;
-                //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Opruimen was "+p5.exitValue()+" en "+p6.exitValue());
-                regelnum = 46;
+                String strCommand1 = "rm -f " + data_file;
+                Process p5 = Runtime.getRuntime().exec(strCommand1);
+                String strCommand2 = "rm -f " + zip_folder + "/*.CEL";
+                Process p6 = Runtime.getRuntime().exec(strCommand2);
 
+                String strCommand3 = "mv " + zip_folder + " " + res.getString("ws.upload_folder")+getCTD_REF();
+                Process p7 = Runtime.getRuntime().exec(strCommand3);
+                //String strCommand4 = "cp " + zip_folder + "/* "+res.getString("ws.upload_folder")+getCTD_REF()+"/";
+                //Process p8 = Runtime.getRuntime().exec(strCommand4);
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "IN getCleanData2: \n\tc1: "+strCommand1+"\n\tc2: "+strCommand2+"\n\tc3: "+strCommand3);
             }
-
-
-
-            regelnum = 1000;
-
 
             ////////////////////
             //SKARINGA
@@ -375,9 +360,8 @@ public class getCleanData2 {
             }
             message = trans.serializeToString(result);
             
-            regelnum = 8;
         } catch(Exception e){
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR!! : "+e.toString()+" @ "+regelnum);
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
         }
         return message;
     }

@@ -37,7 +37,7 @@ a:active {
 <table width="100%" border="0" cellspacing="2" cellpadding="0">
   <tr>
     <td bgcolor="#0099CC"><a target="subcontent" href="about.jsp">&nbsp;About the CTD</a></td>
-    <td bgcolor="#0099CC"><a target="subcontent" href="upload.jsp">&nbsp;Upload data</a></td>
+    <td bgcolor="#0099CC"><a target="subcontent" href="upload3.jsp">&nbsp;Upload data</a></td>
     <td bgcolor="#0099CC"><a target="subcontent" href="add_protocol.jsp">&nbsp;Add protocol</a></td>
     <td>&nbsp;</td>
     <td>&nbsp;</td>
@@ -66,7 +66,7 @@ a:active {
   </tr>
 </table>
 <p>
-<iframe name="subcontent" src="about.jsp" width="100%" height="700" frameborder="0" scrolling="no">
+<iframe name="subcontent" src="about.jsp" width="100%" height="7000" frameborder="0" scrolling="no">
 </iframe>
 
 </body>

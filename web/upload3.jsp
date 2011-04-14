@@ -61,9 +61,9 @@ try {
             <div id="drag">
                 ...
             </div>
-            <a href="#" onClick="init_step5();">Ok</a>
+            <a href="#" onClick="init_step5();">procede to final step</a>
         </div>
-        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2><input type="submit" id="submitdata" value="Save data" onClick="savedata()"/></div>
+        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2>If all of the above information is correct, hit this button and the data will be processed and stored in the database.<br /><input type="submit" id="submitdata" value="Save data" onClick="savedata()"/></div>
         <div id="filename" style="display: none"></div>
         <div id="tempfolder" style="display: none"></div>
     </body>

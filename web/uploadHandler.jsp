@@ -28,7 +28,7 @@ page import="com.oreilly.servlet.*" %><%!
         while (i < 100) {
             i++;
             uuid++;
-            dirName = res.getString("ws.temp_folder")+uuid;
+            dirName = res.getString("ws.upload_folder")+uuid;
             File file=new File(dirName);
             boolean exists = file.exists();
             if (!exists){

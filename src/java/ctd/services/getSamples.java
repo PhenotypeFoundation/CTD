@@ -90,7 +90,7 @@ public class getSamples {
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
             // Open the ZIP file
-            ZipFile zf = new ZipFile(res.getString("ws.temp_folder")+strFilename);
+            ZipFile zf = new ZipFile(res.getString("ws.upload_folder")+strFilename);
 
             // Enumerate each entry
             for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
@@ -151,14 +151,13 @@ public class getSamples {
 
         // Add remainder of samples
         strReturn += "<tr class='fs_th'><td colspan='2' class='forbid'><br />The following sampletokens are not matched with a file.</td></tr>";
-        strReturn += "<tr><td colspan='2'>";
         strReturn += "<tr><td colspan='2' style='height:100px; font-size:small;'>";
         while(lstGSCFResponse.size()>0){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.pop();
             strReturn += "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div>";
         }
 
-        strReturn += "</table>";
+        strReturn += "</td></tr></table>";
 
         return strReturn;
     }
