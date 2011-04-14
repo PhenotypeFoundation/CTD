@@ -63,13 +63,10 @@ public class GscfService {
                 strParam += "&"+entry.getKey()+"="+entry.getValue();
             }
         }
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF: about to place restcall");
+
         try {
             // Place the REST call
             URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken+strParam);
-
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GSCF service: "+this.restURL()+restMethod+"/query?sessionToken="+sessionToken+strParam);
-
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
             strRet[0] = connection.getResponseCode()+"";
 
@@ -82,7 +79,6 @@ public class GscfService {
             }
             connection.disconnect();
         } catch(Exception e) {
-            // If something goes wrong we throw an exception
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: "+e.getLocalizedMessage());
             throw new Exception500InternalServerError(e.getMessage());
         }
@@ -164,7 +160,7 @@ public class GscfService {
         ObjectTransformer trans = null;
         HashMap objJSON = new HashMap();
         try {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GscfService: "+strGSCFRespons[1]);
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "GscfService: "+strGSCFRespons[1]);
             trans = ObjectTransformerFactory.getInstance().getImplementation();
             LinkedList lstJSON = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
             objJSON = (HashMap) lstJSON.get(0);

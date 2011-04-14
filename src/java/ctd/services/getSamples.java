@@ -42,7 +42,6 @@ public class getSamples {
 
     public String getSamples() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
         String strReturn = "";
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getSamples()... filename="+getFilename());
 
         // Check if the minimal parameters are set
         if(getSessionToken()==null){
@@ -136,8 +135,8 @@ public class getSamples {
             }
             used[highest_match]=true;
             results.put(i,highest_match);
-
         }
+
         for(int i = 0; i < results.size() && i < lstGSCFResponse.size(); i++){
             String strColor = "#DDEFFF";
             if(i%2==0) {

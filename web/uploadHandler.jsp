@@ -42,16 +42,10 @@ page import="com.oreilly.servlet.*" %><%!
             boolean bln1 = objMap.setExecutable(true);
             boolean bln2 = objMap.setWritable(true);
             boolean bln3 = objMap.setReadable(true);
-            boolean bln4 = objMap.canWrite();
-            Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData directory: " + dirName +" created"+bln1+bln2+bln3+" en ook "+bln4);
+            //boolean bln4 = objMap.canWrite();
+            //Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData directory: " + dirName +" created"+bln1+bln2+bln3+" en ook "+bln4);
         }
         
-        File objMap2 = new File(dirName);
-        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData directory: START "+ dirName);
-        objMap2.list();
-        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData directory: " + dirName +" EINDE");
-
-        //
 	//	initialize the multipart request which will handle file retrieval
 	String contentType = request.getContentType();
 	if( contentType == null || !contentType.startsWith( "multipart/form-data" ) ) {

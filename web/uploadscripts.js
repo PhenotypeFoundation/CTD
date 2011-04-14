@@ -123,8 +123,7 @@ function savedata()  {
       url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+tf+"&matches="+m,
       context: document.body,
       success: function(data){
-          /* TODO: make more sense */
-          alert("st: "+st+"\nat: "+st+"\ntf: ["+tf+"]\nres: "+res+"\ndata: "+data);
+          alert("Your data has been processed, normalized and stored.");
       }
     });
 }

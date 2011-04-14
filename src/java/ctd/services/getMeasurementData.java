@@ -134,8 +134,8 @@ public class getMeasurementData {
                         + strSampleQuery + strMeasurementQuery
                         + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
         SQLQuery sql2 = session.createSQLQuery(strQuery2);
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Q: "+strQuery);
         Iterator it2 = sql2.list().iterator();
+        
         if(!blnVerbose) {
             // If the Verbose parameter is false or not set, then the first
             // line of the JSON should be all sampleTokens, the second line

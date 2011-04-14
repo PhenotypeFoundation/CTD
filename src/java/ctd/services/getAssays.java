@@ -34,7 +34,6 @@ public class getAssays {
 
     public String getAssays() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
         String strReturn = "";
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Arrived in getAssays()...");
 
         // Check if the minimal parameters are set
         if(strSessionToken==null){
@@ -53,14 +52,11 @@ public class getAssays {
         String strModuleVal = res.getString("ctd.moduleURL");
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("consumer", strConsumerVal);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): about to call isUser()");
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): just called isUser()");
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
         }
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken is valid: "+strSessionToken);
 
         strReturn = "<option value='none'>Select an assay...</option>";
         objGSCFService = new GscfService();
@@ -68,9 +64,7 @@ public class getAssays {
         restParams.put("studyToken", strStudyToken);
         restParams.put("consumer", strConsumerVal);
         restParams.put("moduleURL", strModuleVal);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): about to call getAssays()");
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAssays",restParams);
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): just called getAssays(): "+strGSCFRespons[0]+" and "+strGSCFRespons[1]);
 
         LinkedList lstGSCFResponse = new LinkedList();
 
@@ -87,15 +81,12 @@ public class getAssays {
             Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): list length: "+lstGSCFResponse.size());
 
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): map contains "+map.toString());
             strReturn += "<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
         }
 
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): result: "+strReturn);
         return strReturn;
     }
     /**
@@ -125,5 +116,4 @@ public class getAssays {
     public void setStudyToken(String studyToken) {
         this.strStudyToken = studyToken;
     }
-
 }

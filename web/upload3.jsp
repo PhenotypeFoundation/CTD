@@ -8,7 +8,7 @@ try {
     login.setReturnScript("upload3.jsp");
     login.loginGSCF();
 } catch (Exception307TemporaryRedirect e) {
-    Logger.getLogger(String.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
+    //Logger.getLogger(String.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
     response.sendRedirect(e.getError());
 }
 %>

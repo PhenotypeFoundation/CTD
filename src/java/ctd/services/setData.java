@@ -79,6 +79,7 @@ public class setData {
             Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData ERROR: Internal Service Error: "+e.toString());
         }
 
+        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData is er helemaal klaar mee: "+strRet);
         return strRet;
     }
 

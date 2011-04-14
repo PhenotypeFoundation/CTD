@@ -120,7 +120,7 @@ public class getCleanData2 {
                 //get content
                 File dir = new File(zip_folder);
 
-                Process lutser = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
+                //Process lutser = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
 
                 //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.05: just checked folder");
                 File[] files = dir.listFiles(new FileFilter() {
@@ -216,7 +216,7 @@ public class getCleanData2 {
                     String cel_file_path = zip_folder + "/" + cel_file;
                     String name = cel_file.replaceAll(".CEL", "");
                     ssa.setNameRawfile(name);
-                    ssa.setXREF(name);
+                    ssa.setXREF(name+"!!!");
                     map.add(ssa);
                 }
 
@@ -346,18 +346,20 @@ public class getCleanData2 {
 
                 //close the ticket when finished, normalization can only be performed once by the client.
                 CloseTicket();
-
+                regelnum = 16;
                 //remove data_file
                 Process p5 = Runtime.getRuntime().exec("rm -f " + data_file);
+                regelnum = 26;
                 Process p6 = Runtime.getRuntime().exec("rm -f " + zip_folder + "/*.CEL");
-
-
+                regelnum = 36;
+                //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Opruimen was "+p5.exitValue()+" en "+p6.exitValue());
+                regelnum = 46;
 
             }
 
 
 
-            regelnum = 7;
+            regelnum = 1000;
 
 
             ////////////////////

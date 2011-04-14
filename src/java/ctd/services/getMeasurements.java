@@ -89,7 +89,7 @@ public class getMeasurements {
                         + " AND ssa.X_REF='" + getAssayToken() + "'"
                         + " AND ex.chip_annotation_id=ca.id;";
             SQLQuery sql2 = session.createSQLQuery(strQ2);
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, strQ);
+
             Iterator it2 = sql2.list().iterator();
             while (it2.hasNext()) {
                 String probeset = (String) it2.next();
