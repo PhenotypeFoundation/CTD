@@ -99,6 +99,10 @@ function savedata()  {
     /* This function is called from the SUBMIT in step 5. It tries to save all
      * submitted data to the CTD database via an AJAX-call to setData.jsp */
 
+    /* Make sure the user can't submit twice */
+    document.getElementById("submitdata").value = "Processing data...";
+    document.getElementById("submitdata").disabled = true;
+
     /* We need to get the final matches from the TABLE in step 4. Therefore we
      * parse the content in order to find the hidden INPUTs that contain the tokens */
     lstInputs = document.getElementsByTagName("input");
