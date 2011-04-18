@@ -61,7 +61,7 @@
         </table>
         <br>
         <form name="form1" target="_self" method="post" action="index.php?p=set_combat">
-            <table class="text_normal" width="800" border="0" cellspacing="0" cellpadding="0">
+            <table class="text_normal" width="700" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td>&nbsp;</td>
                   <td >Password</td>
