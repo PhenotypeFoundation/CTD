@@ -24,12 +24,14 @@ public class getAssays {
     private String strSessionToken;
 
     /***
-     * TODO COMMENT
+     * This function calls GSCF in order to get a list of assayTokens that are
+     * available for a certain study.
      * 
-     * @return
-     * @throws Exception400BadRequest
-     * @throws Exception403Forbidden
-     * @throws Exception500InternalServerError
+     * @return the list of assayTokens, HTML formatted as OPTION's
+     *
+     * @throws Exception400BadRequest thrown if the sessionToken or studyToken not is set
+     * @throws Exception403Forbidden thrown if the sessionToken isn't valide
+     * @throws Exception500InternalServerError thrown if something goes wrong
      */
 
     public String getAssays() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
@@ -47,12 +49,7 @@ public class getAssays {
 
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
-        ResourceBundle res = ResourceBundle.getBundle("settings");
-        String strConsumerVal = res.getString("ctd.consumerID");
-        String strModuleVal = res.getString("ctd.moduleURL");
-        HashMap<String, String> restParams = new HashMap<String, String>();
-        restParams.put("consumer", strConsumerVal);
-        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",restParams);
+        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
@@ -60,10 +57,8 @@ public class getAssays {
 
         strReturn = "<option value='none'>Select an assay...</option>";
         objGSCFService = new GscfService();
-        restParams = new HashMap<String, String>();
+        HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("studyToken", strStudyToken);
-        restParams.put("consumer", strConsumerVal);
-        restParams.put("moduleURL", strModuleVal);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAssays",restParams);
 
         LinkedList lstGSCFResponse = new LinkedList();

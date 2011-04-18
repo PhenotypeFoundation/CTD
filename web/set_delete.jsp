@@ -11,12 +11,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Set Sample Groups</title>
-        <link href="style.css" rel="stylesheet" type="text/css">
+<jsp:include page="home.jsp" />
         <script>
 
             function read_selection(ele) {
@@ -59,16 +54,13 @@
 				}
 
         </script>
-
-    </head>
-    <body>
         <table cellpadding="0" cellspacing="0" width="640" border="0">
             <tr>
                 <td bgcolor="#0099CC" class="text_header_white"><span class="text_header_black"><span class="text_header_white">Remove experiment from database</span></span></td>
             </tr>
         </table>
         <br>
-        <form name="form1" target="_self" method="post" action="set_delete.jsp">
+        <form name="form1" target="_self" method="post" action="index.php?p=set_delete">
             <table class="text_normal" width="800" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td>&nbsp;</td>
@@ -105,6 +97,3 @@
                 </tr>
             </table>
 </form>
-        <p>&nbsp;</p>
-    </body>
-</html>

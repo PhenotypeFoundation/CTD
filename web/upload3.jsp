@@ -5,23 +5,19 @@
 <%
 try {
     login.setSessionToken(request.getSession().getId());
-    login.setReturnScript("upload3.jsp");
+    login.setReturnScript("index.jsp?p=upload3");
     login.loginGSCF();
 } catch (Exception307TemporaryRedirect e) {
     //Logger.getLogger(String.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
-    response.sendRedirect(e.getError());
+    response.setHeader("RedirGSCF", e.getError());
+    return;
 }
 %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Upload3</title>
+<jsp:include page="home.jsp" />
         <link href="./uploadify/uploadify.css" type="text/css" rel="stylesheet" />
-        <script type="text/javascript" src="./uploadify/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="./uploadscripts.js"></script>
         <script type="text/javascript" src="./uploadify/swfobject.js"></script>
         <script type="text/javascript" src="./uploadify/jquery.uploadify.v2.1.4.min.js"></script>
@@ -48,9 +44,10 @@ try {
               'sizeLimit':2147483646
             });
           });
+          
+          /* onLoad */
+          init_step1();
         </script>
-    </head>
-    <body onLoad="init_step1();">
         <h1>Upload Data</h1>
         <div id="step1" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a .zip containing .cel files:</h2><span id="spanstep1"><input type='file' id='file_upload' name='file_upload' /></span></div>
         <div id="step2" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
@@ -61,10 +58,8 @@ try {
             <div id="drag">
                 ...
             </div>
-            <a href="#" onClick="init_step5();">procede to final step</a>
+            <a href="#" onClick="init_step5();">Click here to proceed to the final step.</a>
         </div>
-        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2>If all of the above information is correct, hit this button and the data will be processed and stored in the database.<br /><input type="submit" id="submitdata" value="Save data" onClick="savedata()"/></div>
+        <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2>If all of the above information is correct, hit this button and the data will be processed and stored in the database.<br /><input type="submit" id="submitdata" value="Save data" onClick="savedata();"/></div>
         <div id="filename" style="display: none"></div>
         <div id="tempfolder" style="display: none"></div>
-    </body>
-</html> 

@@ -19,7 +19,7 @@ page import="com.oreilly.servlet.*" %><%!
 	//	constants
         ResourceBundle res = ResourceBundle.getBundle("settings");
 	String dirName = "error";
-	int maxPostSizeBytes = 10 * 1024 * 1024;
+	int maxPostSizeBytes = 2147483646;
 %><%
 
         ///Get UUID that will be used to create a folder for temporary storage

@@ -1,53 +1,5 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Untitled Document</title>
-<link href="style.css" rel="stylesheet" type="text/css" />
-<style type="text/css">
-<!--
-.header1 {
-	font-weight: bold;
-	font-size: 18px;
-	font-family: Verdana, Geneva, sans-serif;
-}
-.text_normal {
-	font-family: Verdana, Geneva, sans-serif;
-	font-size: 14px;
-	font-style: normal;
-	line-height: normal;
-	font-weight: bold;
-	color: #000;
-}
-.text_normal {
-	font-weight: normal;
-}
-.header2 {
-	font-weight: bold;
-	font-family: Verdana, Geneva, sans-serif;
-	font-size: 14px;
-}
-.prog_style1 {
-	color: #090;
-}
-.prog_style2 {
-	color: #F93;
-}
-.text_normal1 {	font-family: Verdana, Geneva, sans-serif;
-	font-size: 14px;
-	font-style: normal;
-	line-height: normal;
-	font-weight: bold;
-	color: #000;
-}
-.text_normal1 {	font-weight: normal;
-}
--->
-</style>
-</head>
-
-<body>
 <table width="700" border="0" cellpadding="0" cellspacing="20">
   <tr>
     <td>
@@ -99,10 +51,8 @@
         mkdir clean_data_R
         (Store the Rscripts here.)<br /></span>
           <span class="text_normal">chmod 777 data </span><br />
-          <span class="text_normal1">chmod 777 clean_data_R</span>    </p>
+          <span class="text_normal">chmod 777 clean_data_R</span>    </p>
         <p><span class="text_header_black">2.</span><span class="text_normal"> Ensure that the ftp-host, port number, username, password and remote data-folder are included in the  properties.settings file located at the client. These settings are confidential between the client and the server.</span><br/>
         </p></td>
   </tr>
 </table>
-</body>
-</html>

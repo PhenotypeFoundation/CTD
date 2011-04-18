@@ -4,31 +4,19 @@
     Author     : kerkh010
 --%>
 <%@page import="ctd.services.exceptions.Exception307TemporaryRedirect"%>
-<%@ page language="java" import="java.util.*" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="query" scope="session" class="ctd.services.internal.Query"/>
 <jsp:setProperty name="query" property="*"/>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <link href="style.css" rel="stylesheet" type="text/css">
-        
-    </head>
-    <body>
-           <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
+        <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
         <%
         try {
             login.setSessionToken(request.getSession().getId());
-            login.setReturnScript("query.jsp");
+            login.setReturnScript("index.jsp?p=query");
             login.loginGSCF();
         } catch (Exception307TemporaryRedirect e) {
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT! "+e.getError());
-            response.sendRedirect(e.getError());
+            response.setHeader("RedirGSCF", e.getError());
+            return;
         }
         %>
    
@@ -95,9 +83,3 @@
     <p><br>
     </p>
     </IFRAME>
-    
-    </body>
-
-    
-
-</html>

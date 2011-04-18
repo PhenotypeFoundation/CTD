@@ -2,6 +2,7 @@
     Document   : index
     Created on : 4-feb-2010, 10:19:27
     Author     : kerkh010
+    Edited by  : Tjeerd van Dijk and Taco Steemers
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -12,60 +13,50 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Clean Transcriptome Database</title>
-    <style type="text/css">
-<!--
-body {
-	background-color: #CCC;
-	color: #000;
-}
--->
-    </style>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <style type="text/css">
-<!--
-a {
-	font-family: Verdana, Geneva, sans-serif;
-	font-size: 14px;
-	color: #FFF;
-}
-a:link {
-	text-decoration: none;
-}
-a:visited {
-	text-decoration: none;
-	color: #FFF;
-}
-a:hover {
-	text-decoration: underline;
-	color: #0CF;
-}
-a:active {
-	text-decoration: none;
-	color: #0CF;
-}
--->
-</style></head>
-    <body>
+        <link href="style.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="./uploadify/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript">
+            function loadPage(page, div) {
+                $.ajax({
+                    url: "./"+page,
+                    success: function(data, textStatus, jqXHR){
+                        if(jqXHR.getResponseHeader("RedirGSCF") != null) {
+                            window.location = jqXHR.getResponseHeader("RedirGSCF");
+                        } else {
+                            $("#"+div).html(data);
+                        }
+                    }    
+                });
+            }
+        </script>
+    </head>
+    <%
+    String strPage = "about";
+    if(request.getParameter("p")!=null) {
+        strPage = request.getParameter("p");
+    }
+    %>
+    <body onLoad="loadPage('<%=strPage %>.jsp','content');">
     <table width="800" border="0" align="center" cellpadding="0" cellspacing="0"s>
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
         <td colspan="7" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right"><img src="images/logo.jpg" width="567" height="55" align="left"></td>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
-      <tr>
-        <td bgcolor="#000000">&nbsp;</td>
-        <td width="100" bgcolor="#000000">&nbsp;&nbsp;&nbsp;<a target="content" href="home.jsp">Home</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="overview.jsp">Overview</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="query.jsp">Query</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="example.jsp">Code Examples</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="installation.jsp">Installation</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="contact.jsp">Contact</a></td>
-        <td width="100" bgcolor="#000000"><a target="content" href="download.jsp">Download</a></td>
-        <td bgcolor="#000000">&nbsp;</td>
+      <tr class="black_button">
+        <td>&nbsp;</td>
+        <td><a href="#" onClick="loadPage('about.jsp','content');">Home</a></td>
+        <td><a href="#" onClick="loadPage('overview.jsp','content');">Overview</a></td>
+        <td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td>
+        <td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
+        <td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
+        <td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
+        <td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
+        <td>&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" height="750" colspan="7" bgcolor="#FFFFFF"><iframe name="content" align="top"  frameborder="0" marginheight="20" hspace="0" overflow-x="hidden" scrolling="auto" width="700" height="750" src="home.jsp"></iframe></td>
+        <td width="700" colspan="7" bgcolor="#FFFFFF"><div id="content" style="width:700; min-height:500px; margin-top:20px;">...</div></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>
