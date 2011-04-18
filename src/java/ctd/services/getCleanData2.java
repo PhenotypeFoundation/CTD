@@ -340,7 +340,14 @@ public class getCleanData2 {
                 String strCommand2 = "rm -f " + zip_folder + "/*.CEL";
                 Process p6 = Runtime.getRuntime().exec(strCommand2);
 
-                String strCommand3 = "mv " + zip_folder + " " + res.getString("ws.upload_folder")+getCTD_REF();
+                File final_folder =new File(res.getString("ws.upload_folder")+getCTD_REF());
+                String strCommand3;
+                boolean exists = final_folder.exists();
+                if(exists){
+                    strCommand3 = "cp " + zip_folder + "/* " + res.getString("ws.upload_folder")+getCTD_REF();
+                } else {
+                    strCommand3 = "mv " + zip_folder + " " + res.getString("ws.upload_folder")+getCTD_REF();
+                }
                 Process p7 = Runtime.getRuntime().exec(strCommand3);
                 //String strCommand4 = "cp " + zip_folder + "/* "+res.getString("ws.upload_folder")+getCTD_REF()+"/";
                 //Process p8 = Runtime.getRuntime().exec(strCommand4);
