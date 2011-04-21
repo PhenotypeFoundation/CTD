@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<table width="700" border="0" cellpadding="0" cellspacing="20">
+<table width="700" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <td>
     <div style="display:none"><p class="header1">For programmers</p>
@@ -34,6 +34,7 @@
 <p><span class="header2">GSCF</span></p>
         <p><span class="text_header_black">1.</span><span class="text_normal"> You will need an instance of the Generic Study Capture Framework. If no instance is available you can download and install it (<a target="_blank" href="https://trac.nbic.nl/gscf/">link</a>).</span><br/></p>
         <p><span class="text_header_black">2.</span><span class="text_normal"> Login as an admin to the GSCF instance and add the CTD module via Admin -> Manage Modules.</span></p>
+        <p><span class="text_header_black">3.</span><span class="text_normal"> Make sure that the currect properties are set in properties.settings file located at the client.</span></p>
 <p><span class="header2">MySQL server</span>    </p>
         <p><span class="text_header_black">1.</span><span class="text_normal"> Download and install the MySQL server if needed. (<a target="_blank" href="http://www.mysql.com/">link</a>)</span><br/>
         <span class="text_header_black">2.</span><span class="text_normal"> Create the database, named &quot;ctd&quot;, and run the <a target="content" href="download.jsp">sql-script</a> to restore the database tables.</span></p>
