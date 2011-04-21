@@ -36,12 +36,10 @@ public class getSamples {
      * This function gets all available Assaytokens from GSCF that can be linked
      * to a specific assay. It also gets a filename of a zip containing .cel files
      *
-     * TODO: comment
-     *
      * @return the table with filenames and sampletokens
-     * @throws Exception400BadRequest
-     * @throws Exception403Forbidden
-     * @throws Exception500InternalServerError
+     * @throws Exception400BadRequest this exception is thrown if no sessionToken or assayToken is set
+     * @throws Exception403Forbidden this exception is thrown if the sessionToken is invalide
+     * @throws Exception500InternalServerError this exception is thrown if there is some kind of unknown error
      */
 
     public String getSamples() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
@@ -106,6 +104,10 @@ public class getSamples {
             }
         } catch (IOException e) {
             System.out.println(e);
+        }
+
+        if(lstGSCFResponse.size()<lstFilenames.size()) {
+            return "<br /><b>There are more files submitted than there are available samples.</b><br />Go to the study in GSCF and add more samples.";
         }
 
         //From samples to filenames
