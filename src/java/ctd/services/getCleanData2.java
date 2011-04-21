@@ -38,8 +38,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -54,6 +59,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import org.apache.commons.io.*;
 
 /**
  *
@@ -70,6 +77,9 @@ public class getCleanData2 {
 
     public String cleanData(){
         String message = "";
+        String timestamp = new java.util.Date().getTime()+"";
+
+
         try{
             CleanDataResult result = new CleanDataResult();
 
@@ -105,7 +115,7 @@ public class getCleanData2 {
                 error_message = "Ticket password and CTD_REF don't match.";
             }
             if (closed.equals("yes")) {
-                error_message = "Ticket is allready used for normalization of these CEL-files.";
+                error_message = "Ticket is already used for normalization of these CEL-files.";
                 ticket = null;
             }
 
@@ -139,10 +149,14 @@ public class getCleanData2 {
                 for (int i = 0; i < files.length; i++) {
                     String file = files[i].getName();
                     if (file.contains("zip")) {
+                        // Add the timestamp to the zip
+                        files[i].renameTo(new File(zip_folder+"/"+timestamp+"_"+file));
+                        file = timestamp+"_"+file;
+                        
                         cel_zip_file = file;
                         Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + cel_zip_file+" -*- "+zip_folder + "gctfile_"+folder);
                         zip_file = zip_folder + "/" + cel_zip_file;
-                        gct_file = zip_folder + "/gctfile_"+folder;
+                        gct_file = zip_folder + "/" + timestamp + "_gctfile";
                     }
                 }
 
@@ -333,25 +347,38 @@ public class getCleanData2 {
 
                 //close the ticket when finished, normalization can only be performed once by the client.
                 CloseTicket();
+                
+                File fileFolderOld = new File(zip_folder);
+                File fileFolderDest = new File(res.getString("ws.upload_folder")+getCTD_REF());
+                File[] listOfFiles = fileFolderOld.listFiles();
 
-                //remove data_file
-                String strCommand1 = "rm -f " + data_file;
-                Process p5 = Runtime.getRuntime().exec(strCommand1);
-                String strCommand2 = "rm -f " + zip_folder + "/*.CEL";
-                Process p6 = Runtime.getRuntime().exec(strCommand2);
-
-                File final_folder =new File(res.getString("ws.upload_folder")+getCTD_REF());
-                String strCommand3;
-                boolean exists = final_folder.exists();
-                if(exists){
-                    strCommand3 = "cp " + zip_folder + "/* " + res.getString("ws.upload_folder")+getCTD_REF();
-                } else {
-                    strCommand3 = "mv " + zip_folder + " " + res.getString("ws.upload_folder")+getCTD_REF();
+                //Remove cells and data file (expression.txt)
+                for(int i = 0; i < listOfFiles.length; i++){
+                    if(listOfFiles[i].getPath().toLowerCase().endsWith(".zip") || listOfFiles[i].getPath().toLowerCase().endsWith("expression.txt")){
+                        try{
+                            listOfFiles[i].delete();
+                        } catch(Exception e) {
+                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                        }
+                    }
                 }
-                Process p7 = Runtime.getRuntime().exec(strCommand3);
-                //String strCommand4 = "cp " + zip_folder + "/* "+res.getString("ws.upload_folder")+getCTD_REF()+"/";
-                //Process p8 = Runtime.getRuntime().exec(strCommand4);
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "IN getCleanData2: \n\tc1: "+strCommand1+"\n\tc2: "+strCommand2+"\n\tc3: "+strCommand3);
+
+                //Copy remaining files for safekeeping
+                for(int i = 0; i < listOfFiles.length; i++){
+                    try{
+                        FileUtils.copyFileToDirectory(listOfFiles[i],fileFolderDest,false);
+                        listOfFiles[i].delete();
+                    } catch(Exception e) {
+                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                    }
+                }
+
+                //Remove temporary folder
+                try{
+                    fileFolderOld.delete();
+                } catch(Exception e){
+                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                }
             }
 
             ////////////////////

@@ -25,7 +25,7 @@ page import="com.oreilly.servlet.*" %><%!
         ///Get UUID that will be used to create a folder for temporary storage
         int uuid = 0;
         int i = 0;
-        while (i < 100) {
+        while (i < 2147483646) {
             i++;
             uuid++;
             dirName = res.getString("ws.upload_folder")+uuid;
