@@ -5,6 +5,7 @@
     Edited by  : Tjeerd van Dijk and Taco Steemers
 --%>
 
+<%@page import="java.util.ResourceBundle"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
@@ -47,16 +48,23 @@
         <td>&nbsp;</td>
         <td><a href="#" onClick="loadPage('about.jsp','content');">Home</a></td>
         <td><a href="#" onClick="loadPage('overview.jsp','content');">Overview</a></td>
+        <%
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        out.print("<td><a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a></td>");
+        %>
         <td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td>
-        <td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
-        <td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
-        <td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
-        <td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
+        <%
+            //<td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
+            //<td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
+            //<td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
+            //<td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
+        %>
+        <td>&nbsp;</td>
         <td>&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" colspan="7" bgcolor="#FFFFFF"><div id="content" style="width:700; min-height:500px; margin-top:20px;">...</div></td>
+        <td width="700" colspan="7" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;">...</div></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>

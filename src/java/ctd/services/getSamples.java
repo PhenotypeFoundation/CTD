@@ -107,15 +107,18 @@ public class getSamples {
         }
 
         if(lstGSCFResponse.size()<lstFilenames.size()) {
-            return "<br /><b>There are more files submitted than there are available samples.</b><br />Go to the study in GSCF and add more samples.";
+            return "<br /><b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a> and add more samples.<br /><a href='"+res.getString("gscf.baseURL")+"/'>This link leads to GSCF.</a>";
+        }
+        if(lstFilenames.size()==0) {
+            return "<br /><b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains files and is readable before you upload it.";
         }
 
         //From samples to filenames
         HashMap<String, String> results = new HashMap<String, String>();
         HashMap<String, Integer> sampletokens = new HashMap<String, Integer>();
         boolean[] used = new boolean[lstFilenames.size()];
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): lstGSCFResponsesize: "+lstGSCFResponse.size());
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): lstFilenamessize: "+lstFilenames.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): lstGSCFResponsesize: "+lstGSCFResponse.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): lstFilenamessize: "+lstFilenames.size());
         for(int i = 0; i < lstGSCFResponse.size() && i<lstFilenames.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             String name = map.get("name").replace(" ", "").toLowerCase();
@@ -149,7 +152,7 @@ public class getSamples {
 
         Iterator it = results.entrySet().iterator();
         int i = 0;
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): resultssize: "+results.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): resultssize: "+results.size());
         while(it.hasNext()){
             String strColor = "#DDEFFF";
             if(i%2==0) {

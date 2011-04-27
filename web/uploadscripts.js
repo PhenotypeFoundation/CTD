@@ -1,7 +1,7 @@
 /* 
  * Uploadscripts.js
  * By Tjeerd van Dijk and Taco Steemers, thehyve.nl
- * apr 2001
+ * apr 2011
  *
  * Functions in this file are used in upload3.jsp to
  * ensure a good user experience and to place diverse
@@ -70,7 +70,7 @@ function init_step4() {
     /* In the initiation of step 4, if both step 3 and the upload are ready, the
      * filename-samplename table is loaded via an AJAX-call to getSamples.jsp */
     if(upload_ready && step_3_ready) {
-        $('#step4').show('slow');
+        $('#step1').hide('slow');
         var at = document.getElementById("selectAssay").value;
         var fn = document.getElementById("filename").innerHTML;
         var tf = document.getElementById("tempfolder").innerHTML;
@@ -78,10 +78,18 @@ function init_step4() {
           url: "./getSamples.jsp?assayToken="+at+"&filename="+tf+"/"+fn,
           context: document.body,
           success: function(data){
-            document.getElementById("drag").innerHTML = data;
+            // If the returned data seems to contain draggable content, add it.
+            var index = data.toString().indexOf("fs_th mark", 0);
+            if(index!=-1){
+                document.getElementById("drag").innerHTML = data;
 
-            /* Needed to make divs in the table dragable */
-            REDIPS.drag.init();
+                /* Needed to make divs in the table dragable */
+                REDIPS.drag.init();
+            } else {
+                // Otherwise, it will probably be an error/diagnostic message, so remove the ability to proceed.
+                document.getElementById("step4").innerHTML = data;
+            }
+            $('#step4').show('slow');
           }
         });
     }
@@ -123,8 +131,9 @@ function savedata()  {
       url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+tf+"&matches="+m,
       context: document.body,
       success: function(data){
-          alert("Your data has been processed, normalized and stored... "+ data);
-          document.getElementById("content2").innerHTML = "";
+          alert("Your data has been processed, normalized and stored.");
+          //Now reload the page from the server.
+          window.location.reload(true);
       }
     });
 }

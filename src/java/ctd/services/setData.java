@@ -76,10 +76,10 @@ public class setData {
             strRet = objCommitData.cleanData();
         } catch (Exception e) {
             strRet = "Saving Failed: "+e.toString()+" \n"+e.getMessage();
-            Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData ERROR: Internal Service Error: "+e.toString());
+            Logger.getLogger(setData.class.getName()).log(Level.SEVERE, getPassword()+": setData ERROR: Internal Service Error: "+e.toString());
         }
 
-        Logger.getLogger(setData.class.getName()).log(Level.SEVERE, "setData is er helemaal klaar mee: "+strRet);
+        Logger.getLogger(setData.class.getName()).log(Level.INFO, getPassword()+": setData returns: "+strRet);
         return strRet;
     }
 

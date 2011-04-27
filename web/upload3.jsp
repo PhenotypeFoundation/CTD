@@ -50,7 +50,7 @@ try {
         </script>
         <div id="content2">
             <h1>Upload Data</h1>
-            <div id="step1" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a .zip containing .cel files:</h2><span id="spanstep1"><input type='file' id='file_upload' name='file_upload' /></span></div>
+            <div id="step1" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a .zip containing .cel files:</h2><span id="spanstep1"><input type='file' id='file_upload' name='file_upload' />Make sure GSCF contains a study with the samples that you wish to add data for, and that your account has access to this study.</span></div>
             <div id="step2" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
             <div id="step3" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>3. Select an assay:</h2><span id="spanstep2"><select id='selectAssay' name='selectAssay' onChange='assay_selected();'></select></span></div>
             <div id="step4" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF">
@@ -59,7 +59,8 @@ try {
                 <div id="drag">
                     ...
                 </div>
-                <a href="#" onClick="init_step5();">Click here to proceed to the final step.</a>
+                <br/>
+                <b><a href="#" onClick="init_step5();">Click here to proceed to the final step.</a></b>
             </div>
             <div id="step5" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>5. Save data</h2>If all of the above information is correct, hit this button and the data will be processed and stored in the database.<br /><input type="submit" id="submitdata" value="Save data" onClick="savedata();"/></div>
             <div id="filename" style="display: none"></div>

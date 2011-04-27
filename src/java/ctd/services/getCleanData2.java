@@ -82,14 +82,11 @@ public class getCleanData2 {
 
         try{
             CleanDataResult result = new CleanDataResult();
-
-            //String message = "";
             String error_message = "";
             //get parameters.
             ResourceBundle res = ResourceBundle.getBundle("settings");
             ResourceBundle cdf_list = ResourceBundle.getBundle("cdf");
-
-            //Base directory ftp folder: Here the subfolders are found for each set of CEL-files.
+            //Base directory ftp folder: Here the temporary subfolders are found for each set of CEL-files, and the final assaytoken-based folder.
             String ftp_folder = res.getString("ws.upload_folder");
             String rscript_cleandata = res.getString("ws.rscript_cleandata");
             String rscript = res.getString("ws.rscript");
@@ -98,13 +95,11 @@ public class getCleanData2 {
             String db_password = res.getString("db.password");
             String db_database = res.getString("db.database");
 
-            //open hibernate connection
+            //retrieve the information on the assignment from the database
             SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
             Session session = sessionFactory.openSession();
             Transaction tr = session.beginTransaction();
-
             Query q = session.createQuery("from Ticket where password='" + getPassword() + "' AND ctd_REF='" + getCTD_REF() + "'");
-
             Ticket ticket = null;
             String closed = "";
             if (q.list().size() != 0) {
@@ -122,30 +117,19 @@ public class getCleanData2 {
             if (ticket != null) {
                 //get the folder
                 String folder = ticket.getFolder();
-                //create subfolder containing the derived zip file
-                //String zip_folder = ftp_folder + folder;
                 String zip_folder = ftp_folder + folder;
-                //get content
+                //get contents
                 File dir = new File(zip_folder);
 
-                //Process p100 = Runtime.getRuntime().exec("chmod 777 " + zip_folder);
-
-                //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\n\t0.05: just checked folder");
+                //find the zip file.
                 File[] files = dir.listFiles(new FileFilter() {
                     public boolean accept(File pathname) {
                         return pathname.isFile();
                     }
-                });
-
-                //find the zip file.
+                });                
                 String cel_zip_file = "";
                 String zip_file = "";
                 String gct_file = "";
-
-                for (int i = 0; i < files.length; i++) {
-                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "\tPrinting file: "+files[i]);
-                }
-                
                 for (int i = 0; i < files.length; i++) {
                     String file = files[i].getName();
                     if (file.contains("zip")) {
@@ -154,22 +138,17 @@ public class getCleanData2 {
                         file = timestamp+"_"+file;
                         
                         cel_zip_file = file;
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "binnen zip: "+zip_folder + cel_zip_file+" -*- "+zip_folder + "gctfile_"+folder);
                         zip_file = zip_folder + "/" + cel_zip_file;
                         gct_file = zip_folder + "/" + timestamp + "_gctfile";
                     }
                 }
-
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "einde zip");
                 Process p3 = Runtime.getRuntime().exec("chmod 777 " + zip_file);
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "permissions gezet");
 
                 //////////////////////////////////////////////////////////////////
                 //Do a system call to normalize. R. (zip_folder zip_file gct_file rscript)
                 String args = rscript+" --verbose --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "args: "+args);
+                Logger.getLogger(getTicket.class.getName()).log(Level.INFO, timestamp+": Running: "+args);
                 Process p = Runtime.getRuntime().exec(args);
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "rscript setup gedaan, checken of de boel klaar is. Commando was "+args);
                 //Check if CEL files are unzipped allready
                 boolean do_loop = true;
                 while (do_loop) {
@@ -183,12 +162,12 @@ public class getCleanData2 {
                             try {
                                 Thread.sleep(5000);
                             } catch (InterruptedException ex) {
-                                Logger.getLogger(getCleanData.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(getCleanData.class.getName()).log(Level.SEVERE, null, timestamp+": "+ex);
                             }
                         }
                     }
                 }
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Kennelijk is het klaar");
+                Logger.getLogger(getTicket.class.getName()).log(Level.INFO, timestamp+": rscript has finished.");
                 File dir2 = new File(zip_folder);
                 String[] files2 = dir2.list();
                 String chip_file = "";
@@ -202,28 +181,27 @@ public class getCleanData2 {
                     if (file.endsWith("chip")) {
                         chip_file = file;
                         chip_file_db = chip_file.split("_CDF_")[1];
+                        File fileFile = new File(chip_file);
+                        fileFile.renameTo(new File(zip_folder+"/"+chip_file_db)); //Making the file correspond to the database entry. Duplicates can be safely overwritten, and will be.
                     }
                 }
 
                 //Check if all CEL files are derived from the same chip.
                 //This is essential for normalization.
                 //initiate check hashmap. This map contains all the unique chip definition file names. There should be only one per analysis.
-
                 ArrayList<StudySampleAssay> map = new ArrayList<StudySampleAssay>();
-
                 for (int i = 0; i < unziped_files.size(); i++) {
                     String cel_file = unziped_files.get(i);
 
                     StudySampleAssay ssa = new StudySampleAssay();
                     // Open the file that is the first
                     // command line parameter
-                    String cel_file_path = zip_folder + "/" + cel_file;
+                    //String cel_file_path = zip_folder + "/" + cel_file;
                     String name = cel_file;
                     ssa.setNameRawfile(name);
                     ssa.setXREF(getCTD_REF());
                     map.add(ssa);
                 }
-
                 ticket.getStudySampleAssaies().addAll(map);
                 session.saveOrUpdate(ticket);
                 session.persist(ticket);
@@ -233,17 +211,14 @@ public class getCleanData2 {
                 //Storage chip definition file (CDF), creation gct file and database storage.
                 SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
                 Session session1 = sessionFactory1.openSession();
-
-                List<ChipAnnotation> chip_annotation = null;
-
+                
                 //check if cdf (chip definition file) is allready stored, if not, store it.
-
+                List<ChipAnnotation> chip_annotation = null;
                 Query q2 = session1.createQuery("from Chip Where Name='" + chip_file_db + "'");
                 if (q2.uniqueResult() != null) {
                     Chip chip = (Chip) q2.list().get(0);
                     chip_annotation = chip.getChipAnnotation();
                 }
-
                 if (q2.uniqueResult() == null) {
                     //Add this chip and its annotation
                     Chip chip_new = new Chip();
@@ -289,6 +264,7 @@ public class getCleanData2 {
                     chip_annotation_ids.put(ps, id);
                 }
 
+                //Create the .gct-files
                 try {
 
                     Query qt = session2.createQuery("from Ticket where password='" + getPassword() + "' AND ctd_REF='" + getCTD_REF() + "'");
@@ -324,41 +300,38 @@ public class getCleanData2 {
 
 
                 } catch (IOException e) {
-                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.getMessage()+"  "+e.getLocalizedMessage());
+                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.getMessage()+"  "+e.getLocalizedMessage());
                 }
                 pr.close();
                 out.close();
 
+                //update ticket
                 Transaction tr2 = session2.beginTransaction();
                 session2.update(ticket);
                 session2.persist(ticket);
                 tr2.commit();
-
                 session2.close();
 
+                //import the data into the database
                 String u = "--user=" + db_username;
                 String passw = "--password=" + db_password;
                 String[] commands = new String[]{"mysqlimport", u, passw, "--local", db_database,data_file};
-
                 Process p4 = Runtime.getRuntime().exec(commands);
-
-
                 message = message + " RMA and GRSN on the CEL-files is done, data is stored.";
 
                 //close the ticket when finished, normalization can only be performed once by the client.
                 CloseTicket();
                 
+                //Remove zip and data file (expression.txt)
                 File fileFolderOld = new File(zip_folder);
                 File fileFolderDest = new File(res.getString("ws.upload_folder")+getCTD_REF());
                 File[] listOfFiles = fileFolderOld.listFiles();
-
-                //Remove cells and data file (expression.txt)
                 for(int i = 0; i < listOfFiles.length; i++){
                     if(listOfFiles[i].getPath().toLowerCase().endsWith(".zip") || listOfFiles[i].getPath().toLowerCase().endsWith("expression.txt")){
                         try{
                             listOfFiles[i].delete();
                         } catch(Exception e) {
-                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
                         }
                     }
                 }
@@ -369,7 +342,7 @@ public class getCleanData2 {
                         FileUtils.copyFileToDirectory(listOfFiles[i],fileFolderDest,false);
                         listOfFiles[i].delete();
                     } catch(Exception e) {
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
                     }
                 }
 
@@ -377,7 +350,7 @@ public class getCleanData2 {
                 try{
                     fileFolderOld.delete();
                 } catch(Exception e){
-                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
                 }
             }
 
@@ -390,12 +363,12 @@ public class getCleanData2 {
             try {
                 trans = ObjectTransformerFactory.getInstance().getImplementation();
             } catch (NoImplementationException ex) {
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, timestamp+": "+ex);
             }
             message = trans.serializeToString(result);
             
         } catch(Exception e){
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ERROR IN getCleanData2: "+e.toString());
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
         }
         return message;
     }

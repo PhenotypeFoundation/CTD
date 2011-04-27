@@ -52,13 +52,13 @@ public class getStudies {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
         }
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken is valid: "+strSessionToken);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getStudies(): strSessionToken is valid: "+strSessionToken);
 
         strReturn = "<option value='none'>Select a study...</option>";
         objGSCFService = new GscfService();
         res = ResourceBundle.getBundle("settings");
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getStudies",restParams);
-        LinkedList lstStudies = new LinkedList();
+        //LinkedList lstStudies = new LinkedList();
         LinkedList lstGSCFResponse = new LinkedList();
 
         ObjectTransformer trans = null;
