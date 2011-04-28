@@ -46,7 +46,7 @@ public class Overview {
         }
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "isUser Response: "+strGSCFRespons[1]+" "+objGSCFService.isUser(strGSCFRespons[1]));
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
-            String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"index.jsp?p=overview");
+            String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/index.jsp?p=overview");
             throw new Exception307TemporaryRedirect(urlAuthRemote);
         }
 
