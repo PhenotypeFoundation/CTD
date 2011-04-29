@@ -22,14 +22,19 @@
                     url: "./"+page,
                     success: function(data, textStatus, jqXHR){
                         if(jqXHR.getResponseHeader("RedirGSCF") != null) {
-                            window.location = jqXHR.getResponseHeader("RedirGSCF");
+                            window.location.replace(jqXHR.getResponseHeader("RedirGSCF"));
                         } else {
                             $("#"+div).html(data);
                         }
-                    }    
+                    }
                 });
             }
         </script>
+        <link href="./uploadify/uploadify.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="./uploadscripts.js"></script>
+        <script type="text/javascript" src="./uploadify/swfobject.js"></script>
+        <script type="text/javascript" src="./uploadify/jquery.uploadify.v2.1.4.min.js"></script>
+        <script type="text/javascript" src="./uploadify/redips-drag.js"></script>
     </head>
     <%
     String strPage = "about";
@@ -41,7 +46,7 @@
     <table width="800" border="0" align="center" cellpadding="0" cellspacing="0"s>
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
-        <td colspan="7" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right"><img src="images/logo.jpg" width="567" height="55" align="left"></td>
+        <td colspan="8" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right" /><img src="images/logo.jpg" width="567" height="55" align="left" /></td>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
       <tr class="black_button">
@@ -53,18 +58,15 @@
         out.print("<td><a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a></td>");
         %>
         <td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td>
-        <%
-            //<td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
-            //<td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
-            //<td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
-            //<td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
-        %>
-        <td>&nbsp;</td>
+        <td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
+        <td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
+        <td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
+        <td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" colspan="7" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;">...</div></td>
+        <td width="700" colspan="8" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;"><img src="./images/wait.gif" alt="loading page content..." /></div></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>

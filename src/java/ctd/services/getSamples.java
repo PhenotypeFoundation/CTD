@@ -10,6 +10,8 @@ import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +33,7 @@ public class getSamples {
     private String strAssayToken;
     private String strSessionToken;
     private String strFilename;
+    private boolean blnError = false;
 
     /***
      * This function gets all available Assaytokens from GSCF that can be linked
@@ -87,7 +90,7 @@ public class getSamples {
         }
 
         strReturn += "<table>";
-        strReturn += "<tr class='fs_th'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
+        strReturn += "<tr class='fs_th fs_borderbottom'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
 
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
@@ -102,15 +105,18 @@ public class getSamples {
                     lstFilenames.add(zipEntryName);
                 }
             }
+
         } catch (IOException e) {
-            System.out.println(e);
+            Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, "ERROR getSamples: "+e.getMessage());
         }
 
         if(lstGSCFResponse.size()<lstFilenames.size()) {
-            return "<br /><b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a> and add more samples.<br /><a href='"+res.getString("gscf.baseURL")+"/'>This link leads to GSCF.</a>";
+            blnError = true;
+            return "<br /><b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>GSCF</a> and add more samples.";
         }
         if(lstFilenames.size()==0) {
-            return "<br /><b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains files and is readable before you upload it.";
+            blnError = true;
+            return "<br /><b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains cel-files and is readable before you upload it.";
         }
 
         //From samples to filenames
@@ -152,19 +158,25 @@ public class getSamples {
 
         Iterator it = results.entrySet().iterator();
         int i = 0;
-        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): resultssize: "+results.size());
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): resultssize: "+lstFilenames.size()+" "+results.size());
+        String[] arrFiles = new String[lstFilenames.size()];
         while(it.hasNext()){
             String strColor = "#DDEFFF";
             if(i%2==0) {
-                strColor = "#FFFFFF";
+                //strColor = "#FFFFFF";
             }
-            i++;
-
             Map.Entry<String, String> kv = (Map.Entry<String, String>) it.next();
             //HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
             String fn = kv.getValue();
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(sampletokens.get(kv.getKey()));
-            strReturn += "<tr><td class='mark' style='width:50%; background-color:"+strColor+"; font-size:small;'>"+fn+"<input type='hidden' value='"+fn+"'/></td><td style='width:50%; background-color:"+strColor+"; font-size:small;'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): "+i+": "+fn);
+            arrFiles[i] = fn+"!!SEP!!<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
+            i++;
+        }
+        Arrays.sort(arrFiles);
+        for(int ii = 0; ii < arrFiles.length; ii++){
+            String[] arrSplit = arrFiles[ii].split("!!SEP!!");
+            strReturn += arrSplit[1];
         }
 
         //Remove used tokens from lstGSCFResponse
@@ -181,11 +193,12 @@ public class getSamples {
         // Add remainder of samples
         boolean blnRemainingSamples = false;
         if(lstGSCFResponse.size()>0){
-            strReturn += "<tr class='fs_th mark'><td class='mark' colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
+            strReturn += "<tr class='fs_th'><td class='mark' colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
         }
+
         while(lstGSCFResponse.size()>0){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.pop();
-            strReturn += "<tr><td colspan='2' style='font-size:small;'>"
+            strReturn += "<tr><td colspan='2' class='fs_fontsize'>"
                     + "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div>"
                     + "</td></tr>";
         }
@@ -234,6 +247,13 @@ public class getSamples {
      */
     public void setFilename(String strFilename) {
         this.strFilename = strFilename;
+    }
+
+    /**
+     * @return the blnError
+     */
+    public boolean getError() {
+        return blnError;
     }
 
 }

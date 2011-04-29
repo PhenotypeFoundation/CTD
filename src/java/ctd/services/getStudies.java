@@ -9,6 +9,7 @@ import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
@@ -73,10 +74,17 @@ public class getStudies {
             Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        String[] arrOptions = new String[lstGSCFResponse.size()];
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            strReturn += "<option value="+map.get("studyToken")+">"+map.get("code")+" - "+map.get("title")+"</option>";
+            arrOptions[i] = map.get("code")+map.get("title")+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("code")+" - "+map.get("title")+"</option>";
         }
+        Arrays.sort(arrOptions);
+        for(int i = 0; i < lstGSCFResponse.size(); i++){
+            String[] arrSplit = arrOptions[i].split("!!SEP!!");
+            strReturn += arrSplit[1];
+        }
+
 
         return strReturn;
     }

@@ -11,5 +11,8 @@ samples.setSessionToken(request.getSession().getId());
 samples.setAssayToken(request.getParameter("assayToken"));
 samples.setFilename(request.getParameter("filename"));
 String message = samples.getSamples();
+if(samples.getError()) {
+    response.setHeader("ErrorInSamples", "true");
+}
 out.println(message);
 %>

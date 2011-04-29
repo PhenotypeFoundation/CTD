@@ -11,7 +11,32 @@
 
 function init_step1() {
     /* The DIV for step 1 is slowly shown */
+    document.getElementById('spanstep1').innerHTML="<input type='file' id='file_upload' name='file_upload' />";
+    $('#file_upload').uploadify({
+      'uploader'     : './uploadify/uploadify.swf',
+      'script'       : './uploadHandler.jsp',
+      'cancelImg'    : './uploadify/cancel.png',
+      'displayData'  : 'percentage',
+      'onSelectOnce' : function() {init_step2()},
+      'onComplete'   : function(event, queueID, fileObj, response, data) {
+                          document.getElementById("filename").innerHTML=fileObj.name;
+                          document.getElementById("tempfolder").innerHTML=response.toString();
+                          upload_ready = true;
+                          document.getElementById("spanstep1").innerHTML='File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./uploadify/cancel.png" alt="remove file" style="border:0;"/></a>';
+                          init_step4();
+                      },
+      'fileExt'      : '*.zip',
+      'fileDesc'     : '.zip files',
+      'buttonText'   : 'Select a file',
+      'auto'         : true,
+      'queueSizeLimit':1,
+      'sizeLimit':2147483646
+    });
     $('#step1').show('slow');
+    upload_ready = false;
+    document.getElementById("drag").innerHTML='...';
+    $('#step4').hide();
+
 }
 
 function study_selected() {
@@ -19,6 +44,8 @@ function study_selected() {
         /* If an option is selected in the study SELECT box then we procede to step 3 */
         $('#step3').show('slow');
         init_step3();
+    } else {
+        $('#step3').hide();
     }
 }
 
@@ -42,13 +69,17 @@ step_3_ready = false;
 function init_step2() {
     /* In the initiation of step 2 the study SELECT is filled via
      * an AJAX-call to getStudies.jsp */
-    $.ajax({
-      url: "./getStudies.jsp",
-      context: document.body,
-      success: function(data){
-        $("#selectStudy").html(data);
-      }
-    });
+    document.getElementById("selectAssay").disabled = false;
+    document.getElementById("selectStudy").disabled = false;
+    if(document.getElementById('selectStudy').value=="") {
+        $.ajax({
+          url: "./getStudies.jsp",
+          context: document.body,
+          success: function(data){
+            $("#selectStudy").html(data);
+          }
+        });
+    }
     $('#step2').show('slow');
 }
 
@@ -70,37 +101,25 @@ function init_step4() {
     /* In the initiation of step 4, if both step 3 and the upload are ready, the
      * filename-samplename table is loaded via an AJAX-call to getSamples.jsp */
     if(upload_ready && step_3_ready) {
-        $('#step1').hide('slow');
         var at = document.getElementById("selectAssay").value;
+        document.getElementById("selectAssay").disabled = true;
+        document.getElementById("selectStudy").disabled = true;
         var fn = document.getElementById("filename").innerHTML;
         var tf = document.getElementById("tempfolder").innerHTML;
         $.ajax({
           url: "./getSamples.jsp?assayToken="+at+"&filename="+tf+"/"+fn,
           context: document.body,
-          success: function(data){
-            // If the returned data seems to contain draggable content, add it.
-            var index = data.toString().indexOf("fs_th mark", 0);
-            if(index!=-1){
-                document.getElementById("drag").innerHTML = data;
-
-                /* Needed to make divs in the table dragable */
-                REDIPS.drag.init();
+          success: function(data, textStatus, jqXHR){
+            if(jqXHR.getResponseHeader("ErrorInSamples") != null) {
+                document.getElementById("spanstep4").innerHTML = data;
             } else {
-                // Otherwise, it will probably be an error/diagnostic message, so remove the ability to proceed.
-                document.getElementById("step4").innerHTML = data;
+                document.getElementById("drag").innerHTML = data;
+                REDIPS.drag.init();
             }
             $('#step4').show('slow');
           }
         });
     }
-}
-
-function init_step5() {
-    //$("#spanstep1").html(document.getElementById('filename').innerHTML);
-    //$("#spanstep2").html(document.getElementById('selectStudy').value);
-    //$("#spanstep3").html(document.getElementById('selectAssay').value);
-    /* TODO: grey out the content of the previous steps */
-    $('#step5').show('slow');
 }
 
 function savedata()  {
@@ -110,6 +129,9 @@ function savedata()  {
     /* Make sure the user can't submit twice */
     document.getElementById("submitdata").value = "Processing data...";
     document.getElementById("submitdata").disabled = true;
+    document.getElementById("correct").disabled = true;
+    document.getElementById("spanstep1").innerHTML='File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>';
+    REDIPS.drag.enable_drag(false);
 
     /* We need to get the final matches from the TABLE in step 4. Therefore we
      * parse the content in order to find the hidden INPUTs that contain the tokens */

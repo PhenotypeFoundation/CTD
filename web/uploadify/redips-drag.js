@@ -89,7 +89,7 @@ REDIPS.drag = (function () {
 		mark = {action: 'deny',
 				cname: 'mark',
 				exception: []},
-		border = 'dashed',			// (string) border style for enabled element
+		border = 'dotted',			// (string) border style for enabled element
 		border_disabled = 'dotted',	// (string) border style for disabled element
 		trash = 'trash',			// (string) cell class name where draggable element will be destroyed
 		trash_ask = true,			// (boolean) confirm object deletion (ask a question "Are you sure?" before delete)
@@ -1471,6 +1471,7 @@ REDIPS.drag = (function () {
 				// using advanced model has problems with text selection and dragging text selection
 				divs[i].onmousedown = handler;
 				divs[i].style.borderStyle = borderStyle;
+                                divs[i].style.borderWidth = 1;
 				divs[i].style.cursor = cursor;
 				// add enabled property to the DIV element (true or false)
 				divs[i].redips_enabled = enabled;
