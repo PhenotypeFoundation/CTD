@@ -130,7 +130,3 @@ a:active {
 .fs_fontsize {
     font-size: 8pt;
 }
-
-.fs_borderbottom td th{
-    border-bottom:1px double #FFF;
-}

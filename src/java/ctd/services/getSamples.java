@@ -90,7 +90,7 @@ public class getSamples {
         }
 
         strReturn += "<table>";
-        strReturn += "<tr class='fs_th fs_borderbottom'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
+        strReturn += "<tr class='fs_th'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
 
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
