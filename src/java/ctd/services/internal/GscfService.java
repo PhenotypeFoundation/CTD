@@ -98,8 +98,8 @@ public class GscfService {
     /**
      * Returns the URL to let the user login at GSCF
      *
-     * @param params    Parameters of the action called
      * @param strToken  Session token
+     * @param strReturnURL The url that GCSF redirects to if the request is succesful
      * @return          URL to redirect the user to
      */
     public String urlAuthRemote(String strToken, String strReturnURL) {

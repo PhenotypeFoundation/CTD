@@ -5,6 +5,7 @@
     Edited by  : Tjeerd van Dijk and Taco Steemers
 --%>
 
+<%@page import="ctd.services.exceptions.Exception307TemporaryRedirect"%>
 <%@page import="java.util.ResourceBundle"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -14,6 +15,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Clean Transcriptome Database</title>
+        <link rel="icon" href="./images/favicon.ico">
         <link href="style.css" rel="stylesheet" type="text/css">
         <script type="text/javascript" src="./uploadify/jquery-1.4.2.min.js"></script>
         <script type="text/javascript">
@@ -36,13 +38,17 @@
         <script type="text/javascript" src="./uploadify/jquery.uploadify.v2.1.4.min.js"></script>
         <script type="text/javascript" src="./uploadify/redips-drag.js"></script>
     </head>
+    <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
     <%
     String strPage = "about";
     if(request.getParameter("p")!=null) {
         strPage = request.getParameter("p");
     }
+    login.setSessionToken(request.getSession().getId());
+    String strUserResponse = login.getUser();
     %>
     <body onLoad="loadPage('<%=strPage %>.jsp','content');">
+    <table style="width: 100%; margin-bottom: 5px;"><tr><td class="gscf_bar"><%=strUserResponse %></td></tr></table>
     <table width="800" border="0" align="center" cellpadding="0" cellspacing="0"s>
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>

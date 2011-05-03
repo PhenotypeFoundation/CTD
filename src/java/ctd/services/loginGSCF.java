@@ -1,8 +1,11 @@
 package ctd.services;
 
+import com.skaringa.javaxml.ObjectTransformer;
+import com.skaringa.javaxml.ObjectTransformerFactory;
 import ctd.services.exceptions.Exception307TemporaryRedirect;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +40,41 @@ public class loginGSCF {
             String urlAuthRemote = objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/"+getReturnScript());
             throw new Exception307TemporaryRedirect(urlAuthRemote);
         }
+    }
+
+    public String getUser() {
+
+        String strUser = "";
+
+        GscfService objGSCFService = new GscfService();
+        String[] strGSCFRespons = new String[2];
+        try {
+            this.loginGSCF();
+            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "getUser", null);
+        } catch (Exception500InternalServerError ex) {
+            Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error");
+        } catch (Exception307TemporaryRedirect ex) {
+            
+        }
+
+        ObjectTransformer trans = null;
+        try {
+            trans = ObjectTransformerFactory.getInstance().getImplementation();
+            Map objJSON = (Map) trans.deserializeFromJsonString(strGSCFRespons[1]);
+            if(objJSON.containsKey("username")) {
+                strUser = (String) objJSON.get("username").toString();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in loginGSCF.getUser");
+        }
+        
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        String strRet = "You are signed in as <i>"+strUser+"</i> at the General Study Capture Framework (<a href='#'>sign out</a>)";
+        if(strUser.equals("")) {
+            strRet = "You are not signed in (<a href='"+objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/index.jsp")+"'>sign in</a>) at the General Study Capture Framework";
+        }
+
+        return strRet;
     }
 
     /**

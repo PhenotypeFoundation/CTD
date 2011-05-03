@@ -4,6 +4,8 @@ body {
 	background-color: #CCC;
 	color: #000;
         font-family: Verdana, Geneva, sans-serif;
+        margin: 0px;
+        padding: 0px;
 }
 
 a {
@@ -23,6 +25,29 @@ a:hover {
 a:active {
 	text-decoration: none;
 	color: #0CF;
+}
+
+/* GSCF Bar */
+.gscf_bar {
+    text-align: center;
+    vertical-align: top;
+    background: url('./images/tab_m.png');
+    background-position: -19px -19px;
+    color: #FFF;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 10pt;
+    height: 23px;
+}
+
+.gscf_bar a {
+    color: #15ADFF;
+    text-decoration: none;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 10pt;
+}
+
+.gscf_bar a:hover {
+	color: #FFF;
 }
 
 /* Menu buttons */
