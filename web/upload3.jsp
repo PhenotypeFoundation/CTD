@@ -18,16 +18,20 @@ try {
    "http://www.w3.org/TR/html4/loose.dtd">
 <jsp:include page="home.jsp" />
 <h1>Upload Data</h1>
-<div id="step1" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a .zip containing .cel files:</h2><span id="spanstep1">...</span></div>
-<div id="step2" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
-<div id="step3" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF"><h2>3. Select an assay:</h2><span id="spanstep2"><select id='selectAssay' name='selectAssay' onChange='assay_selected();'></select></span></div>
-<div id="step4" style="display: none; padding:2px; margin: 3px; background-color: #DDEFFF">
-    <h2>4. Link files to samples</h2><br /><span id="spanstep4">
-    You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.
-    <div id="drag">
-        <img src="./images/wait.gif" alt="loading page content..." />
-    </div>
-    <br /><input type="submit" id="submitdata" value="Save data" onClick="savedata();"/>&nbsp;<input type="submit" id="correct" value="Correct step 2 or step 3" onClick="$('#step4').hide(); init_step2();"/></span>
+<div id="info" style="display: block; padding:5px; margin: 3px; background-color: #DDEFFF">
+<span class="text_normal">This wizard wil enable you to upload your transcriptomics data to this Clean
+Transcriptome Database. In the first step you will be asked to upload a zip-archive that contains
+the cel-files you wish to add. In the second step you will need to indicate to which GSCF-study
+you want to link this new data, and in the next step you will need to indicate the assay. The last
+step will ask you to link the cel-files to specific measurements. These measurements should be
+added to the study in GSCF which you would select in step 2, before you start the wizard.</span></div>
+<div id="step1" style="display: none; padding:5px; margin: 3px; background-color: #DDEFFF"><h2>1. Upload a zip-archive containing celfiles:</h2><span id="spanstep1">...</span></div>
+<div id="step2" style="display: none; padding:5px; margin: 3px; background-color: #DDEFFF"><h2>2. Select a study</h2><span id="spanstep2"><select id='selectStudy' name='selectStudy' onChange='study_selected();'></select></span></div>
+<div id="step3" style="display: none; padding:5px; margin: 3px; background-color: #DDEFFF"><h2>3. Select an assay:</h2><span id="spanstep2"><select id='selectAssay' name='selectAssay' onChange='assay_selected();'></select></span></div>
+<div id="step4" style="display: none; padding:5px; margin: 3px; background-color: #DDEFFF">
+    <h2>4. Link files to samples</h2><br /><span id="spanstep4"></span>&nbsp;
+    <input type="submit" id="correct" value="Select a different assay" onClick="$('#step4').hide(); init_step3();"/>
+
 </div>
 <div id="filename" style="display: none"></div>
 <div id="tempfolder" style="display: none"></div>

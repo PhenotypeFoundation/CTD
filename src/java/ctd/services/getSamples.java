@@ -112,11 +112,11 @@ public class getSamples {
 
         if(lstGSCFResponse.size()<lstFilenames.size()) {
             blnError = true;
-            return "<br /><b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>GSCF</a> and add more samples.";
+            return "<b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>GSCF</a> and add more samples.<br />";
         }
         if(lstFilenames.size()==0) {
             blnError = true;
-            return "<br /><b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains cel-files and is readable before you upload it.";
+            return "<b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains cel-files and is readable before you upload it.<br />";
         }
 
         //From samples to filenames

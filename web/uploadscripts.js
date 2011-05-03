@@ -71,6 +71,9 @@ function init_step2() {
      * an AJAX-call to getStudies.jsp */
     document.getElementById("selectAssay").disabled = false;
     document.getElementById("selectStudy").disabled = false;
+    document.getElementById("selectAssay").selectedIndex = 0;
+    document.getElementById("selectStudy").selectedIndex = 0;
+
     if(document.getElementById('selectStudy').value=="") {
         $.ajax({
           url: "./getStudies.jsp",
@@ -86,6 +89,11 @@ function init_step2() {
 function init_step3() {
     /* In the initiation of step 3 the assay SELECT is filled via
      * an AJAX-call to getAssays.jsp */
+    document.getElementById("selectAssay").disabled = false;
+    document.getElementById("selectStudy").disabled = false;
+    document.getElementById("selectAssay").selectedIndex = 0;
+    step_3_ready = false;
+
     var st = document.getElementById("selectStudy").value;
     $.ajax({
       url: "./getAssays.jsp?studyToken="+st,
@@ -100,6 +108,7 @@ function init_step3() {
 function init_step4() {
     /* In the initiation of step 4, if both step 3 and the upload are ready, the
      * filename-samplename table is loaded via an AJAX-call to getSamples.jsp */
+    document.getElementById("spanstep4").innerHTML = 'You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div><br /><input type="submit" id="submitdata" value="Save data" onClick="savedata();"/>';
     if(upload_ready && step_3_ready) {
         var at = document.getElementById("selectAssay").value;
         document.getElementById("selectAssay").disabled = true;

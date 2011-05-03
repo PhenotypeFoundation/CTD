@@ -11,11 +11,7 @@
 <jsp:useBean id="overview" scope="session" class="ctd.services.internal.Overview"/>
 <jsp:setProperty name="overview" property="*"/>
 
-        <table cellpadding="0" cellspacing="0" width="640" border="0">
-          <tr>
-            <td class="text_header_black">Overview</td>
-          </tr>
-        </table>
+        <h1>Overview</h1>
         <br>
         <table cellpadding="0" cellspacing="0" width="640" class="tableoverview">
           <tr>
