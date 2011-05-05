@@ -77,10 +77,11 @@ public class getStudies {
         String[] arrOptions = new String[lstGSCFResponse.size()];
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
+            String strCode = " ("+map.get("code")+")";
             if(map.get("code")==null) {
-                map.put("code", "null");
+                strCode = "";
             }
-            arrOptions[i] = map.get("code").toLowerCase()+map.get("title").toLowerCase()+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("code")+" - "+map.get("title")+"</option>";
+            arrOptions[i] = map.get("title").toLowerCase()+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
         }
         Arrays.sort(arrOptions);
         for(int i = 0; i < lstGSCFResponse.size(); i++){
