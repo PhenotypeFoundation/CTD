@@ -134,8 +134,8 @@ public class getCleanData2 {
                     String file = files[i].getName();
                     if (file.contains("zip")) {
                         // Add the timestamp to the zip
-                        files[i].renameTo(new File(zip_folder+"/"+timestamp+"_"+file));
-                        file = timestamp+"_"+file;
+                        files[i].renameTo(new File(zip_folder+"/"+timestamp+"_zip.zip"));
+                        file = timestamp+"_zip.zip";
                         
                         cel_zip_file = file;
                         zip_file = zip_folder + "/" + cel_zip_file;
