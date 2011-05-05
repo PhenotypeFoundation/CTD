@@ -18,6 +18,7 @@
         <link rel="icon" href="./images/favicon.ico">
         <link href="style.css" rel="stylesheet" type="text/css">
         <script type="text/javascript" src="./uploadify/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="./uploadify/jquery.scrollTo-min.js"></script>
         <script type="text/javascript">
             function loadPage(page, div) {
                 $.ajax({

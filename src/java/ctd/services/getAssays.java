@@ -80,7 +80,7 @@ public class getAssays {
         String[] arrOptions = new String[lstGSCFResponse.size()];
         for(int i = 0; i < lstGSCFResponse.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            arrOptions[i] = map.get("title")+"!!SEP!!<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
+            arrOptions[i] = map.get("name").toLowerCase()+"!!SEP!!<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
         }
         Arrays.sort(arrOptions);
         for(int i = 0; i < lstGSCFResponse.size(); i++){

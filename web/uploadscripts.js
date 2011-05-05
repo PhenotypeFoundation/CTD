@@ -36,7 +36,7 @@ function init_step1() {
     upload_ready = false;
     document.getElementById("drag").innerHTML='...';
     $('#step4').hide();
-
+    $.scrollTo('#step1', 800);
 }
 
 function study_selected() {
@@ -84,6 +84,7 @@ function init_step2() {
         });
     }
     $('#step2').show('slow');
+    $.scrollTo('#step2', 800);
 }
 
 function init_step3() {
@@ -101,6 +102,7 @@ function init_step3() {
       success: function(data){
         $("#selectAssay").html(data);
         $('#step3').show('slow');
+        $.scrollTo( '#step3', 800);
       }
     });
 }
@@ -126,6 +128,7 @@ function init_step4() {
                 REDIPS.drag.init();
             }
             $('#step4').show('slow');
+            $.scrollTo('#step4', 800);
           }
         });
     }
