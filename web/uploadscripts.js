@@ -167,7 +167,8 @@ function savedata()  {
       success: function(data){
           alert("Your data has been processed, normalized and stored.");
           //Now reload the page from the server.
-          window.location.reload(true);
+          window.location = "./index.jsp?p=overview";
+
       }
     });
 }
