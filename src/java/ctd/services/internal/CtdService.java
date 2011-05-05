@@ -6,9 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This service is used to process incoming REST calls
@@ -23,7 +26,7 @@ public class CtdService {
      *
      * @param strRestService    the String that indicates what RESTful service
      *                          should be called
-     * @param strQuerystring    the String that contains the parameters that
+     * @param objParameterMap   the Map that contains the parameters that
      *                          will be passed to the RESTful service
      * @return strRet           the String[] that contains the HTTP-status code
      *                          on the first position, and the response to the
@@ -31,16 +34,11 @@ public class CtdService {
      * @throws Exception        any Exception that is not handled in this
      *                          function
      */
-    public String[] ProcessRestCall(String strRestService, String strQuerystring) throws Exception {
+    public String[] ProcessRestCall(String strRestService, Map objParameterMap) throws Exception {
         String[] strRet = new String[2];
-        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "CTD service: "+strRestService+" "+strQuerystring);
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "CTD service: "+strRestService);
 
         try {
-            // Decoding the Querystring, sorry for the ugly hack
-            URI objURI = new URI("http://www.example.com/dummy?"+strQuerystring);
-            strQuerystring = objURI.getQuery();
-
-
             String strClassBase = "ctd.services.";
 
             Class clsClass = Class.forName(strClassBase+strRestService); // Classname of the RESTful service
@@ -61,30 +59,29 @@ public class CtdService {
                 }
             }
 
-            // Process the query string.
-            // Split into different groups of 'name=value'
-            String[] arrQueries = strQuerystring.split("&");
-            for(int i=0; i<arrQueries.length; i++) {
-                String[] arrSplit = arrQueries[i].split("=");
+            // Process the parameterMap
+            Set keys = objParameterMap.keySet();         // The set of keys in the map.
+            Iterator keyIter = keys.iterator();
+            while (keyIter.hasNext()) {
+                String key = (String) keyIter.next();  // Get the next key.
+                String[] value = (String[]) objParameterMap.get(key);  // Get the value for that key.
+                for(int i=0; i<value.length; i++) {
+                    key = key.substring(0, 1).toUpperCase()+key.substring(1, key.length());
+                    if(mapParameterTypes.containsKey("set"+key)) {
+                       Object[] arguments = new Object[1];
+                       arguments[0] = key;
 
-                arrSplit[0] = arrSplit[0].substring(0, 1).toUpperCase()+arrSplit[0].substring(1, arrSplit[0].length());
+                       // Cast parameter value to required type
+                       Object[] objParam = determineArguments(mapParameterTypes.get("set"+key).toString(),value[i]);
 
-                // Set each 'name' with the appropriate 'value' if there is a
-                // 'set'-function associated with the 'name', else thow a 400
-                if(mapParameterTypes.containsKey("set"+arrSplit[0])) {
-                   Object[] arguments = new Object[1];
-                   arguments[0] = arrSplit[0];
+                       // Obtain and invoke 'set'-function
+                       Method thisMethodSet = objClassMethods.getClass().getDeclaredMethod("set"+key, mapParameterTypes.get("set"+key));
+                       thisMethodSet.invoke(objClassInstance, objParam);
 
-                   // Cast parameter value to required type
-                   Object[] objParam = determineArguments(mapParameterTypes.get("set"+arrSplit[0]).toString(),arrSplit[1]);
-
-                   // Obtain and invoke 'set'-function
-                   Method thisMethodSet = objClassMethods.getClass().getDeclaredMethod("set"+arrSplit[0], mapParameterTypes.get("set"+arrSplit[0]));
-                   thisMethodSet.invoke(objClassInstance, objParam);
-
-                } else {
-                    //throw new Exception400BadRequest();
-                    Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Supplied parameter '"+arrSplit[0]+"' is not known by the service "+strRestService+".");
+                    } else {
+                        //throw new Exception400BadRequest();
+                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Supplied parameter '"+key+"' is not known by the service "+strRestService+".");
+                    }
                 }
             }
 

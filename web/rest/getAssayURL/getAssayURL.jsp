@@ -10,7 +10,7 @@
 <jsp:useBean id="ctdservice" scope="page" class="ctd.services.internal.CtdService"/>
 
 <%
-    String[] message = ctdservice.ProcessRestCall("getAssayURL",request.getQueryString());
+    String[] message = ctdservice.ProcessRestCall("getAssayURL",request.getParameterMap());
     // ProcessRestCall gives 2 Strings back, message[0] is the response code and message[1] is the body of the message
     if(Integer.valueOf(message[0])!=307) {
         // A 307 is a redirect code and needs to be treated different than the other returns
