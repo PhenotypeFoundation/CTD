@@ -49,12 +49,10 @@ public class loginGSCF {
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = new String[2];
         try {
-            this.loginGSCF();
+            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "isUser", null);
             strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "getUser", null);
         } catch (Exception500InternalServerError ex) {
             Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error");
-        } catch (Exception307TemporaryRedirect ex) {
-            
         }
 
         ObjectTransformer trans = null;
@@ -69,7 +67,7 @@ public class loginGSCF {
         }
         
         ResourceBundle res = ResourceBundle.getBundle("settings");
-        String strRet = "You are signed in as <i>"+strUser+"</i> at the General Study Capture Framework (<a href='#'>sign out</a>)";
+        String strRet = "You are signed in as <i>"+strUser+"</i> at the General Study Capture Framework (<a href='"+objGSCFService.urlLogoutRemote(strSessionToken, res.getString("ctd.moduleURL") + "/index.jsp")+"'>sign out</a>)";
         if(strUser.equals("")) {
             strRet = "You are not signed in (<a href='"+objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/index.jsp")+"'>sign in</a>) at the General Study Capture Framework";
         }

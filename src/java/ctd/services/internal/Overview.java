@@ -36,11 +36,8 @@ public class Overview {
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = new String[2];
         ResourceBundle res = ResourceBundle.getBundle("settings");
-        HashMap<String, String> restParams = new HashMap<String, String>();
-        String strConsumerVal = res.getString("ctd.consumerID");
         try {
-            restParams.put("consumer", strConsumerVal);
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",restParams);
+            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",null);
         } catch (Exception500InternalServerError e) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (isUser): "+e.getError());
         }
@@ -60,11 +57,12 @@ public class Overview {
         }
         strOffset = "";
 
+        String strGSCFRespons2[] = new String[2];
+
         // Get all studies a user has access to
-        restParams.clear();
-        restParams.put("consumer", strConsumerVal);
         try {
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getStudies",restParams);
+            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getStudies",null);
+            strGSCFRespons2 = objGSCFService.callGSCF(getSessionToken(),"getAssays",null);
         } catch (Exception500InternalServerError e) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (getStudies): "+e.getError());
         }
@@ -88,6 +86,24 @@ public class Overview {
             mapStudyNames.put(objMap.get("studyToken"), objMap.get("title"));
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ADDED TO MAP: "+objMap.get("studyToken")+" "+objMap.get("title"));
         }
+
+        trans = null;
+        objJSON = null;
+        Map mapAssayNames = new HashMap();
+        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW RESPONSE "+strGSCFRespons[1]);
+        try {
+            trans = ObjectTransformerFactory.getInstance().getImplementation();
+            objJSON = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons2[1]);
+        } catch (Exception e) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (JSON): "+e.getLocalizedMessage());
+        }
+        
+        for(int i=0; i<objJSON.size(); i++) {
+            HashMap<String, String> objMap = (HashMap) objJSON.get(i);
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "EntrySET: "+objMap.entrySet().toString());
+            mapAssayNames.put(objMap.get("externalAssayID"), objMap.get("name"));
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ADDED TO MAP: "+objMap.get("studyToken")+" "+objMap.get("title"));
+        }
   
         if(!strStudyQuery.equals("")) strStudyQuery = " WHERE a.study_token IN(" + strStudyQuery + ") ";
 
@@ -104,7 +120,7 @@ public class Overview {
                             +" FROM study_sample_assay a"
                             +" "+strStudyQuery
                             +" GROUP BY a.X_REF"
-                            +" ORDER BY X_REF "+strOffset+"";
+                            +" "+strOffset+"";
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW QUERY: "+strQuery);
         SQLQuery sql = session.createSQLQuery(strQuery);
         Iterator it2 = sql.list().iterator();
@@ -112,7 +128,7 @@ public class Overview {
 
         // the gscf url in order to be able to refer to study and assay details
         String strGscfHome = res.getString("gscf.baseURL");
-
+        LinkedList<String> lstRijen = new LinkedList<String>();
         while (it2.hasNext()) {
             Object[] data = (Object[]) it2.next();
 
@@ -126,13 +142,20 @@ public class Overview {
             }
 
             iRownr++;
-
-            strRet += "<tr class=\""+strClass+"\">\n";
-            strRet += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>"+objGSCFService.getAssayName((String)data[0],(String)data[1],getSessionToken())+"</a></td>\n";
-            strRet += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>"+mapStudyNames.get((String)data[1])+"</a></td>\n";
-            strRet += "\t<td class=\"tdoverview\">"+data[2].toString()+" ("+strExprCount+")</td>\n";
-            strRet += "</tr>\n";
+            
+            String strLine = (String)mapStudyNames.get((String)data[1])+(String)mapAssayNames.get((String)data[0])+"!!SEP!!<tr class=\""+strClass+"\">\n";
+            strLine += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>"+mapAssayNames.get((String)data[0])+"</a></td>\n";
+            strLine += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>"+mapStudyNames.get((String)data[1])+"</a></td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+" ("+strExprCount+")</td>\n";
+            strLine += "</tr>\n";
+            lstRijen.add(strLine);
         }
+
+        for(int i=0; i<lstRijen.size(); i++) {
+            String[] arrLine = lstRijen.get(i).split("!!SEP!!");
+            strRet += arrLine[1];
+        }
+        
         session.close();
 
         return strRet;

@@ -107,6 +107,18 @@ public class GscfService {
         return res.getString("gscf.baseURL") + "/login/auth_remote?moduleURL="+res.getString("ctd.moduleURL")+"&consumer="+res.getString("ctd.consumerID")+"&token="+strToken+"&returnUrl="+strReturnURL;
     }
 
+    /**
+     * Returns the URL to let the user logout at GSCF
+     *
+     * @param   strToken  Session token
+     * @param   strReturnURL The url that GCSF redirects to if the request is succesful
+     * @return  URL to redirect the user to
+     */
+    public String urlLogoutRemote(String strToken, String strReturnURL) {
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        return res.getString("gscf.baseURL") + "/logout/remote?moduleURL="+res.getString("ctd.moduleURL")+"&consumer="+res.getString("ctd.consumerID")+"&token="+strToken+"&returnUrl="+strReturnURL;
+    }
+
     public boolean isUser(String strJSON) {
         boolean blnRet = false;
 
@@ -145,7 +157,7 @@ public class GscfService {
 
         return blnRet;
     }
-    
+    /*
     public String getAssayName(String strAssayToken, String strStudyToken, String strSessionToken) {
         String[] strGSCFRespons = new String[2];
 
@@ -169,4 +181,6 @@ public class GscfService {
         }
         return (String) objJSON.get("name");
     }
+     * 
+     */
 }
