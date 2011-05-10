@@ -99,6 +99,7 @@ if(jQuery)(
 					swfobject.embedSWF(settings.uploader, settings.id + 'Uploader', settings.width, settings.height, '9.0.24', settings.expressInstall, data, {'quality':'high','wmode':settings.wmode,'allowScriptAccess':settings.scriptAccess},{},function(event) {
 						if (typeof(settings.onSWFReady) == 'function' && event.success) settings.onSWFReady();
 					});
+                                        jQuery("#" + jQuery(this).attr('id') + "Uploader").append("<b>No Flash plugin found</b><br/>Your browser needs to support Flash in order to be able to use this upload.");
 					if (settings.queueID == false) {
 						jQuery("#" + jQuery(this).attr('id') + "Uploader").after('<div id="' + jQuery(this).attr('id') + 'Queue" class="uploadifyQueue"></div>');
 					} else {
@@ -186,7 +187,7 @@ if(jQuery)(
 					if (event.data.action(event, ID, fileObj, data, clearFast) !== false) {
 						if (remove) { 
 							var fadeSpeed = (clearFast == true) ? 0 : 250;
-							jQuery("#" + jQuery(this).attr('id') + ID).fadeOut(fadeSpeed, function() { jQuery(this).remove() });
+							jQuery("#" + jQuery(this).attr('id') + ID).fadeOut(fadeSpeed, function() {jQuery(this).remove()});
 						}
 					}
 				});
@@ -198,7 +199,7 @@ if(jQuery)(
 					if (event.data.action(event, clearFast) !== false) {
 						jQuery("#" + queueID).find('.uploadifyQueueItem').each(function() {
 							var index = jQuery('.uploadifyQueueItem').index(this);
-							jQuery(this).delay(index * 100).fadeOut(250, function() { jQuery(this).remove() });
+							jQuery(this).delay(index * 100).fadeOut(250, function() {jQuery(this).remove()});
 						});
 					}
 				});
