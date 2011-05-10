@@ -11,7 +11,7 @@
 
 function init_step1() {
     /* The DIV for step 1 is slowly shown */
-    document.getElementById('spanstep1').innerHTML="<input type='file' id='file_upload' name='file_upload' />";
+    $('#spanstep1').html("<input type='file' id='file_upload' name='file_upload' />");
     $('#file_upload').uploadify({
       'uploader'     : './uploadify/uploadify.swf',
       'script'       : './uploadHandler.jsp',

@@ -56,7 +56,7 @@ public class getStudies {
         strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getStudies",null);
         String[] strGSCFRespons2 = objGSCFService.callGSCF(getSessionToken(),"getAssays",null);
 
-        Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, "getSt:\nCODE: "+strGSCFRespons[0]+"\n"+strGSCFRespons[1]+"\n-----\nCODE: "+strGSCFRespons2[0]+"\n"+strGSCFRespons2[1]);
+        //Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, "getSt:\nCODE: "+strGSCFRespons[0]+"\n"+strGSCFRespons[1]+"\n-----\nCODE: "+strGSCFRespons2[0]+"\n"+strGSCFRespons2[1]);
         //LinkedList lstStudies = new LinkedList();
         LinkedList lstGSCFResponse = new LinkedList();
         LinkedList lstGSCFResponse2 = new LinkedList();

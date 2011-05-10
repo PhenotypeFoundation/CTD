@@ -69,17 +69,18 @@ public class GscfService {
             URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken+strParam);
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
             strRet[0] = connection.getResponseCode()+"";
-
-            // Read the response body into a buffer and process it
-            BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String strLine = "";
             strRet[1] = "";
-            while((strLine=rd.readLine())!=null){
-                strRet[1] +=strLine+"\n";
+            if(!strRet[0].equals("403")) {
+                // Read the response body into a buffer and process it
+                BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String strLine = "";
+                while((strLine=rd.readLine())!=null){
+                    strRet[1] +=strLine+"\n";
+                }
             }
             connection.disconnect();
         } catch(Exception e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: "+e.getLocalizedMessage());
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: \n"+e.getLocalizedMessage()+"\n"+e.toString()+"\nSessionToken: ["+sessionToken+"]\nrestMethod: ["+restMethod+"]\nparam: ["+strParam+"]");
             throw new Exception500InternalServerError(e.getMessage());
         }
 

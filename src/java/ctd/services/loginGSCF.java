@@ -49,21 +49,22 @@ public class loginGSCF {
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = new String[2];
         try {
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "isUser", null);
             strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "getUser", null);
         } catch (Exception500InternalServerError ex) {
-            Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error");
+            Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error \n"+ex.getError());
         }
 
-        ObjectTransformer trans = null;
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-            Map objJSON = (Map) trans.deserializeFromJsonString(strGSCFRespons[1]);
-            if(objJSON.containsKey("username")) {
-                strUser = (String) objJSON.get("username").toString();
+        if(!strGSCFRespons[0].equals("403")) {
+            ObjectTransformer trans = null;
+            try {
+                trans = ObjectTransformerFactory.getInstance().getImplementation();
+                Map objJSON = (Map) trans.deserializeFromJsonString(strGSCFRespons[1]);
+                if(objJSON.containsKey("username")) {
+                    strUser = (String) objJSON.get("username").toString();
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in loginGSCF.getUser");
             }
-        } catch (Exception ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in loginGSCF.getUser");
         }
         
         ResourceBundle res = ResourceBundle.getBundle("settings");
