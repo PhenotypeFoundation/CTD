@@ -19,10 +19,10 @@ function init_step1() {
       'displayData'  : 'percentage',
       'onSelectOnce' : function() {init_step2()},
       'onComplete'   : function(event, queueID, fileObj, response, data) {
-                          document.getElementById("filename").innerHTML=fileObj.name;
-                          document.getElementById("tempfolder").innerHTML=response.toString();
+                          $('#filename').html(fileObj.name);
+                          $('#tempfolder').html(response.toString());
                           upload_ready = true;
-                          document.getElementById("spanstep1").innerHTML='File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./uploadify/cancel.png" alt="remove file" style="border:0;"/></a>';
+                          $('#spanstep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./uploadify/cancel.png" alt="remove file" style="border:0;"/></a>');
                           init_step4();
                       },
       'fileExt'      : '*.zip',
@@ -34,7 +34,7 @@ function init_step1() {
     });
     $('#step1').show('slow');
     upload_ready = false;
-    document.getElementById("drag").innerHTML='...';
+    $('#drag').html('...');
     $('#step4').hide();
     $.scrollTo('#step1', 800);
 }
@@ -121,10 +121,10 @@ function init_step4() {
           url: "./getSamples.jsp?assayToken="+at+"&filename="+tf+"/"+fn,
           context: document.body,
           success: function(data, textStatus, jqXHR){
-            if(jqXHR.getResponseHeader("ErrorInSamples") != null) {
-                document.getElementById("spanstep4").innerHTML = data;
+            if(jqXHR.getResponseHeader("ErrorInSamples") != null && jqXHR.getResponseHeader("ErrorInSamples") != "") {
+                $("#spanstep4").html(data);
             } else {
-                document.getElementById("drag").innerHTML = data;
+                $("#drag").html(data);
                 REDIPS.drag.init();
             }
             $('#step4').show('slow');
@@ -142,7 +142,7 @@ function savedata()  {
     document.getElementById("submitdata").value = "Processing data...";
     document.getElementById("submitdata").disabled = true;
     document.getElementById("correct").disabled = true;
-    document.getElementById("spanstep1").innerHTML='File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>';
+    $("#drag").html('File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>');
     REDIPS.drag.enable_drag(false);
 
     /* We need to get the final matches from the TABLE in step 4. Therefore we
