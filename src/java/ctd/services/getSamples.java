@@ -170,7 +170,7 @@ public class getSamples {
             String fn = kv.getValue();
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(sampletokens.get(kv.getKey()));
             //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): "+i+": "+fn);
-            arrFiles[i] = fn.toLowerCase()+"!!SEP!!<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' value='"+map.get("sampleToken")+"'/></div></td></tr>";
+            arrFiles[i] = fn.toLowerCase()+"!!SEP!!<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' class='matching_file' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' class='matching_sample' value='"+map.get("sampleToken")+"'/></div></td></tr>";
             i++;
         }
         Arrays.sort(arrFiles);
@@ -199,7 +199,8 @@ public class getSamples {
         while(lstGSCFResponse.size()>0){
             HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.pop();
             strReturn += "<tr><td colspan='2' class='fs_fontsize'>"
-                    + "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"</div>"
+                    + "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")
+                    + "<input type='hidden' class='matching_sample' value='"+map.get("sampleToken")+"'/></div>"
                     + "</td></tr>";
         }
         strReturn += "</table>";

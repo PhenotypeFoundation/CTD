@@ -59,7 +59,7 @@ public class getAssays {
         strReturn = "<option value='none'>Select an assay...</option>";
         objGSCFService = new GscfService();
         HashMap<String, String> restParams = new HashMap<String, String>();
-        restParams.put("studyToken", strStudyToken);
+        restParams.put("studyToken", getStudyToken());
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAssays",restParams);
 
         LinkedList lstGSCFResponse = new LinkedList();

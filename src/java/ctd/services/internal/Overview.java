@@ -72,7 +72,7 @@ public class Overview {
             if(!strStudyCall.equals("")) strStudyCall += "&studyToken=";
             strStudyCall += objMap.get("parentStudyToken");
 
-            mapAssayNames.put(objMap.get("externalAssayID"), objMap.get("name"));
+            mapAssayNames.put(objMap.get("assayToken"), objMap.get("name"));
         }
 
         HashMap<String, String> objParam = new HashMap();
