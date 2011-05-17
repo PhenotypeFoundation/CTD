@@ -110,7 +110,7 @@ function init_step3() {
 function init_step4() {
     /* In the initiation of step 4, if both step 3 and the upload are ready, the
      * filename-samplename table is loaded via an AJAX-call to getSamples.jsp */
-    document.getElementById("spanstep4").innerHTML = 'You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div><br /><input type="submit" id="submitdata" value="Save data" onClick="savedata();"/>';
+    document.getElementById("spanstep4").innerHTML = 'You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div><br /><input type="submit" id="correct" value="Select a different assay" onClick="$(\'#step4\').hide(); init_step3();"/>&nbsp;<input type="submit" id="submitdata" value="Save data" onClick="savedata();"/>';
     if(upload_ready && step_3_ready) {
         var at = document.getElementById("selectAssay").value;
         document.getElementById("selectAssay").disabled = true;
