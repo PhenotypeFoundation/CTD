@@ -49,54 +49,35 @@ public class getStudies {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+strSessionToken);
             throw new Exception403Forbidden();
         }
-        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getStudies(): strSessionToken is valid: "+strSessionToken);
+
+        LinkedList lstGetAssays = objGSCFService.callGSCF2(getSessionToken(),"getAssays",null);
+
+        String strStudyCall = "";
+        for(int i = 0; i < lstGetAssays.size(); i++){
+            HashMap<String, String> mapTokens = (HashMap<String, String>) lstGetAssays.get(i);
+
+            if(!strStudyCall.equals("")) strStudyCall += "&studyToken=";
+            strStudyCall += mapTokens.get("parentStudyToken");
+        }
+
+        HashMap<String, String> objParam = new HashMap();
+        objParam.put("studyToken",strStudyCall);
+        LinkedList lstGetStudies = objGSCFService.callGSCF2(getSessionToken(),"getStudies",objParam);
+
+        String[] arrOptions = new String[lstGetAssays.size()];
+        for(int i = 0; i < lstGetStudies.size(); i++){
+            HashMap<String, String> map = (HashMap<String, String>) lstGetStudies.get(i);
+            String strCode = " ("+map.get("code")+")";
+            if(map.get("code")==null) {
+                strCode = "";
+            }
+            arrOptions[i] = map.get("title").toLowerCase()+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
+        }
+        
+        Arrays.sort(arrOptions);
 
         strReturn = "<option value='none'>Select a study...</option>";
-        objGSCFService = new GscfService();
-        strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getStudies",null);
-        String[] strGSCFRespons2 = objGSCFService.callGSCF(getSessionToken(),"getAssays",null);
-
-        //Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, "getSt:\nCODE: "+strGSCFRespons[0]+"\n"+strGSCFRespons[1]+"\n-----\nCODE: "+strGSCFRespons2[0]+"\n"+strGSCFRespons2[1]);
-        //LinkedList lstStudies = new LinkedList();
-        LinkedList lstGSCFResponse = new LinkedList();
-        LinkedList lstGSCFResponse2 = new LinkedList();
-
-        ObjectTransformer trans = null;
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-        } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            lstGSCFResponse = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
-            lstGSCFResponse2 = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons2[1]);
-        } catch (DeserializerException ex) {
-            Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        LinkedList<String> lstParentTokens = new LinkedList();
-        for(int i = 0; i < lstGSCFResponse2.size(); i++){
-            HashMap<String, String> mapTokens = (HashMap<String, String>) lstGSCFResponse2.get(i);
-            lstParentTokens.add(mapTokens.get("parentStudyToken"));
-            //Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, "parSt: "+mapTokens.get("parentStudyToken"));
-        }
-
-        String[] arrOptions = new String[lstGSCFResponse.size()];
-        for(int i = 0; i < lstGSCFResponse.size(); i++){
-            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            if(lstParentTokens.contains(map.get("studyToken"))) {
-                String strCode = " ("+map.get("code")+")";
-                if(map.get("code")==null) {
-                    strCode = "";
-                }
-                arrOptions[i] = map.get("title").toLowerCase()+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
-            } else {
-                arrOptions[i] = "";
-                //Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, "some are more equal: "+map.get("studyToken"));
-            }
-        }
-        Arrays.sort(arrOptions);
-        for(int i = 0; i < lstGSCFResponse.size(); i++){
+        for(int i = 0; i < arrOptions.length; i++){
             if(arrOptions[i].contains("!!SEP!!")) {
                 String[] arrSplit = arrOptions[i].split("!!SEP!!");
                 strReturn += arrSplit[1];

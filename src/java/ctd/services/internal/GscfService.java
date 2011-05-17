@@ -39,6 +39,7 @@ public class GscfService {
     * @throws      Exception500InternalServerError if something goes wrong while
     *              making or processing the REST call to GSCF this exception is thrown
     */
+    @Deprecated
     public String[] callGSCF(String sessionToken, String restMethod, HashMap<String, String> restParams) throws Exception500InternalServerError {
         String[] strRet = new String[2];
 
@@ -77,6 +78,7 @@ public class GscfService {
                 while((strLine=rd.readLine())!=null){
                     strRet[1] +=strLine+"\n";
                 }
+                rd.close();
             }
             connection.disconnect();
         } catch(Exception e) {
@@ -86,6 +88,31 @@ public class GscfService {
 
         return strRet;
     }
+
+    public LinkedList callGSCF2(String sessionToken, String restMethod, HashMap<String, String> restParams) {
+
+        String[] strRet = new String[2];
+
+        try {
+            strRet = this.callGSCF(sessionToken, restMethod, restParams);
+        } catch (Exception500InternalServerError e) {
+            StackTraceElement[] arrStackTr = Thread.currentThread().getStackTrace();
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF2 ERROR ("+arrStackTr[2].toString()+"): "+e.getError());
+        }
+
+        LinkedList objJSON = null;
+         try {
+            ObjectTransformer trans = ObjectTransformerFactory.getInstance().getImplementation();
+            objJSON = (LinkedList) trans.deserializeFromJsonString(strRet[1]);
+        } catch (Exception e) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF2 ERROR (JSON): "+e.getLocalizedMessage());
+        }
+
+        return objJSON;
+
+    }
+
+
     /**
      * Base URL of GSCF Rest Controller/API
      *

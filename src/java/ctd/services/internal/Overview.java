@@ -41,7 +41,7 @@ public class Overview {
         } catch (Exception500InternalServerError e) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (isUser): "+e.getError());
         }
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "isUser Response: "+strGSCFRespons[1]+" "+objGSCFService.isUser(strGSCFRespons[1]));
+
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/index.jsp?p=overview");
             throw new Exception307TemporaryRedirect(urlAuthRemote);
@@ -57,54 +57,34 @@ public class Overview {
         }
         strOffset = "";
 
-        String strGSCFRespons2[] = new String[2];
 
-        // Get all studies a user has access to
-        try {
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getStudies",null);
-            strGSCFRespons2 = objGSCFService.callGSCF(getSessionToken(),"getAssays",null);
-        } catch (Exception500InternalServerError e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (getStudies): "+e.getError());
-        }
-        ObjectTransformer trans = null;
-        LinkedList objJSON = null;
+        LinkedList lstGetAssays = objGSCFService.callGSCF2(getSessionToken(),"getAssays",null);
         String strStudyQuery = "";
-        Map mapStudyNames = new HashMap();
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW RESPONSE "+strGSCFRespons[1]);
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-            objJSON = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
-        } catch (Exception e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (JSON): "+e.getLocalizedMessage());
-        }
-        
-        for(int i=0; i<objJSON.size(); i++) {
-            HashMap<String, String> objMap = (HashMap) objJSON.get(i);
+        String strStudyCall = "";
+        Map mapAssayNames = new HashMap();
+                
+        for(int i=0; i<lstGetAssays.size(); i++) {
+            HashMap<String, String> objMap = (HashMap) lstGetAssays.get(i);
+            
             if(!strStudyQuery.equals("")) strStudyQuery += ",";
-            strStudyQuery += "'"+objMap.get("studyToken")+"'";
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "EntrySET: "+objMap.entrySet().toString());
-            mapStudyNames.put(objMap.get("studyToken"), objMap.get("title"));
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ADDED TO MAP: "+objMap.get("studyToken")+" "+objMap.get("title"));
+            strStudyQuery += "'"+objMap.get("parentStudyToken")+"'";
+
+            if(!strStudyCall.equals("")) strStudyCall += "&studyToken=";
+            strStudyCall += objMap.get("parentStudyToken");
+
+            mapAssayNames.put(objMap.get("externalAssayID"), objMap.get("name"));
         }
 
-        trans = null;
-        objJSON = null;
-        Map mapAssayNames = new HashMap();
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW RESPONSE "+strGSCFRespons[1]);
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-            objJSON = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons2[1]);
-        } catch (Exception e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (JSON): "+e.getLocalizedMessage());
+        HashMap<String, String> objParam = new HashMap();
+        objParam.put("studyToken",strStudyCall);
+        LinkedList lstGetStudies = objGSCFService.callGSCF2(getSessionToken(),"getStudies",objParam);
+
+        Map mapStudyNames = new HashMap();
+        for(int i=0; i<lstGetStudies.size(); i++) {
+            HashMap<String, String> objMap = (HashMap) lstGetStudies.get(i);
+            mapStudyNames.put(objMap.get("studyToken"), objMap.get("title"));
         }
-        
-        for(int i=0; i<objJSON.size(); i++) {
-            HashMap<String, String> objMap = (HashMap) objJSON.get(i);
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "EntrySET: "+objMap.entrySet().toString());
-            mapAssayNames.put(objMap.get("externalAssayID"), objMap.get("name"));
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "ADDED TO MAP: "+objMap.get("studyToken")+" "+objMap.get("title"));
-        }
-  
+
         if(!strStudyQuery.equals("")) strStudyQuery = " WHERE a.study_token IN(" + strStudyQuery + ") ";
 
         //open hibernate connection
