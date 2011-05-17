@@ -99,7 +99,9 @@ if(jQuery)(
 					swfobject.embedSWF(settings.uploader, settings.id + 'Uploader', settings.width, settings.height, '9.0.24', settings.expressInstall, data, {'quality':'high','wmode':settings.wmode,'allowScriptAccess':settings.scriptAccess},{},function(event) {
 						if (typeof(settings.onSWFReady) == 'function' && event.success) settings.onSWFReady();
 					});
-                                        jQuery("#" + jQuery(this).attr('id') + "Uploader").append("<b>No Flash plugin found</b><br/>Your browser needs to support Flash in order to be able to use this upload.");
+                                        if(!swfobject.hasFlashPlayerVersion("1")) {
+                                            jQuery("#" + jQuery(this).attr('id') + "Uploader").append("<b>No Flash plugin found</b><br/>Your browser needs to support Flash in order to be able to use this upload.");
+                                        }
 					if (settings.queueID == false) {
 						jQuery("#" + jQuery(this).attr('id') + "Uploader").after('<div id="' + jQuery(this).attr('id') + 'Queue" class="uploadifyQueue"></div>');
 					} else {
