@@ -9,7 +9,9 @@ import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
+import ctd.services.internal.responseComparator;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
@@ -63,25 +65,16 @@ public class getStudies {
         HashMap<String, String> objParam = new HashMap();
         objParam.put("studyToken",strStudyCall);
         LinkedList lstGetStudies = objGSCFService.callGSCF2(getSessionToken(),"getStudies",objParam);
+        Collections.sort(lstGetStudies, new responseComparator("title"));
 
-        String[] arrOptions = new String[lstGetAssays.size()];
+        strReturn = "<option value='none'>Select a study...</option>";
         for(int i = 0; i < lstGetStudies.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGetStudies.get(i);
             String strCode = " ("+map.get("code")+")";
             if(map.get("code")==null) {
                 strCode = "";
             }
-            arrOptions[i] = map.get("title").toLowerCase()+"!!SEP!!<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
-        }
-        
-        Arrays.sort(arrOptions);
-
-        strReturn = "<option value='none'>Select a study...</option>";
-        for(int i = 0; i < arrOptions.length; i++){
-            if(arrOptions[i].contains("!!SEP!!")) {
-                String[] arrSplit = arrOptions[i].split("!!SEP!!");
-                strReturn += arrSplit[1];
-            }
+            strReturn += "<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
         }
 
         return strReturn;

@@ -9,7 +9,9 @@ import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
+import ctd.services.internal.responseComparator;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
@@ -56,36 +58,16 @@ public class getAssays {
             throw new Exception403Forbidden();
         }
 
-        strReturn = "<option value='none'>Select an assay...</option>";
-        objGSCFService = new GscfService();
+
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("studyToken", getStudyToken());
-        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAssays",restParams);
+        LinkedList lstGetAssays = objGSCFService.callGSCF2(strSessionToken,"getAssays",restParams);
+        Collections.sort(lstGetAssays, new responseComparator("name"));
 
-        LinkedList lstGSCFResponse = new LinkedList();
-
-
-        ObjectTransformer trans = null;
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-        } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            lstGSCFResponse = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
-        } catch (DeserializerException ex) {
-            Logger.getLogger(getStudies.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        String[] arrOptions = new String[lstGSCFResponse.size()];
-        for(int i = 0; i < lstGSCFResponse.size(); i++){
-            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            arrOptions[i] = map.get("name").toLowerCase()+"!!SEP!!<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
-        }
-        Arrays.sort(arrOptions);
-        for(int i = 0; i < lstGSCFResponse.size(); i++){
-            String[] arrSplit = arrOptions[i].split("!!SEP!!");
-            strReturn += arrSplit[1];
+        strReturn = "<option value='none'>Select an assay...</option>";
+        for(int i = 0; i < lstGetAssays.size(); i++){
+            HashMap<String, String> map = (HashMap<String, String>) lstGetAssays.get(i);
+            strReturn += "<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
         }
         
         return strReturn;

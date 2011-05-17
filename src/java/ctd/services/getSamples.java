@@ -9,6 +9,7 @@ import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
+import ctd.services.internal.responseComparator;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,25 +71,10 @@ public class getSamples {
             throw new Exception403Forbidden();
         }
 
+        LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
+        Collections.sort(lstGetSamples, new responseComparator("name"));
+
         strReturn = "";
-        objGSCFService = new GscfService();
-        res = ResourceBundle.getBundle("settings");
-        strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getSamples",restParams);
-
-        LinkedList lstGSCFResponse = new LinkedList();
-
-        ObjectTransformer trans = null;
-        try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-        } catch (NoImplementationException ex) {
-            Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            lstGSCFResponse = (LinkedList) trans.deserializeFromJsonString(strGSCFRespons[1]);
-        } catch (DeserializerException ex) {
-            Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         strReturn += "<table>";
         strReturn += "<tr class='fs_th'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
 
@@ -110,7 +96,7 @@ public class getSamples {
             Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, "ERROR getSamples: "+e.getMessage());
         }
 
-        if(lstGSCFResponse.size()<lstFilenames.size()) {
+        if(lstGetSamples.size()<lstFilenames.size()) {
             blnError = true;
             return "<b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>GSCF</a> and add more samples.<br />";
         }
@@ -119,85 +105,24 @@ public class getSamples {
             return "<b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains cel-files and is readable before you upload it.<br />";
         }
 
-        //From samples to filenames
-        HashMap<String, String> results = new HashMap<String, String>();
-        HashMap<String, Integer> sampletokens = new HashMap<String, Integer>();
-        boolean[] used = new boolean[lstFilenames.size()];
-        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): lstGSCFResponsesize: "+lstGSCFResponse.size());
-        //Logger.getLogger(getTicket.class.getName()).log(Level.INFO, "getSamples(): lstFilenamessize: "+lstFilenames.size());
-        for(int i = 0; i < lstGSCFResponse.size() && i<lstFilenames.size(); i++){
-            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            String name = map.get("name").replace(" ", "").toLowerCase();
-            String event = map.get("event").replace(" ", "").toLowerCase();
-            String subject = map.get("subject").replace(" ", "").toLowerCase();
-            int highest_match = -1;
-            int highest_match_score = -1;
-            for(int j = 0; j < lstFilenames.size(); j++){
-                if(!used[j]){
-                    String fn = lstFilenames.get(j).replace(" ", "").toLowerCase();
-                    int score = 0;
-                    if(fn.contains(name)){
-                        score+=3;
-                    }
-                    if(fn.contains(event)){
-                        score+=1;
-                    }
-                    if(fn.contains(subject)){
-                        score+=2;
-                    }
-                    if(score>highest_match_score){
-                        highest_match = j;
-                        highest_match_score = score;
-                    }
-                }
-            }
-            used[highest_match]=true;
-            results.put(lstGSCFResponse.get(i).toString(),lstFilenames.get(highest_match));
-            sampletokens.put(lstGSCFResponse.get(i).toString(), i);
-        }
-
-        Iterator it = results.entrySet().iterator();
-        int i = 0;
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): resultssize: "+lstFilenames.size()+" "+results.size());
-        String[] arrFiles = new String[lstFilenames.size()];
-        while(it.hasNext()){
+        for(int i=0; i<lstFilenames.size(); i++) {
             String strColor = "#DDEFFF";
             if(i%2==0) {
-                //strColor = "#FFFFFF";
+                strColor = "#FFFFFF";
             }
-            Map.Entry<String, String> kv = (Map.Entry<String, String>) it.next();
-            //HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(i);
-            String fn = kv.getValue();
-            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.get(sampletokens.get(kv.getKey()));
-            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): "+i+": "+fn);
-            arrFiles[i] = fn.toLowerCase()+"!!SEP!!<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' class='matching_file' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")+"<input type='hidden' class='matching_sample' value='"+map.get("sampleToken")+"'/></div></td></tr>";
-            i++;
-        }
-        Arrays.sort(arrFiles);
-        for(int ii = 0; ii < arrFiles.length; ii++){
-            String[] arrSplit = arrFiles[ii].split("!!SEP!!");
-            strReturn += arrSplit[1];
+            HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
+
+            String fn = lstFilenames.get(i);
+
+            strReturn += "<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' class='matching_file' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"<input type='hidden' class='matching_sample' value='"+mapSamples.get("sampleToken")+"'/></div></td></tr>";
         }
 
-        //Remove used tokens from lstGSCFResponse
-        Iterator it2 = sampletokens.entrySet().iterator();
-        while(it2.hasNext()){
-            Map.Entry<String, Integer> kv = (Map.Entry<String, Integer>) it2.next();
-            for(int j = 0; j < lstGSCFResponse.size(); j++){
-                if(kv.getKey().equals(lstGSCFResponse.get(j).toString())){
-                    lstGSCFResponse.remove(j);
-                }
-            }
+        if(lstGetSamples.size()>0){
+            strReturn += "<tr class='fs_th'><td class='mark' colspan='2'><br />The following samples are not matched with a file.</td></tr>";
         }
 
-        // Add remainder of samples
-        boolean blnRemainingSamples = false;
-        if(lstGSCFResponse.size()>0){
-            strReturn += "<tr class='fs_th'><td class='mark' colspan='2'><br />The following sampletokens are not matched with a file.</td></tr>";
-        }
-
-        while(lstGSCFResponse.size()>0){
-            HashMap<String, String> map = (HashMap<String, String>) lstGSCFResponse.pop();
+        while(lstGetSamples.size()>0){
+            HashMap<String, String> map = (HashMap<String, String>) lstGetSamples.removeFirst();
             strReturn += "<tr><td colspan='2' class='fs_fontsize'>"
                     + "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")
                     + "<input type='hidden' class='matching_sample' value='"+map.get("sampleToken")+"'/></div>"
