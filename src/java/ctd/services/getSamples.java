@@ -4,6 +4,7 @@ import com.skaringa.javaxml.DeserializerException;
 import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
+import ctd.model.StudySampleAssay;
 import ctd.services.exceptions.Exception400BadRequest;
 import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
@@ -25,6 +26,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Query;
+import org.hibernate.cfg.Configuration;
 
 /**
  * @author Tjeerd van Dijk
@@ -131,6 +136,56 @@ public class getSamples {
         strReturn += "</table>";
 
         return strReturn;
+    }
+
+    public String getSamplesOverview() {
+        String strRet = "<table>";
+        if(getAssayToken()!=null && getSessionToken()!=null) {
+
+            GscfService objGSCFService = new GscfService();
+            HashMap<String, String> restParams = new HashMap<String, String>();
+            restParams.put("assayToken", getAssayToken());
+            LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
+            Collections.sort(lstGetSamples, new responseComparator("name"));
+            Collections.sort(lstGetSamples, new responseComparator("subject"));
+            Collections.sort(lstGetSamples, new responseComparator("startTime"));
+            Collections.sort(lstGetSamples, new responseComparator("event"));
+
+            SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+            Session session = sessionFactory.openSession();
+
+            HashMap<String, String> mapFiles = new HashMap<String, String>();
+            Query q1 = session.createQuery("from StudySampleAssay where X_REF='"+getAssayToken()+"'");
+            Iterator it1 = q1.iterate();
+            while (it1.hasNext()){
+                StudySampleAssay ssa = (StudySampleAssay) it1.next();
+                mapFiles.put(ssa.getSampleToken(), ssa.getNameRawfile());
+            }
+
+            while(lstGetSamples.size()>0) {
+                HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
+
+                String strFile = "<i>no file</i>";
+                if(mapFiles.containsKey(mapSamples.get("sampleToken"))) {
+                    strFile = mapFiles.get(mapSamples.get("sampleToken"));
+                }
+
+                strRet += "<tr>" +
+                        "<td>"+mapSamples.get("event")+"</td>"+
+                        "<td>"+mapSamples.get("startTime")+"</td>"+
+                        "<td>"+mapSamples.get("subject")+"</td>"+
+                        "<td>"+mapSamples.get("name")+"</td>"+
+                        "<td>"+mapSamples.get("material")+"</td>"+
+                        "<td>"+strFile+"</td>"+
+                        "</tr>\n";
+            }
+
+            session.close();
+            sessionFactory.close();
+        }
+        strRet += "</table>";
+
+        return strRet;
     }
 
     /**

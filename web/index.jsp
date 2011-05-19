@@ -17,33 +17,14 @@
         <title>Clean Transcriptome Database</title>
         <link rel="icon" href="./images/favicon.ico">
         <link href="./style.css" rel="stylesheet" type="text/css">
+        <link href="./scripts/uploadify.css" type="text/css" rel="stylesheet" />
         <script type="text/javascript" src="./scripts/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="./scripts/jquery.scrollTo-min.js"></script>
-        <script type="text/javascript">
-            function loadPage(page, div) {
-                strSep = "?";
-                if(page.indexOf("?") != -1) {
-                    strSep = "&";
-                }
-                page = page + strSep + "noCacheVar=" + new Date().getTime();
-                $.ajax({
-                    url: "./"+page,
-                    success: function(data, textStatus, jqXHR){
-                        if(jqXHR.getResponseHeader("RedirGSCF") != null && jqXHR.getResponseHeader("RedirGSCF") != "") {
-                            window.location.replace(jqXHR.getResponseHeader("RedirGSCF"));
-                        } else {
-                            $("#"+div).html(data);
-                        }
-                    }
-                });
-            }
-        </script>
-        <link href="./scripts/uploadify.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="./scripts/indexscripts.js"></script>
         <script type="text/javascript" src="./scripts/uploadscripts.js"></script>
         <script type="text/javascript" src="./scripts/overviewscripts.js"></script>
         <script type="text/javascript" src="./scripts/swfobject.js"></script>
         <script type="text/javascript" src="./scripts/jquery.uploadify.v2.1.4.min.js"></script>
-        <script type="text/javascript" src="./scripts/redips-drag.js"></script>
     </head>
     <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
     <%
@@ -55,11 +36,11 @@
     String strUserResponse = login.getUser();
     %>
     <body onLoad="loadPage('<%=strPage %>.jsp','content');">
-    <table style="width: 100%; margin-bottom: 5px;"><tr><td class="gscf_bar"><%=strUserResponse %></td></tr></table>
-    <table width="800" border="0" align="center" cellpadding="0" cellspacing="0"s>
+        <table style="width: 100%; margin-bottom: 5px;"><tr><td class="gscf_bar"><%=strUserResponse %></td></tr></table>
+    <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
-        <td colspan="8" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" width="63" height="55" align="right" /><img src="images/logo.jpg" width="567" height="55" align="left" /></td>
+        <td colspan="8" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" alt="Logo Nugo" width="63" height="55" align="right" /><img src="images/logo.jpg" alt="Logo CTD" width="567" height="55" align="left" /></td>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
       <tr class="black_button">
