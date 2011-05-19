@@ -101,7 +101,7 @@ public class GscfService {
         }
 
         LinkedList objJSON = null;
-         try {
+        try {
             ObjectTransformer trans = ObjectTransformerFactory.getInstance().getImplementation();
             objJSON = (LinkedList) trans.deserializeFromJsonString(strRet[1]);
         } catch (Exception e) {
@@ -163,8 +163,6 @@ public class GscfService {
         } catch (Exception ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService.isUser");
         }
-
-
 
         return blnRet;
     }
