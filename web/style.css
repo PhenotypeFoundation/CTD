@@ -27,6 +27,10 @@ a:active {
 	color: #0CF;
 }
 
+a img {
+    border: 0;
+}
+
 /* GSCF Bar */
 .gscf_bar {
     text-align: center;
@@ -118,6 +122,10 @@ a:active {
 	padding: 5px 6px;
 	text-align: left;
 	vertical-align: top;
+}
+
+.tdoverview a{
+	font: 11px verdana, arial, helvetica, sans-serif;
 }
 
 .thoverview {

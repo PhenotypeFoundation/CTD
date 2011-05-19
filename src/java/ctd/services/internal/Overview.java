@@ -124,10 +124,11 @@ public class Overview {
             iRownr++;
             
             String strLine = (String)mapStudyNames.get((String)data[1])+(String)mapAssayNames.get((String)data[0])+"!!SEP!!<tr class=\""+strClass+"\">\n";
-            strLine += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>"+mapAssayNames.get((String)data[0])+"</a></td>\n";
-            strLine += "\t<td class=\"tdoverview\"><a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>"+mapStudyNames.get((String)data[1])+"</a></td>\n";
-            strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+" ("+strExprCount+")</td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+mapAssayNames.get((String)data[0])+" (<a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>assay in GSCF</a>)</td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>study in GSCF</a>)</td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+"&nbsp;(<a href='#' onClick=''>more info</a>)\n";
             strLine += "</tr>\n";
+            //strLine += "<tbody id=\""+(String)data[0]+"HiddenRows\"><tr><td class=\"tdoverview\" colspan='4'>TEST!</td></tr></tbody>\n";
             lstRijen.add(strLine);
         }
 

@@ -12,12 +12,12 @@
 <jsp:setProperty name="overview" property="*"/>
 
         <h1>Overview</h1>
-        <br>
+        <p class="text_normal">This page shows studies and assays that have uploaded .CEL files</p>
         <table cellpadding="0" cellspacing="0" width="640" class="tableoverview">
           <tr>
             <th bgcolor="#0099CC" class="thoverview">Assay name</th>
             <th bgcolor="#0099CC" class="thoverview">Study name</th>
-            <th bgcolor="#0099CC" class="thoverview">Number of samples (with data)</th>
+            <th bgcolor="#0099CC" class="thoverview">Number of samples with data</th>
           </tr>
             <%
             try {
