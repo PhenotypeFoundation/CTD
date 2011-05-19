@@ -16,9 +16,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Clean Transcriptome Database</title>
         <link rel="icon" href="./images/favicon.ico">
-        <link href="style.css" rel="stylesheet" type="text/css">
-        <script type="text/javascript" src="./uploadify/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="./uploadify/jquery.scrollTo-min.js"></script>
+        <link href="./style.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="./scripts/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="./scripts/jquery.scrollTo-min.js"></script>
         <script type="text/javascript">
             function loadPage(page, div) {
                 strSep = "?";
@@ -38,11 +38,12 @@
                 });
             }
         </script>
-        <link href="./uploadify/uploadify.css" type="text/css" rel="stylesheet" />
-        <script type="text/javascript" src="./uploadscripts.js"></script>
-        <script type="text/javascript" src="./uploadify/swfobject.js"></script>
-        <script type="text/javascript" src="./uploadify/jquery.uploadify.v2.1.4.min.js"></script>
-        <script type="text/javascript" src="./uploadify/redips-drag.js"></script>
+        <link href="./scripts/uploadify.css" type="text/css" rel="stylesheet" />
+        <script type="text/javascript" src="./scripts/uploadscripts.js"></script>
+        <script type="text/javascript" src="./scripts/overviewscripts.js"></script>
+        <script type="text/javascript" src="./scripts/swfobject.js"></script>
+        <script type="text/javascript" src="./scripts/jquery.uploadify.v2.1.4.min.js"></script>
+        <script type="text/javascript" src="./scripts/redips-drag.js"></script>
     </head>
     <jsp:useBean id="login" scope="session" class="ctd.services.loginGSCF"/>
     <%
