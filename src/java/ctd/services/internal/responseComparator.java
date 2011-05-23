@@ -10,12 +10,22 @@ import java.util.HashMap;
 public class responseComparator implements Comparator {
 
     private String strMapKey = "";
+    private boolean blnIsDouble = false;
 
     /**
      * @param strIn: the field in the map you want to use to sort the LinkedList
      */
     public responseComparator(String strIn) {
         strMapKey = strIn;
+    }
+
+    /**
+     * @param strIn: the field in the map you want to use to sort the LinkedList
+     * @param blnIn: a boolean indicating if this field is an integer
+     */
+    public responseComparator(String strIn, boolean blnIn) {
+        strMapKey = strIn;
+        blnIsDouble = blnIn;
     }
 
     /**
@@ -30,12 +40,25 @@ public class responseComparator implements Comparator {
     public int compare(Object arg0, Object arg1) {
         HashMap<String, String> map0 = (HashMap<String, String>)arg0;
         HashMap<String, String> map1 = (HashMap<String, String>)arg1;
-        if(map0.get(strMapKey).compareTo(map1.get(strMapKey))<0) {
-            return -1;
-        } else if(map0.get(strMapKey).equals(map1.get(strMapKey))) {
-            return 0;
+
+        if(!blnIsDouble) {
+            if(map0.get(strMapKey).compareTo(map1.get(strMapKey))<0) {
+                return -1;
+            } else if(map0.get(strMapKey).equals(map1.get(strMapKey))) {
+                return 0;
+            } else {
+                return 1;
+            }
         } else {
-            return 1;
+            double v0 = Double.valueOf(map0.get(strMapKey));
+            double v1 = Double.valueOf(map1.get(strMapKey));
+            if(v0<v1) {
+                return -1;
+            } else if(v0==v1) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
 }

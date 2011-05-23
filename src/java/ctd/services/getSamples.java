@@ -140,7 +140,15 @@ public class getSamples {
     }
 
     public String getSamplesOverview() {
-        String strRet = "<table>";
+        String strRet = "<table class='overviewdet'>";
+        strRet += "<tr>" +
+                        "<th>Event</th>"+
+                        "<th>Start time</th>"+
+                        "<th>Subject</th>"+
+                        "<th>Name</th>"+
+                        "<th>Material</th>"+
+                        "<th>File</th>"+
+                        "</tr>\n";
         if(getAssayToken()!=null && getSessionToken()!=null) {
 
             GscfService objGSCFService = new GscfService();
@@ -148,7 +156,7 @@ public class getSamples {
             restParams.put("assayToken", getAssayToken());
             LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
             Collections.sort(lstGetSamples, new responseComparator("name"));
-            Collections.sort(lstGetSamples, new responseComparator("subject"));
+            Collections.sort(lstGetSamples, new responseComparator("subject",true));
             Collections.sort(lstGetSamples, new responseComparator("startTime"));
             Collections.sort(lstGetSamples, new responseComparator("event"));
 
@@ -171,7 +179,7 @@ public class getSamples {
                     strFile = mapFiles.get(mapSamples.get("sampleToken"));
                 }
 
-                strRet += "<tr>" +
+                strRet += "<tr style='border: 1px solid white;'>" +
                         "<td>"+mapSamples.get("event")+"</td>"+
                         "<td>"+mapSamples.get("startTime")+"</td>"+
                         "<td>"+mapSamples.get("subject")+"</td>"+
