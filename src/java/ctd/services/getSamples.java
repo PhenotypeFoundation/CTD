@@ -82,6 +82,9 @@ public class getSamples {
         strReturn = "";
         strReturn += "<table style='width:100%'>";
         strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
+
+        HashMap<String, String> mapFiles = getFilesFromDatabase(getAssayToken());
+
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
             // Open the ZIP file
@@ -117,7 +120,14 @@ public class getSamples {
         String strOptions = "<option value='none'>Select a sample for this file...</option>";
         while(lstGetSamples.size()>0) {
             HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
-            strOptions += "<option value='"+mapSamples.get("sampleToken")+"'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"</option>";
+            if(!mapFiles.containsKey(mapSamples.get("sampleToken"))) {
+                strOptions += "<option value='"+mapSamples.get("sampleToken")+"'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"</option>";
+            } else {
+                strReturn += "<tr><td class='fs_fontsize' style='width:50%; background-color:#CCC;'>"+mapFiles.get(mapSamples.get("sampleToken"))+"</td>"
+                            +"<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>"
+                            +mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")
+                            +"</td></tr>";
+            }
         }
 
         for(int i=0; i<lstFilenames.size(); i++) {
@@ -130,8 +140,9 @@ public class getSamples {
 
             strReturn += "<tr><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"</td>"
                       +"<td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"
-                        +"<select name='"+fn+"' class='select_file' style='width:250px'>"+strOptions+"</select>"
-                        + "<a href='#' onClick=\"autofill('"+fn+"'); return false;\"><img src='./images/lightningBolt.png' border='0' alt='autofill' /></a></td></tr>";
+                        +"<select id='"+fn+"' class='select_file' style='width:250px' onChange=\"updateOptions('"+fn+"');\">"+strOptions+"</select>"
+                        + "<a href='#' id='link_autofill_"+fn+"' style='visibility: hidden' onClick=\"autofill('"+fn+"'); return false;\"><img src='./images/lightningBolt.png' style='border: 0px;' alt='autofill' /></a>"
+                        + " <span id='errorspan_"+fn+"' style='visibility: hidden; color:red; font-weight:bold;'>!!!</span></td></tr>";
         }
 
         strReturn += "</table>";
@@ -156,20 +167,11 @@ public class getSamples {
             restParams.put("assayToken", getAssayToken());
             LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
             Collections.sort(lstGetSamples, new responseComparator("name"));
-            Collections.sort(lstGetSamples, new responseComparator("subject",true));
+            Collections.sort(lstGetSamples, new responseComparator("subject"));
             Collections.sort(lstGetSamples, new responseComparator("startTime"));
             Collections.sort(lstGetSamples, new responseComparator("event"));
 
-            SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-            Session session = sessionFactory.openSession();
-
-            HashMap<String, String> mapFiles = new HashMap<String, String>();
-            Query q1 = session.createQuery("from StudySampleAssay where X_REF='"+getAssayToken()+"'");
-            Iterator it1 = q1.iterate();
-            while (it1.hasNext()){
-                StudySampleAssay ssa = (StudySampleAssay) it1.next();
-                mapFiles.put(ssa.getSampleToken(), ssa.getNameRawfile());
-            }
+            HashMap<String, String> mapFiles = getFilesFromDatabase(getAssayToken());
 
             while(lstGetSamples.size()>0) {
                 HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
@@ -189,12 +191,29 @@ public class getSamples {
                         "</tr>\n";
             }
 
-            session.close();
-            sessionFactory.close();
         }
         strRet += "</table>";
 
         return strRet;
+    }
+
+    public HashMap<String, String> getFilesFromDatabase(String strAssToken) {
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Session session = sessionFactory.openSession();
+
+        HashMap<String, String> mapFiles = new HashMap<String, String>();
+        Query q1 = session.createQuery("from StudySampleAssay where X_REF='"+strAssToken+"'");
+        Iterator it1 = q1.iterate();
+        while (it1.hasNext()){
+            StudySampleAssay ssa = (StudySampleAssay) it1.next();
+            mapFiles.put(ssa.getSampleToken(), ssa.getNameRawfile());
+        }
+        session.close();
+        sessionFactory.close();
+
+        //Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, "getFiles: "+mapFiles.size()+" "+strAssToken);
+
+        return mapFiles;
     }
 
     /**

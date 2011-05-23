@@ -241,7 +241,7 @@ function savedata()  {
         if(lstSelects[i].getAttribute("class")=="select_file") {
             if(lstSelects[i].value!="none") {
                 if(res.length>0) res += ",";
-                res += lstSelects[i].getAttribute("name")+","+lstSelects[i].value;
+                res += lstSelects[i].getAttribute("id")+","+lstSelects[i].value;
             }
         }
     }
