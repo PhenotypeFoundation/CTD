@@ -20,7 +20,7 @@ function init_step1() {
           'script'       : './uploadHandler.jsp',
           'cancelImg'    : './scripts/cancel.png',
           'displayData'  : 'percentage',
-          'onSelectOnce' : function() {init_step2()},
+          'onSelect'     : function() {init_step2()},
           'onComplete'   : function(event, queueID, fileObj, response, data) {
                               $('#filename').html(fileObj.name);
                               $('#tempfolder').html(response.toString());
