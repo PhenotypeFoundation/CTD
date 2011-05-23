@@ -80,22 +80,26 @@ public class getSamples {
         Collections.sort(lstGetSamples, new responseComparator("name"));
 
         strReturn = "";
-        strReturn += "<table>";
-        strReturn += "<tr class='fs_th'><th class='mark'>Filenames</th><th class='mark'>Samplenames</th></tr>";
-
+        strReturn += "<table style='width:100%'>";
+        strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
         LinkedList<String> lstFilenames = new LinkedList<String>();
         try {
             // Open the ZIP file
             ZipFile zf = new ZipFile(res.getString("ws.upload_folder")+strFilename);
 
             // Enumerate each entry
+            String strUglyHack = "";
             for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
                 // Get the entry name
                 String zipEntryName = ((ZipEntry)entries.nextElement()).getName();
                 if(!zipEntryName.equals(".") && !zipEntryName.equals("..")){
-                    lstFilenames.add(zipEntryName);
+                    if(!strUglyHack.equals("")) strUglyHack += "!!SEP!!";
+                    strUglyHack += zipEntryName;
                 }
             }
+            String[] arrFiles = strUglyHack.split("!!SEP!!");
+            Arrays.sort(arrFiles);
+            lstFilenames.addAll(Arrays.asList(arrFiles));
 
         } catch (IOException e) {
             Logger.getLogger(getSamples.class.getName()).log(Level.SEVERE, "ERROR getSamples: "+e.getMessage());
@@ -103,11 +107,17 @@ public class getSamples {
 
         if(lstGetSamples.size()<lstFilenames.size()) {
             blnError = true;
-            return "<b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in <a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>GSCF</a> and add more samples.<br />";
+            return "<b>There are more files in the submitted .zip than there are available samples.</b><br />Go to the study in GSCF (<a href='"+res.getString("gscf.baseURL")+"/assay/showByToken/"+getAssayToken()+"'>link</a>) and add more samples.<br />";
         }
         if(lstFilenames.size()==0) {
             blnError = true;
             return "<b>There are either no files in the submitted .zip, or the .zip is corrupted.</b><br/>No data has been processed!</br>Please make sure your .zip contains cel-files and is readable before you upload it.<br />";
+        }
+
+        String strOptions = "<option value='none'>Select a sample for this file...</option>";
+        while(lstGetSamples.size()>0) {
+            HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
+            strOptions += "<option value='"+mapSamples.get("sampleToken")+"'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"</option>";
         }
 
         for(int i=0; i<lstFilenames.size(); i++) {
@@ -115,24 +125,15 @@ public class getSamples {
             if(i%2==0) {
                 strColor = "#FFFFFF";
             }
-            HashMap<String, String> mapSamples = (HashMap<String, String>) lstGetSamples.removeFirst();
 
             String fn = lstFilenames.get(i);
 
-            strReturn += "<tr><td class='mark fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"<input type='hidden' class='matching_file' value='"+fn+"'/></td><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'><div class='drag' style='padding: 3px'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"<input type='hidden' class='matching_sample' value='"+mapSamples.get("sampleToken")+"'/></div></td></tr>";
+            strReturn += "<tr><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"</td>"
+                      +"<td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"
+                        +"<select name='"+fn+"' class='select_file' style='width:250px'>"+strOptions+"</select>"
+                        + "<a href='#' onClick=\"autofill('"+fn+"'); return false;\"><img src='./images/lightningBolt.png' border='0' alt='autofill' /></a></td></tr>";
         }
 
-        if(lstGetSamples.size()>0){
-            strReturn += "<tr class='fs_th'><td class='mark' colspan='2'><br />The following samples are not matched with a file.</td></tr>";
-        }
-
-        while(lstGetSamples.size()>0){
-            HashMap<String, String> map = (HashMap<String, String>) lstGetSamples.removeFirst();
-            strReturn += "<tr><td colspan='2' class='fs_fontsize'>"
-                    + "<div class='drag' style='padding: 3px'>"+map.get("name")+" - "+map.get("event")+" - "+map.get("Text on vial")
-                    + "<input type='hidden' class='matching_sample' value='"+map.get("sampleToken")+"'/></div>"
-                    + "</td></tr>";
-        }
         strReturn += "</table>";
 
         return strReturn;

@@ -25,7 +25,7 @@ function init_step1() {
                               $('#filename').html(fileObj.name);
                               $('#tempfolder').html(response.toString());
                               upload_ready = true;
-                              $('#spanstep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./uploadify/cancel.png" alt="remove file" style="border:0;"/></a>');
+                              $('#spanstep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./scripts/cancel.png" alt="remove file" style="border:0;"/></a>');
                               init_step4();
                           },
           'fileExt'      : '*.zip',
@@ -125,10 +125,11 @@ function init_step4() {
      * filename-samplename table is loaded via an AJAX-call to getSamples.jsp */
     if(upload_ready && step_3_ready) {
 
-        document.getElementById("spanstep4").innerHTML = 'You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div><br /><input type="submit" id="correct" value="Select a different assay" onClick="$(\'#step4\').hide(); init_step3();"/>&nbsp;<input type="submit" id="submitdata" value="Save data" onClick="savedata();"/>';
+        document.getElementById("spanstep4").innerHTML = 'You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div>';
         var at = document.getElementById("selectAssay").value;
         document.getElementById("selectAssay").disabled = true;
         document.getElementById("selectStudy").disabled = true;
+        document.getElementById("submitdata").disabled = false;
         var fn = document.getElementById("filename").innerHTML;
         var tf = document.getElementById("tempfolder").innerHTML;
         $.ajax({
@@ -137,6 +138,7 @@ function init_step4() {
           success: function(data, textStatus, jqXHR){
             if(jqXHR.getResponseHeader("ErrorInSamples") != null && jqXHR.getResponseHeader("ErrorInSamples") != "") {
                 $("#spanstep4").html(data);
+                document.getElementById("submitdata").disabled = true;
             } else {
                 $("#drag").html(data);
             }
@@ -144,6 +146,33 @@ function init_step4() {
             $.scrollTo('#step4', 800);
           }
         });
+    }
+}
+
+function autofill(selectid) {
+    //alert(selectid);
+    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    blnAutofill = false;
+    for(i=0; i<lstSelects.length; i++) {
+        if(lstSelects[i].getAttribute("class")=="select_file") {
+           if(!blnAutofill) {
+               if(lstSelects[i].getAttribute("name")==selectid && lstSelects[i].value!="none") {
+                   blnAutofill = true;
+                   iOption = lstSelects[i].selectedIndex;
+                  //alert("FOUND "+selectid+" "+iOption);
+               }
+           } else {
+               if(lstSelects[i].value=="none") {
+                   //alert("changing "+lstSelects[i].getAttribute("name"));
+                   iOption = iOption + 1;
+                   lstSelects[i].selectedIndex = iOption;
+                   //alert(lstSelects[i].getAttribute("name")+" "+iOption);
+               } else {
+                   //alert(lstSelects[i].getAttribute("name")+" break!! ["+lstSelects[i].getAttribute("value")+"]");
+                   break;
+               }
+           }
+        }
     }
 }
 
@@ -161,16 +190,13 @@ function savedata()  {
 
     /* We need to get the final matches from the TABLE in step 4. Therefore we
      * parse the content in order to find the hidden INPUTs that contain the tokens */
-    lstInputs = document.getElementById("spanstep4").getElementsByTagName("input");
+    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
     res = "";
-    blnExpectFile = true;
-    for(i=0; i<lstInputs.length; i++) {
-        if(lstInputs[i].getAttribute("type")=="hidden") {
-            //alert(lstInputs[i].getAttribute("value"));
-            if((lstInputs[i].getAttribute("class")=="matching_file" && blnExpectFile) || (lstInputs[i].getAttribute("class")=="matching_sample" && !blnExpectFile)) {
+    for(i=0; i<lstSelects.length; i++) {
+        if(lstSelects[i].getAttribute("class")=="select_file") {
+            if(lstSelects[i].value!="none") {
                 if(res.length>0) res += ",";
-                res += lstInputs[i].getAttribute("value");
-                blnExpectFile = !blnExpectFile;
+                res += lstSelects[i].getAttribute("name")+","+lstSelects[i].value;
             }
         }
     }
