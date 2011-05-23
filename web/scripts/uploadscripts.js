@@ -16,9 +16,9 @@ function init_step1() {
     } else {
         $('#spanstep1').html("<input type='file' id='file_upload' name='file_upload' />");
         $('#file_upload').uploadify({
-          'uploader'     : './uploadify/uploadify.swf',
+          'uploader'     : './scripts/uploadify.swf',
           'script'       : './uploadHandler.jsp',
-          'cancelImg'    : './uploadify/cancel.png',
+          'cancelImg'    : './scripts/cancel.png',
           'displayData'  : 'percentage',
           'onSelectOnce' : function() {init_step2()},
           'onComplete'   : function(event, queueID, fileObj, response, data) {
