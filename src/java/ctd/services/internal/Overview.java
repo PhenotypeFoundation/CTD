@@ -124,8 +124,8 @@ public class Overview {
             iRownr++;
             
             String strLine = (String)mapStudyNames.get((String)data[1])+(String)mapAssayNames.get((String)data[0])+"!!SEP!!<tr class=\""+strClass+"\">\n";
-            strLine += "\t<td class=\"tdoverview\">"+mapAssayNames.get((String)data[0])+" (<a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>assay in GSCF</a>)</td>\n";
-            strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>study in GSCF</a>)</td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+mapAssayNames.get((String)data[0])+" (<a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>details in GSCF</a>)</td>\n";
+            strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>details in GSCF</a>)</td>\n";
             strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+"&nbsp;(<a href='#' onClick='showOverviewDetails(\""+(String)data[0]+"\")'>more info</a>)\n";
             strLine += "</tr>\n";
             strLine += "<tbody id=\""+(String)data[0]+"HiddenRows\" style='visibility: collapse;'><tr><td class=\"tdoverview tdoverviewdetails\" colspan='4' id=\""+(String)data[0]+"Details\"><img src='./images/wait.gif' /></td></tr></tbody>\n";
