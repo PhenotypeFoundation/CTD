@@ -20,12 +20,12 @@ import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
 import com.skaringa.javaxml.SerializerException;
 import ctd.model.StudySampleAssay;
-import ctd.model.Ticket;
-import ctd.services.getTicket;
 import ctd.services.exceptions.*;
 import ctd.services.internal.GscfService;
 import ctd.ws.model.ProbeSetExpression;
 import ctd.ws.model.ExpressionProbesetSample;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,7 +66,8 @@ public class getMeasurementData {
         }
 
         //open hibernate connection
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+        Configuration objConf = new Configuration().configure();
+        SessionFactory sessionFactory = objConf.buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         // Check if the provided sessionToken has access to the provided assayToken
@@ -78,6 +79,11 @@ public class getMeasurementData {
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
+
+        if(strStudyToken.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -94,16 +100,16 @@ public class getMeasurementData {
 
         // If the optional parameter measurementToken is set, then we prepare
         // an extra condition for the query
-        String strMeasurementQuery = "";
-        if(!getMeasurementToken().equals("")) {
-            strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
+        String strMeasurementQuery = getMeasurementToken();
+        if(!strMeasurementQuery.isEmpty()) {
+            strMeasurementQuery = " AND ca.probeset IN(" + strMeasurementQuery + ") ";
         }
 
         // If the optional parameter sampleToken is set, then we prepare
         // an extra condition for the query
-        String strSampleQuery = "";
-        if(!getSampleToken().equals("")) {
-            strSampleQuery += " AND ssa.sample_token IN(" + getSampleToken() + ") ";
+        String strSampleQuery = getSampleToken();
+        if(!strSampleQuery.isEmpty()) {
+            strSampleQuery = " AND ssa.sample_token IN(" + strSampleQuery + ") ";
         }
 
 //        Ticket ticket = null;
@@ -135,7 +141,7 @@ public class getMeasurementData {
                         + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
         SQLQuery sql2 = session.createSQLQuery(strQuery2);
         Iterator it2 = sql2.list().iterator();
-        
+
         if(!blnVerbose) {
             // If the Verbose parameter is false or not set, then the first
             // line of the JSON should be all sampleTokens, the second line
@@ -244,14 +250,19 @@ public class getMeasurementData {
      * @return the strMeasurementToken
      */
     public String getMeasurementToken() {
-        String strRet = "";
-        for(int i=0; i<strMeasurementToken.size(); i++) {
-            if(!strRet.equals("")) {
-                strRet += ",";
+        StringBuffer strRet = new StringBuffer();
+        strRet.append("");
+        boolean hasMeasurementToken = false;
+
+         for(int i=0; i<strMeasurementToken.size(); i++) {
+            if(hasMeasurementToken) {
+                strRet.append( "," );
+            } else {
+                hasMeasurementToken = true;
             }
-            strRet += "'" + strMeasurementToken.get(i) + "'";
+            strRet.append( "'" ).append( strMeasurementToken .get(i) ).append( "'" );
         }
-        return strRet;
+        return strRet.toString();
     }
 
     /**
@@ -265,14 +276,19 @@ public class getMeasurementData {
      * @return the strSampleToken
      */
     public String getSampleToken() {
-        String strRet = "";
-        for(int i=0; i<strSampleToken.size(); i++) {
-            if(!strRet.equals("")) {
-                strRet += ",";
+        StringBuffer strRet = new StringBuffer();
+        strRet.append("");
+        boolean hasSampleToken = false;
+
+         for(int i=0; i<strSampleToken.size(); i++) {
+            if(hasSampleToken) {
+                strRet.append( "," );
+            } else {
+                hasSampleToken = true;
             }
-            strRet += "'" + strSampleToken.get(i) + "'";
+            strRet.append( "'" ).append( strSampleToken .get(i) ).append( "'" );
         }
-        return strRet;
+        return strRet.toString();
     }
 
     /**

@@ -62,6 +62,11 @@ public class getMeasurementMetadata {
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
+
+        if(strStudyToken.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+        
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -75,9 +80,9 @@ public class getMeasurementMetadata {
 
         // If the optional parameter measurementToken is set, then we prepare
         // an extra condition for the query
-        String strMeasurementQuery = "";
-        if(!getMeasurementToken().equals("")) {
-            strMeasurementQuery += " AND ca.probeset IN(" + getMeasurementToken() + ") ";
+        String strMeasurementQuery = getMeasurementToken();
+        if(!strMeasurementQuery.isEmpty()) {
+            strMeasurementQuery = " AND ca.probeset IN(" + strMeasurementQuery + ") ";
         }
 
         SQLQuery sql2 = session.createSQLQuery("SELECT DISTINCT ca.probeset,ca.gene_accession,ca.gene_symbol,ca.gene_description"
@@ -145,14 +150,19 @@ public class getMeasurementMetadata {
      * @return the strMeasurementToken
      */
     public String getMeasurementToken() {
-        String strRet = "";
-        for(int i=0; i<strMeasurementToken.size(); i++) {
-            if(!strRet.equals("")) {
-                strRet += ",";
+        StringBuffer strRet = new StringBuffer();
+        strRet.append("");
+        boolean hasMeasurementToken = false;
+
+         for(int i=0; i<strMeasurementToken.size(); i++) {
+            if(hasMeasurementToken) {
+                strRet.append( "," );
+            } else {
+                hasMeasurementToken = true;
             }
-            strRet += "'" + strMeasurementToken.get(i) + "'";
+            strRet.append( "'" ).append( strMeasurementToken .get(i) ).append( "'" );
         }
-        return strRet;
+        return strRet.toString();
     }
 
     /**

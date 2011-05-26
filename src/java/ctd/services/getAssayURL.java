@@ -55,6 +55,11 @@ public class getAssayURL {
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
+        
+        if(strStudyToken.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);

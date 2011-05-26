@@ -9,6 +9,10 @@ import ctd.model.Ticket;
 import ctd.services.exceptions.*;
 import ctd.services.getTicket;
 import ctd.services.internal.GscfService;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,16 +40,17 @@ public class getMeasurements {
         if(getAssayToken()==null || getSessionToken()==null){
             throw new Exception400BadRequest();
         }
-
+ 
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
         if(!objGSCFService.isUser(strGSCFRespons[1])) {
             throw new Exception403Forbidden();
         }
-
-        //open hibernate connection
-        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
+       
+        Configuration objConf;
+        objConf = new Configuration().configure();
+        SessionFactory sessionFactory = objConf.buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         // Check if the provided sessionToken has access to the provided assayToken
@@ -57,6 +62,11 @@ public class getMeasurements {
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
+        
+        if(strStudyToken.isEmpty()) {
+            throw new Exception404ResourceNotFound();
+        }
+
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);

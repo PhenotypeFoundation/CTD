@@ -15,7 +15,7 @@
     if(Integer.valueOf(message[0])!=307) {
         // A 307 is a redirect code and needs to be treated different than the other returns
         response.setStatus(Integer.valueOf(message[0]));
-        response.getWriter().println(message[1]);
+        response.getWriter().println(message[1]);   
     } else {
         response.sendRedirect(message[1]);
     }

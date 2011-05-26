@@ -37,7 +37,7 @@ public class CtdService {
     public String[] ProcessRestCall(String strRestService, Map objParameterMap) throws Exception {
         String[] strRet = new String[2];
         //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "CTD service: "+strRestService);
-
+        long startTime = System.currentTimeMillis();
         try {
             String strClassBase = "ctd.services.";
 
@@ -125,7 +125,13 @@ public class CtdService {
             strRet[1] = "Internal Server Error: CtdService";
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Internal Server Error: CtdService:\n"+e.getMessage());
         }
-
+        /*
+        String strBericht = strRet[1];
+        if(strRet[1].length()>2000) {
+            strBericht = strRet[1].substring(0, 1999)+" (...)";
+        }
+        Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "CODE: "+strRet[0]+", Response at "+strRestService+" (in "+(System.currentTimeMillis()-startTime)+"ms):<br />"+strBericht);
+        */
         return strRet;
     }
 
