@@ -1,4 +1,5 @@
  function loadPage(page, div) {
+    $("#"+div).html("<img src='./images/wait.gif' alt='loading page'/>");
     var strSep = "?";
     if(page.indexOf("?") != -1) {
         strSep = "&";
@@ -12,6 +13,9 @@
             } else {
                 $("#"+div).html(data);
             }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#"+div).html(xhr.status+" "+errorThrown);
         }
     });
 }
