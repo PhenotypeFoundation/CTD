@@ -14,6 +14,7 @@ function init_step1() {
     if(!swfobject.hasFlashPlayerVersion("1")) {
         $('#spanstep1').html("<b>No Flash plugin found</b><br/>Your browser needs to support Flash in order to be able to use this upload.");
     } else {
+        loaddiag();
         $('#spanstep1').html("<input type='file' id='file_upload' name='file_upload' />");
         $('#file_upload').uploadify({
           'uploader'     : './scripts/uploadify.swf',
@@ -43,13 +44,17 @@ function init_step1() {
     $.scrollTo('#step1', 800);
 }
 
-function showdiag() {
-  launchWindow("#dialog");
-}
-
-function closediag() {
-    $('#mask').hide();
-    $('.window').hide();
+function loaddiag() {
+    $("#dialog").dialog({
+      autoOpen: false,
+      open: function(event, ui) {
+          $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide();
+      },
+      closeOnEscape: false,
+      draggable: false,
+      modal: true,
+      resizable: false
+    });
 }
 
 function study_selected() {
@@ -229,8 +234,7 @@ function savedata()  {
     document.getElementById("submitdata").value = "Processing data...";
     document.getElementById("submitdata").disabled = true;
     document.getElementById("correct").disabled = true;
-    centerPopup();
-    loadPopup();
+    $("#dialog").dialog('open')
     $("#spanstep1").html('File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>');
 
     /* We need to get the final matches from the TABLE in step 4. Therefore we
@@ -254,58 +258,17 @@ function savedata()  {
       url: "./setData.jsp?studyToken="+st+"&assayToken="+at+"&filename="+tf+"&matches="+m,
       context: document.body,
       success: function(data){
-        $("#diagprocessing").html("<b>Finished</b><br />Your data has been processed, normalized and stored.<br /><a href='#' onClick='closePopup()'>Ok</a>")
+        $("#dialog").dialog( "option", "title", 'Finished' );
+        $("#dialog").html("Your data has been processed, normalized and stored.");
+        $("#dialog").dialog( "option", "buttons", [
+            {
+                text: "Ok",
+                click: function() {
+                    $(this).dialog('close')
+                    window.location = "./index.jsp?p=overview";
+                }
+            }
+        ] );
       }
-    });
-}
-
-/* POP UP */
-
-//SETTING UP OUR POPUP
-//0 means disabled; 1 means enabled;
-var popupStatus = 0;
-
-
-//loading popup with jQuery magic!
-function loadPopup(){
-    //loads popup only if it is disabled
-    if(popupStatus==0){
-        $("#mask").css({
-        "opacity": "0.7"
-        });
-        $("#mask").fadeIn("slow");
-        $("#diagprocessing").fadeIn("slow");
-        popupStatus = 1;
-    }
-}
-
-//disabling popup with jQuery magic!
-function closePopup(){
-    //disables popup only if it is enabled
-    if(popupStatus==1){
-        $("#mask").fadeOut("slow");
-        $("#diagprocessing").fadeOut("slow");
-        popupStatus = 0;
-        window.location = "./index.jsp?p=overview";
-    }
-}
-
-//centering popup
-function centerPopup(){
-    //request data for centering
-    var windowWidth = document.documentElement.clientWidth;
-    var windowHeight = document.documentElement.clientHeight;
-    var popupHeight = $("#diagprocessing").height();
-    var popupWidth = $("#diagprocessing").width();
-    //centering
-    $("#diagprocessing").css({
-        "position": "absolute",
-        "top": windowHeight/2-popupHeight/2,
-        "left": windowWidth/2-popupWidth/2
-    });
-    //only need force for IE6
-
-    $("#mask").css({
-     "height": windowHeight
     });
 }

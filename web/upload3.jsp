@@ -32,11 +32,7 @@ added to the study in GSCF which you would select in step 2, before you start th
 <div id="filename" style="display: none"></div>
 <div id="tempfolder" style="display: none"></div>
 <script type="text/javascript">init_step1();</script>
-<div id="boxes">
-    <div id="diagprocessing" class="window">
-        <b>Your data is being processed</b><br />
-        The time needed for processing depends on the number of files you submitted. If the number of files is smaller than 50, processing should be finished in a couple of minutes.<br />
-        <img src="./images/wait.gif"/>
-    </div>
-    <div id="mask"></div>
+<div id="dialog" style="display: none;" title="Your data is being processed">
+The time needed for processing depends on the number of files you submitted. If the number of files is smaller than 50, processing should be finished in a couple of minutes.<br />
+    <img src="./images/wait.gif"/>
 </div>
