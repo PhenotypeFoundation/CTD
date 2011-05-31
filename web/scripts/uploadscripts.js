@@ -76,8 +76,8 @@ function assay_selected() {
 
 /* These 2 booleans are used to monitor if enough information is available in
  * order to procede to step 4 */
-upload_ready = false;
-step_3_ready = false;
+var upload_ready = false;
+var step_3_ready = false;
 
 function init_step2() {
     /* In the initiation of step 2 the study SELECT is filled via

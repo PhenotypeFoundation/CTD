@@ -1,5 +1,5 @@
  function loadPage(page, div) {
-    strSep = "?";
+    var strSep = "?";
     if(page.indexOf("?") != -1) {
         strSep = "&";
     }

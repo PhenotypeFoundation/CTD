@@ -1,13 +1,11 @@
 var overviewdetail = "";
 
 function showOverviewDetails(assay) {
-    nowopen = overviewdetail;
+    var nowopen = overviewdetail;
     closeOverviewDetails();
     if(nowopen!=assay) {
         overviewdetail = assay;
-        $("#"+overviewdetail+"HiddenRows").css({
-            "visibility": "visible"
-        });
+        $("#"+overviewdetail+"HiddenRows").show();
         $.ajax({
             url: "./samplesoverview.jsp?assayToken="+assay,
             success: function(data, textStatus, jqXHR){
@@ -19,9 +17,7 @@ function showOverviewDetails(assay) {
 
 function closeOverviewDetails() {
     if(overviewdetail!="") {
-        $("#"+overviewdetail+"HiddenRows").css({
-            "visibility": "collapse"
-        });
+        $("#"+overviewdetail+"HiddenRows").hide();
         overviewdetail = "";
     }
 }

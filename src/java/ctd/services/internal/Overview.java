@@ -128,7 +128,7 @@ public class Overview {
             strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>details in GSCF</a>)</td>\n";
             strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+"&nbsp;(<a href='#' onClick='showOverviewDetails(\""+(String)data[0]+"\")'>more info</a>)\n";
             strLine += "</tr>\n";
-            strLine += "<tbody id=\""+(String)data[0]+"HiddenRows\" style='visibility: collapse;'><tr><td class=\"tdoverview tdoverviewdetails\" colspan='4' id=\""+(String)data[0]+"Details\"><img src='./images/wait.gif' /></td></tr></tbody>\n";
+            strLine += "<tbody id=\""+(String)data[0]+"HiddenRows\" style='display: none;'><tr><td class=\"tdoverview tdoverviewdetails\" colspan='4' id=\""+(String)data[0]+"Details\"><img src='./images/wait.gif' /></td></tr></tbody>\n";
             lstRijen.add(strLine);
         }
 
