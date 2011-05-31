@@ -331,18 +331,15 @@ public class getCleanData2 {
                         try{
                             listOfFiles[i].delete();
                         } catch(Exception e) {
-                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
+                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2 (try to delete): "+e.toString());
                         }
-                    }
-                }
-
-                //Copy remaining files for safekeeping
-                for(int i = 0; i < listOfFiles.length; i++){
-                    try{
-                        FileUtils.copyFileToDirectory(listOfFiles[i],fileFolderDest,false);
-                        listOfFiles[i].delete();
-                    } catch(Exception e) {
-                        Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
+                    } else {
+                        try{
+                            FileUtils.copyFileToDirectory(listOfFiles[i],fileFolderDest,false);
+                            listOfFiles[i].delete();
+                        } catch(Exception e) {
+                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2 (try to copy): "+e.toString());
+                        }
                     }
                 }
 

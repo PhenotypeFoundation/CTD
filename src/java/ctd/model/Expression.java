@@ -60,4 +60,23 @@ public class Expression implements java.io.Serializable {
         this.expression = expression;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Expression)){
+            return false;
+        }
+        Expression mm=(Expression)obj;
+
+        if(getChipAnnotationId().equals(mm.getChipAnnotationId()) &&
+           getStudySampleAssayId().equals(mm.getStudySampleAssayId()) &&
+           getExpression().equals(mm.getExpression())) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return (getChipAnnotationId()+getStudySampleAssayId()+getExpression()+"").hashCode();
+    }
 }
