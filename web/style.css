@@ -101,8 +101,6 @@ a img {
 	font-weight: normal;
 	color: #000;
 }
-
-
  
 .small-text {
 	font-size: small;
@@ -110,6 +108,7 @@ a img {
 .boldnumber {
 	font-weight: bold;
 }
+
 /** START :: OVERVIEW **/
 .tableoverview {
 	border: 1px solid #ccc;
@@ -147,12 +146,12 @@ a img {
 
 .odd {
 	background: #DDEFFF;
-        border: 0;
+        border: 0px;
 }
 
 .even {
 	background: #ffffff;
-        border: 1;
+        border: 1px;
 }
 
 .overviewdet {
@@ -173,18 +172,14 @@ a img {
 }
 
 /** START :: getSamples **/
-.fs_odd {
-    background-color: #00FF00;
-}
-
-.fs_even {
-    background-color: #0000FF;
-}
-
 .fs_th {
     font-weight: bold;
 }
 
 .fs_fontsize {
+    font-size: 8pt;
+}
+
+.fs_fontsize a {
     font-size: 8pt;
 }

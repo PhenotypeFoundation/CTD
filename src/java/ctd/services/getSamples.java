@@ -81,7 +81,7 @@ public class getSamples {
 
         strReturn = "";
         strReturn += "<table style='width:100%'>";
-        strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames</th></tr>";
+        strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames <span class='fs_fontsize'>[<a href='#' onClick='resetall(); return false;'>clear all</a>]</span></th></tr>";
 
         HashMap<String, String> mapFiles = getFilesFromDatabase(getAssayToken());
 

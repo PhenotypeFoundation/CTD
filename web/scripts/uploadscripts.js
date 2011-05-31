@@ -155,9 +155,10 @@ function init_step4() {
 }
 
 function validateOptions() {
-    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    var lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
     var map = new Object();
-    blnError = false;
+    var blnError = false;
+    var strPrev = "";
     for(i=0; i<lstSelects.length; i++) {
         if(lstSelects[i].getAttribute("class")=="select_file") {
             selectid = lstSelects[i].getAttribute("id");
@@ -171,7 +172,13 @@ function validateOptions() {
                     document.getElementById("errorspan_"+selectid).style.visibility="visible";
                     blnError = true;
                 }
+
+                if(strPrev!="") {
+                    document.getElementById("link_autofill_"+strPrev).style.visibility="hidden";
+                }
+                strPrev = selectid;
             } else {
+                strPrev = "";
                 document.getElementById("errorspan_"+selectid).style.visibility="hidden";
             }
         }
@@ -183,8 +190,6 @@ function validateOptions() {
 
 function updateOptions(selectid) {
 
-    validateOptions();
-
     iSelected = document.getElementById(selectid).selectedIndex;
 
     strVisible = "hidden";
@@ -193,6 +198,8 @@ function updateOptions(selectid) {
     }
 
     document.getElementById("link_autofill_"+selectid).style.visibility=strVisible;
+
+    validateOptions();
 }
 
 function autofill(selectid) {
@@ -224,6 +231,19 @@ function autofill(selectid) {
     }
     document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
     validateOptions();
+}
+
+function resetall() {
+    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    for(i=0; i<lstSelects.length; i++) {
+        if(lstSelects[i].getAttribute("class")=="select_file") {
+            lstSelects[i].selectedIndex = 0;
+            selectid = lstSelects[i].getAttribute("id");
+            document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
+            document.getElementById("errorspan_"+selectid).style.visibility="hidden";
+        }
+    }
+    document.getElementById("submitdata").disabled = false;
 }
 
 function savedata()  {
