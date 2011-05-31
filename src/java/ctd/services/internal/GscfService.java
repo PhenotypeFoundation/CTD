@@ -7,8 +7,10 @@ import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.getTicket;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -57,18 +59,27 @@ public class GscfService {
             restParams.put("moduleURL", strModuleVal);
         }
 
-        // Add all the parameters given in the map to the querystring
-        String strParam = "";
-        if(!(restParams==null) && !restParams.isEmpty()) {
-            for (Map.Entry<String, String> entry : restParams.entrySet()) {
-                strParam += "&"+entry.getKey()+"="+entry.getValue();
-            }
-        }
-
         try {
             // Place the REST call
-            URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken+strParam);
+            URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken);
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
+
+            connection.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            boolean blnFirst = true;
+            if(!(restParams==null) && !restParams.isEmpty()) {
+                for (Map.Entry<String, String> entry : restParams.entrySet()) {
+                    if(!blnFirst) {
+                        wr.write("&");
+                    } else {
+                        blnFirst = false;
+                    }
+                    wr.write(entry.getKey()+"="+entry.getValue());
+                }
+            }
+            wr.flush();
+            wr.close();
+
             strRet[0] = connection.getResponseCode()+"";
             strRet[1] = "";
             if(!strRet[0].equals("403")) {
@@ -81,8 +92,9 @@ public class GscfService {
                 rd.close();
             }
             connection.disconnect();
+            //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF result "+strRet[0]+":<br />"+strRet[1]);
         } catch(Exception e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: \n"+e.getLocalizedMessage()+"\n"+e.toString()+"\nSessionToken: ["+sessionToken+"]\nrestMethod: ["+restMethod+"]\nparam: ["+strParam+"]");
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "callGSCF Internal Error: \n"+e.getLocalizedMessage()+"\n"+e.toString()+"\nSessionToken: ["+sessionToken+"]\nrestMethod: ["+restMethod+"]");
             throw new Exception500InternalServerError(e.getMessage());
         }
 
