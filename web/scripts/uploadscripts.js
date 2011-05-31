@@ -16,6 +16,8 @@ function init_step1() {
     } else {
         loaddiag();
         $('#spanstep1').html("<input type='file' id='file_upload' name='file_upload' />");
+        $('#spanstep1').show();
+        $('#filestep1').hide();
         $('#file_upload').uploadify({
           'uploader'     : './scripts/uploadify.swf',
           'script'       : './uploadHandler.jsp',
@@ -26,7 +28,9 @@ function init_step1() {
                               $('#filename').html(fileObj.name);
                               $('#tempfolder').html(response.toString());
                               upload_ready = true;
-                              $('#spanstep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./scripts/cancel.png" alt="remove file" style="border:0;"/></a>');
+                              $('#filestep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./scripts/cancel.png" alt="remove file" style="border:0;"/></a>');
+                              $('#filestep1').show();
+                              $('#spanstep1').hide();
                               init_step4();
                           },
           'fileExt'      : '*.zip',
@@ -155,32 +159,30 @@ function init_step4() {
 }
 
 function validateOptions() {
-    var lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    lstSelects = $('.select_file');
     var map = new Object();
     var blnError = false;
     var strPrev = "";
     for(i=0; i<lstSelects.length; i++) {
-        if(lstSelects[i].getAttribute("class")=="select_file") {
-            selectid = lstSelects[i].getAttribute("id");
-            if(lstSelects[i].selectedIndex>0) {
-                if(map[lstSelects[i].selectedIndex]==null) {
-                    map[lstSelects[i].selectedIndex] = i;
-                    document.getElementById("errorspan_"+selectid).style.visibility="hidden";
-                } else {
-                    document.getElementById("errorspan_"+selectid).style.visibility="visible";
-                    selectid = lstSelects[map[lstSelects[i].selectedIndex]].getAttribute("id");
-                    document.getElementById("errorspan_"+selectid).style.visibility="visible";
-                    blnError = true;
-                }
-
-                if(strPrev!="") {
-                    document.getElementById("link_autofill_"+strPrev).style.visibility="hidden";
-                }
-                strPrev = selectid;
-            } else {
-                strPrev = "";
+        selectid = lstSelects[i].getAttribute("id");
+        if(lstSelects[i].selectedIndex>0) {
+            if(map[lstSelects[i].selectedIndex]==null) {
+                map[lstSelects[i].selectedIndex] = i;
                 document.getElementById("errorspan_"+selectid).style.visibility="hidden";
+            } else {
+                document.getElementById("errorspan_"+selectid).style.visibility="visible";
+                selectid = lstSelects[map[lstSelects[i].selectedIndex]].getAttribute("id");
+                document.getElementById("errorspan_"+selectid).style.visibility="visible";
+                blnError = true;
             }
+
+            if(strPrev!="") {
+                document.getElementById("link_autofill_"+strPrev).style.visibility="hidden";
+            }
+            strPrev = selectid;
+        } else {
+            strPrev = "";
+            document.getElementById("errorspan_"+selectid).style.visibility="hidden";
         }
     }
     document.getElementById("submitdata").disabled = blnError;
@@ -204,44 +206,40 @@ function updateOptions(selectid) {
 
 function autofill(selectid) {
     //alert(selectid);
-    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    lstSelects = $('.select_file');
     blnAutofill = false;
     for(i=0; i<lstSelects.length; i++) {
-        if(lstSelects[i].getAttribute("class")=="select_file") {
-           if(!blnAutofill) {
-               if(lstSelects[i].getAttribute("id")==selectid && lstSelects[i].value!="none") {
-                   blnAutofill = true;
-                   iOption = lstSelects[i].selectedIndex;
-                  //alert("FOUND "+selectid+" "+iOption);
-               }
-           } else {
-               if(lstSelects[i].value=="none") {
-                   //alert("changing "+lstSelects[i].getAttribute("name"));
-                   iOption = iOption + 1;
-                   if(iOption<lstSelects[i].length) {
-                        lstSelects[i].selectedIndex = iOption;
-                   }
-                   //alert(lstSelects[i].getAttribute("name")+" "+iOption);
-               } else {
-                   //alert(lstSelects[i].getAttribute("name")+" break!! ["+lstSelects[i].getAttribute("value")+"]");
-                   break;
-               }
+       if(!blnAutofill) {
+           if(lstSelects[i].getAttribute("id")==selectid && lstSelects[i].value!="none") {
+               blnAutofill = true;
+               iOption = lstSelects[i].selectedIndex;
+              //alert("FOUND "+selectid+" "+iOption);
            }
-        }
+       } else {
+           if(lstSelects[i].value=="none") {
+               //alert("changing "+lstSelects[i].getAttribute("name"));
+               iOption = iOption + 1;
+               if(iOption<lstSelects[i].length) {
+                    lstSelects[i].selectedIndex = iOption;
+               }
+               //alert(lstSelects[i].getAttribute("name")+" "+iOption);
+           } else {
+               //alert(lstSelects[i].getAttribute("name")+" break!! ["+lstSelects[i].getAttribute("value")+"]");
+               break;
+           }
+       }
     }
     document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
     validateOptions();
 }
 
 function resetall() {
-    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    lstSelects = $('.select_file');
     for(i=0; i<lstSelects.length; i++) {
-        if(lstSelects[i].getAttribute("class")=="select_file") {
-            lstSelects[i].selectedIndex = 0;
-            selectid = lstSelects[i].getAttribute("id");
-            document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
-            document.getElementById("errorspan_"+selectid).style.visibility="hidden";
-        }
+        lstSelects[i].selectedIndex = 0;
+        selectid = lstSelects[i].getAttribute("id");
+        document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
+        document.getElementById("errorspan_"+selectid).style.visibility="hidden";
     }
     document.getElementById("submitdata").disabled = false;
 }
@@ -255,18 +253,16 @@ function savedata()  {
     document.getElementById("submitdata").disabled = true;
     document.getElementById("correct").disabled = true;
     $("#dialog").dialog('open')
-    $("#spanstep1").html('File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>');
+    $("#filestep1").html('File uploaded: <i>'+document.getElementById("filename").innerHTML+'</i>');
 
     /* We need to get the final matches from the TABLE in step 4. Therefore we
      * parse the content in order to find the hidden INPUTs that contain the tokens */
-    lstSelects = document.getElementById("spanstep4").getElementsByTagName("select");
+    lstSelects = $('.select_file');
     res = "";
     for(i=0; i<lstSelects.length; i++) {
-        if(lstSelects[i].getAttribute("class")=="select_file") {
-            if(lstSelects[i].value!="none") {
-                if(res.length>0) res += ",";
-                res += lstSelects[i].getAttribute("id")+","+lstSelects[i].value;
-            }
+        if(lstSelects[i].value!="none") {
+            if(res.length>0) res += ",";
+            res += lstSelects[i].getAttribute("id")+","+lstSelects[i].value;
         }
     }
 
