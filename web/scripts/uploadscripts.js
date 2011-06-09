@@ -29,6 +29,13 @@ function init_step1() {
         $('#spanstep1').show();
         // hide the div that we will use to store the filename
         $('#filestep1').hide();
+        // reset step 2, 3 and 4
+        $('#step2').hide();
+        $('#step3').hide();
+        $('#step4').hide();
+        $("#selectStudy").html('');
+        $("#selectAssay").html('');
+        $('#drag').html('...');
         // initiate the uploadify code
         $('#file_upload').uploadify({
           'uploader'     : './scripts/uploadify.swf',
@@ -53,6 +60,13 @@ function init_step1() {
               // try to initiate step 4
               init_step4();
           },
+          'onCancel'    : function(event,ID,fileObj,data) {
+              // If the upload is canceled, step 2 and 3 should disappear
+              $('#step2').hide();
+              $('#step3').hide();
+              $("#selectStudy").html('');
+              $("#selectAssay").html('');
+          },
           // only .zip files are allowed
           'fileExt'      : '*.zip',
           'fileDesc'     : '.zip files',
@@ -67,10 +81,6 @@ function init_step1() {
     $('#step1').show('slow');
     // in the initiation of step 1 the upload is not completed
     upload_ready = false;
-    
-    // empty and hide step 4
-    $('#drag').html('...');
-    $('#step4').hide();
     
     // show step 1
     $.scrollTo('#step1', 800);
