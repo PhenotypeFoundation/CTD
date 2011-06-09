@@ -38,43 +38,45 @@ function init_step1() {
         $('#drag').html('...');
         // initiate the uploadify code
         $('#file_upload').uploadify({
-          'uploader'     : './scripts/uploadify.swf',
-          'script'       : './uploadHandler.jsp',
-          'cancelImg'    : './scripts/cancel.png',
-          // the displayData code was modified to include absolute and percetage
-          'displayData'  : 'percentage',
-          // when a file is selected, initiate step 2
-          'onSelect'     : function() {init_step2()},
-          'onComplete'   : function(event, queueID, fileObj, response, data) {
-              // when the upload is complete, store the filename
-              $('#filename').html(fileObj.name);
-              // store the folder where the file is uploaded
-              $('#tempfolder').html(response.toString());
-              // indicate that the uploading is complete
-              upload_ready = true;
-              $('#filestep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="init_step1();"><img src="./scripts/cancel.png" alt="remove file" style="border:0;"/></a>');
-              // show the filename
-              $('#filestep1').show();
-              // hide the upload button
-              $('#spanstep1').hide();
-              // try to initiate step 4
-              init_step4();
-          },
-          'onCancel'    : function(event,ID,fileObj,data) {
-              // If the upload is canceled, step 2 and 3 should disappear
-              $('#step2').hide();
-              $('#step3').hide();
-              $("#selectStudy").html('');
-              $("#selectAssay").html('');
-          },
-          // only .zip files are allowed
-          'fileExt'      : '*.zip',
-          'fileDesc'     : '.zip files',
-          'buttonText'   : 'Select a file',
-          'auto'         : true,
-          'queueSizeLimit':1,
-          // sizeLimit is maxInt
-          'sizeLimit'    : 2147483646
+            'uploader'     : './scripts/uploadify.swf',
+            'script'       : './uploadHandler.jsp',
+            'cancelImg'    : './scripts/cancel.png',
+            // the displayData code was modified to include absolute and percetage
+            'displayData'  : 'percentage',
+            // when a file is selected, initiate step 2
+            'onSelect'     : function() {
+                init_step2()
+            },
+            'onComplete'   : function(event, queueID, fileObj, response, data) {
+                // when the upload is complete, store the filename
+                $('#filename').html(fileObj.name);
+                // store the folder where the file is uploaded
+                $('#tempfolder').html(response.toString());
+                // indicate that the uploading is complete
+                upload_ready = true;
+                $('#filestep1').html('File uploaded: <i>'+fileObj.name+'</i> <a href="#" onClick="if(confirm(\'Are you sure you want to remove this file?\')) {init_step1();}"><img src="./scripts/cancel.png" alt="remove file" style="border:0;"/></a>');
+                // show the filename
+                $('#filestep1').show();
+                // hide the upload button
+                $('#spanstep1').hide();
+                // try to initiate step 4
+                init_step4();
+            },
+            'onCancel'    : function(event,ID,fileObj,data) {
+                // If the upload is canceled, step 2 and 3 should disappear
+                $('#step2').hide();
+                $('#step3').hide();
+                $("#selectStudy").html('');
+                $("#selectAssay").html('');
+            },
+            // only .zip files are allowed
+            'fileExt'      : '*.zip',
+            'fileDesc'     : '.zip files',
+            'buttonText'   : 'Select a file',
+            'auto'         : true,
+            'queueSizeLimit':1,
+            // sizeLimit is maxInt
+            'sizeLimit'    : 2147483646
         });
     }
     // show step 1
@@ -217,20 +219,20 @@ function init_step4() {
  */
 function loaddiag() {
     $("#dialog").dialog({
-      // we want to determine when the dialog shows
-      autoOpen: false,
-      // if the dialog opens, hide the close button
-      open: function(event, ui) {
-          $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide();
-      },
-      // disable the possibilty to close with escape
-      closeOnEscape: false,
-      // disable dragging of the dialog
-      draggable: false,
-      // make the dialog modal (you can't click anything else if this dialog is shown)
-      modal: true,
-      // disable resizability of the dialog
-      resizable: false
+        // we want to determine when the dialog shows
+        autoOpen: false,
+        // if the dialog opens, hide the close button
+        open: function(event, ui) {
+            $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide();
+        },
+        // disable the possibilty to close with escape
+        closeOnEscape: false,
+        // disable dragging of the dialog
+        draggable: false,
+        // make the dialog modal (you can't click anything else if this dialog is shown)
+        modal: true,
+        // disable resizability of the dialog
+        resizable: false
     });
 }
 
