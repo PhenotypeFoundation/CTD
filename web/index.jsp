@@ -42,7 +42,7 @@
     <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
-        <td colspan="8" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" alt="Logo Nugo" width="63" height="55" align="right" /><img src="images/logo.jpg" alt="Logo CTD" width="567" height="55" align="left" /></td>
+        <td colspan="5" bgcolor="#FFFFFF"><img src="images/nugo_logo1.jpg" alt="Logo Nugo" width="63" height="55" align="right" /><img src="images/logo.jpg" alt="Logo CTD" width="567" height="55" align="left" /></td>
         <td width="50" bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
       <tr class="black_button">
@@ -53,16 +53,17 @@
         ResourceBundle res = ResourceBundle.getBundle("settings");
         out.print("<td><a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a></td>");
         %>
-        <td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td>
-        <td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td>
-        <td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td>
+        <td><a href="#" onClick="loadPage('upload3.jsp','content');">Upload data</a></td>
+        <% //<td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td> %>
+        <% //<td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td> %>
+        <% //<td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td> %>
         <td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
-        <td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td>
+        <% //<td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td> %>
         <td>&nbsp;</td>
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" colspan="8" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;"><img src="./images/wait.gif" alt="loading page content..." /></div></td>
+        <td width="700" colspan="5" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;margin-bottom:10px;"><img src="./images/wait.gif" alt="loading page content..." /></div></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>

@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*"  errorPage="" %>
-<jsp:include page="home.jsp" />
+<% //<jsp:include page="home.jsp" />%>
 <p><span class="text_normal"><strong>Usage</strong><br />
 The NuGO <strong>C</strong>lean <strong>T</strong>ranscriptome <strong>D</strong>atabase is a module of the <a target="_blank" href="http://dbnp.org/dbnp/modules-1/cleantranscriptomicsdatabase">Nutritional Phenotype database</a> that allows users to submit their transcriptome data in the raw format (*.CEL files). Along the way the data is processed, normalized and stored. Users are asked to provide an experiment title and are allowed to arrange the individual hybridizations into groups of biological repeats for statistical needs. <br />
 A global password is provided making the CTD safe for external access. In addition, laboratory protocols can be uploaded, edited and shared.</span> <span class="text_normal">Programmable access is provided by JSON http requests directly (<a target="_blank" href="http://dbnp.org/dbnp/modules-1/detailed-descriptions-of-restful-services">protocol</a>). JSON examples with a password are found here on the example page.</span><br />
