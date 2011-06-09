@@ -54,7 +54,11 @@ public class loginGSCF {
             Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error \n"+ex.getError());
         }
 
-        if(!strGSCFRespons[0].equals("403")) {
+        if(strGSCFRespons[0].equals("503")) {
+            return "ERROR, GSCF OFFLINE";
+        }
+        
+        if(strGSCFRespons[0].equals("200")) {
             ObjectTransformer trans = null;
             try {
                 trans = ObjectTransformerFactory.getInstance().getImplementation();

@@ -63,7 +63,7 @@ public class GscfService {
             // Place the REST call
             URL urlURL = new URL(this.restURL()+restMethod+"/query?token="+sessionToken);
             HttpURLConnection connection = (HttpURLConnection)urlURL.openConnection();
-
+            
             connection.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             boolean blnFirst = true;
@@ -82,7 +82,7 @@ public class GscfService {
 
             strRet[0] = connection.getResponseCode()+"";
             strRet[1] = "";
-            if(!strRet[0].equals("403")) {
+            if(strRet[0].equals("200")) {
                 // Read the response body into a buffer and process it
                 BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String strLine = "";
