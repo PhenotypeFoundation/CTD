@@ -160,15 +160,12 @@ a img {
 	padding: 2px 6px;
         color: #000;
 	text-align: left;
-}
-
-.overviewdet td {
-        border: 1px solid white;
+        width: 100%;
 }
 
 .overviewdet th{
 	font-weight: bold;
-        border: 1px solid white;
+        padding-bottom: 10px;
 }
 
 /** START :: getSamples **/

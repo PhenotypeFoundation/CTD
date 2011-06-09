@@ -52,7 +52,7 @@ public class getSamples {
      */
 
     public String getSamples() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
-        String strReturn = "";
+        StringBuilder strReturn = new StringBuilder();
 
         // Check if the minimal parameters are set
         if(getSessionToken()==null){
@@ -79,9 +79,8 @@ public class getSamples {
         LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
         Collections.sort(lstGetSamples, new responseComparator("name"));
 
-        strReturn = "";
-        strReturn += "<table style='width:100%'>";
-        strReturn += "<tr class='fs_th'><th>Filenames</th><th>Samplenames <span class='fs_fontsize'>[<a href='#' onClick='resetall(); return false;'>clear all</a>]</span></th></tr>";
+        strReturn.append("<table style='width:100%'>");
+        strReturn.append("<tr class='fs_th'><th>Filenames</th><th>Samplenames <span class='fs_fontsize'>[<a href='#' onClick='resetall(); return false;'>clear all</a>]</span></th></tr>");
 
         HashMap<String, String> mapFiles = getFilesFromDatabase(getAssayToken());
 
@@ -123,10 +122,10 @@ public class getSamples {
             if(!mapFiles.containsKey(mapSamples.get("sampleToken"))) {
                 strOptions += "<option value='"+mapSamples.get("sampleToken")+"'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"</option>";
             } else {
-                strReturn += "<tr><td class='fs_fontsize' style='width:50%; background-color:#CCC;'>"+mapFiles.get(mapSamples.get("sampleToken"))+"</td>"
-                            +"<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>"
-                            +mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")
-                            +"</td></tr>";
+                strReturn.append("<tr>" +
+                    "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapFiles.get(mapSamples.get("sampleToken"))).append("</td>" +
+                    "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapSamples.get("name")).append(" - ").append(mapSamples.get("event")).append(" - ").append(mapSamples.get("Text on vial")).append("</td>" +
+                     "</tr>");
             }
         }
 
@@ -138,28 +137,31 @@ public class getSamples {
 
             String fn = lstFilenames.get(i);
 
-            strReturn += "<tr><td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"+fn+"</td>"
-                      +"<td class='fs_fontsize' style='width:50%; background-color:"+strColor+";'>"
-                        +"<select id='"+fn+"' class='select_file' style='width:250px' onChange=\"updateOptions('"+fn+"');\">"+strOptions+"</select>"
-                        + "<a href='#' id='link_autofill_"+fn+"' style='visibility: hidden' onClick=\"autofill('"+fn+"'); return false;\"><img src='./images/lightningBolt.png' style='border: 0px;' alt='autofill' /></a>"
-                        + " <span id='errorspan_"+fn+"' style='visibility: hidden; color:red; font-weight:bold;'>!!!</span></td></tr>";
+            strReturn.append("<tr>" +
+                    "<td class='fs_fontsize' style='width:50%; background-color:").append(strColor).append(";'>").append(fn).append("</td>" + 
+                    "<td class='fs_fontsize' style='width:50%; background-color:").append(strColor).append(";'>" + 
+                        "<select id='").append(fn).append("' class='select_file' style='width:250px' onChange=\"updateOptions('").append(fn).append("');\">").append(strOptions).append("</select>" + 
+                        "<a href='#' id='link_autofill_").append(fn).append("' style='visibility: hidden' onClick=\"autofill('").append(fn).append("'); return false;\"><img src='./images/lightningBolt.png' style='border: 0px;' alt='autofill' /></a>" + 
+                        " <span id='errorspan_").append(fn).append("' style='visibility: hidden; color:red; font-weight:bold;'>!!!</span>" +
+                    "</td></tr>");
         }
 
-        strReturn += "</table>";
+        strReturn.append("</table>");
 
-        return strReturn;
+        return strReturn.toString();
     }
 
     public String getSamplesOverview() {
-        String strRet = "<table class='overviewdet'>";
-        strRet += "<tr>" +
+        
+        StringBuilder strRet = new StringBuilder();
+        strRet.append("<table class='overviewdet'>");
+        
+        strRet.append("<tr>" +
                         "<th>Event</th>"+
                         "<th>Start time</th>"+
                         "<th>Subject</th>"+
-                        "<th>Name</th>"+
-                        "<th>Material</th>"+
                         "<th>File</th>"+
-                        "</tr>\n";
+                        "</tr>\n");
         if(getAssayToken()!=null && getSessionToken()!=null) {
 
             GscfService objGSCFService = new GscfService();
@@ -180,21 +182,27 @@ public class getSamples {
                 if(mapFiles.containsKey(mapSamples.get("sampleToken"))) {
                     strFile = mapFiles.get(mapSamples.get("sampleToken"));
                 }
-
-                strRet += "<tr style='border: 1px solid white;'>" +
-                        "<td>"+mapSamples.get("event")+"</td>"+
-                        "<td>"+mapSamples.get("startTime")+"</td>"+
-                        "<td>"+mapSamples.get("subject")+"</td>"+
-                        "<td>"+mapSamples.get("name")+"</td>"+
-                        "<td>"+mapSamples.get("material")+"</td>"+
-                        "<td>"+strFile+"</td>"+
-                        "</tr>\n";
+                
+                String strStyle = "";
+                if(lstGetSamples.size()%2>0) {
+                    strStyle = "background-color: #DDD;";
+                } 
+                
+                strRet.append("<tr style='").append(strStyle).append(";'>" +
+                        "<td colspan='5'>Samplename: <span class='name'>").append(mapSamples.get("name")).append("</span></td>"+
+                        "</tr>");
+                strRet.append("<tr style='").append(strStyle).append(";'>" +
+                        "<td>").append(mapSamples.get("event")).append("</td>" +
+                        "<td>").append(mapSamples.get("startTime")).append("</td>" +
+                        "<td>").append(mapSamples.get("subject")).append("</td>" +
+                        "<td>").append(strFile).append("</td>"+
+                        "</tr>\n");
             }
 
         }
-        strRet += "</table>";
+        strRet.append("</table>");
 
-        return strRet;
+        return strRet.toString();
     }
 
     public HashMap<String, String> getFilesFromDatabase(String strAssToken) {
