@@ -48,15 +48,15 @@
       <tr class="black_button">
         <td>&nbsp;</td>
         <td><a href="#" onClick="loadPage('about.jsp','content');">Home</a></td>
-        <td><a href="#" onClick="loadPage('overview.jsp','content');">Overview</a></td>
-        <%
-        ResourceBundle res = ResourceBundle.getBundle("settings");
-        out.print("<td><a href='"+res.getString("gscf.baseURL")+"/'>GSCF</a></td>");
-        %>
+        <td><a href="#" onClick="loadPage('overview.jsp','content');">My studies</a></td>
         <td><a href="#" onClick="loadPage('upload3.jsp','content');">Upload data</a></td>
         <% //<td><a href="#" onClick="loadPage('query.jsp','content');">Query</a></td> %>
         <% //<td><a href="#" onClick="loadPage('example.jsp','content');">Code Examples</a></td> %>
         <% //<td><a href="#" onClick="loadPage('installation.jsp','content');">Installation</a></td> %>
+        <%
+        ResourceBundle res = ResourceBundle.getBundle("settings");
+        out.print("<td><a href='"+res.getString("gscf.baseURL")+"/'>Go to GSCF</a></td>");
+        %>
         <td><a href="#" onClick="loadPage('contact.jsp','content');">Contact</a></td>
         <% //<td><a href="#" onClick="loadPage('download.jsp','content');">Download</a></td> %>
         <td>&nbsp;</td>
