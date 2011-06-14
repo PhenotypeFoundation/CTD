@@ -52,30 +52,34 @@ public class getMeasurementData {
     private boolean blnVerbose = false;
 
     public String[] getMeasurementData() throws NoImplementationException, SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
-
+long startTime = System.currentTimeMillis();
+String strBericht = "";
         // Check if the minimal parameters are set
         if(strAssayToken==null || strSessionToken==null){
             throw new Exception400BadRequest();
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: r61<br />";
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+        if(!objGSCFService.isUser(getSessionToken())) {
             throw new Exception403Forbidden();
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: isUser gedaan<br />";
         //open hibernate connection
         Configuration objConf = new Configuration().configure();
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: config gemaakt<br />";
         SessionFactory sessionFactory = objConf.buildSessionFactory();
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: sessionfac gemaakt<br />";
         Session session = sessionFactory.openSession();
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: session gemaakt<br />";
         // Check if the provided sessionToken has access to the provided assayToken
         // This needs to be verified with the studyToken
         String strQ = "SELECT DISTINCT study_token FROM study_sample_assay WHERE X_REF ='"+getAssayToken()+"'";
         SQLQuery sql = session.createSQLQuery(strQ);
         String strStudyToken = "";
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: q gemaakt<br />";
         Iterator it1 = sql.list().iterator();
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: q uitgevoerd<br />";
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
@@ -83,35 +87,35 @@ public class getMeasurementData {
         if(strStudyToken.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: voor getAuth<br />";
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
-        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
+        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: na getAuth<br />";
         // init parameters
         String[] strReturn = new String [2];
         ArrayList<Object> total = new ArrayList<Object>();
         ArrayList<String> lstSampleToken = new ArrayList<String>();
         ArrayList<String> lstMeasurementToken = new ArrayList<String>();
         ArrayList<Double> lstExpressions = new ArrayList<Double>();
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: lijsten gemaakt<br />";
         // If the optional parameter measurementToken is set, then we prepare
         // an extra condition for the query
         String strMeasurementQuery = getMeasurementToken();
         if(!strMeasurementQuery.isEmpty()) {
             strMeasurementQuery = " AND ca.probeset IN(" + strMeasurementQuery + ") ";
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: measurementQ<br />";
         // If the optional parameter sampleToken is set, then we prepare
         // an extra condition for the query
         String strSampleQuery = getSampleToken();
         if(!strSampleQuery.isEmpty()) {
             strSampleQuery = " AND ssa.sample_token IN(" + strSampleQuery + ") ";
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: sampleQ<br />";
 //        Ticket ticket = null;
 //        Integer ssa_id = null;
 //        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
@@ -139,9 +143,11 @@ public class getMeasurementData {
                         + " AND ex.study_sample_assay_id=ssa.id"
                         + strSampleQuery + strMeasurementQuery
                         + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
+Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "<hr />"+strQuery2+"<hr />");
         SQLQuery sql2 = session.createSQLQuery(strQuery2);
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: q2 gemaakt<br />";
         Iterator it2 = sql2.list().iterator();
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: q2 uitgevoerd<br />";
         if(!blnVerbose) {
             // If the Verbose parameter is false or not set, then the first
             // line of the JSON should be all sampleTokens, the second line
@@ -150,7 +156,7 @@ public class getMeasurementData {
             // These hashmaps are used to make sure that a token is only reported once
             HashMap<String, String> mapSampleToken = new HashMap<String, String>();
             HashMap<String, String> mapMeasurementToken = new HashMap<String, String>();
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: !verb<br />";
             while (it2.hasNext()) {
                 Object[] data = (Object[]) it2.next();
                 Double value = (Double) data[0];
@@ -170,6 +176,7 @@ public class getMeasurementData {
                 // add the expression
                 lstExpressions.add(value);
             }
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: !verb loop doorlopen<br />";
             if(lstExpressions.size()>0) {
                 // if the query returned results lstExpressions should be
                 // bigger than zero
@@ -181,6 +188,7 @@ public class getMeasurementData {
             // if the parameter Verbose is set to true every line in the JSON
             // message should report a sampleToken, a measurementToken and a
             // value
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: verb<br />";
             while (it2.hasNext()) {
                 Object[] data = (Object[]) it2.next();
                 Double value = (Double) data[0];
@@ -193,16 +201,17 @@ public class getMeasurementData {
                 objNew.setValue(value);
                 total.add(objNew);
             }
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: verb loop doorlopen<br />";
         }
 
         // Close hibernate session
         session.close();
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: session gesloten<br />";
         // If no data is found, then a 404 is thrown
         if(total.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
-
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: voor skaringa<br />";
         // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
         try {
@@ -210,11 +219,14 @@ public class getMeasurementData {
         } catch (NoImplementationException ex) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
         }
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: na skaringa<br />";
 
         // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
         strReturn[1] = trans.serializeToJsonString(total);
 
+strBericht += "["+(System.currentTimeMillis()-startTime)+"]: EIND<br />";
+Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, strBericht);
         return strReturn;
     }
 

@@ -52,16 +52,14 @@ public class getAssays {
 
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken invalid: "+strSessionToken);
+        if(!objGSCFService.isUser(getSessionToken())) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getAssays(): strSessionToken invalid: "+getSessionToken());
             throw new Exception403Forbidden();
         }
 
-
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("studyToken", getStudyToken());
-        LinkedList lstGetAssays = objGSCFService.callGSCF2(strSessionToken,"getAssays",restParams);
+        LinkedList lstGetAssays = objGSCFService.callGSCF2(getSessionToken(),"getAssays",restParams);
         Collections.sort(lstGetAssays, new responseComparator("name"));
 
         strReturn = "<option value='none'>Select an assay...</option>";

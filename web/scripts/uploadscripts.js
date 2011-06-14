@@ -269,7 +269,10 @@ function validateOptions() {
                 // if the previous select also has an option selected, hide it's autofill button
                 document.getElementById("link_autofill_"+strPrev).style.visibility="hidden";
             }
-            
+
+            // show the autoclear button
+            document.getElementById("link_autoclear_"+selectid).style.visibility="visible";
+
             // remember the previous select
             strPrev = selectid;
         } else {
@@ -277,11 +280,34 @@ function validateOptions() {
             strPrev = "";
             // hide the error message of this select
             document.getElementById("errorspan_"+selectid).style.visibility="hidden";
+            // hide the autoclear button
+            document.getElementById("link_autoclear_"+selectid).style.visibility="hidden";
         }
     }
     
     // if there is an error, we need to disable the save button
     $('#submitdata').attr('disabled', strDisabled);
+}
+
+/**
+ * Function that deletes a sample from the database
+ */
+function delSampleUpload(sampleToken, assayToken) {
+    // Does the users realy want to delete this sample
+    if(confirm('Are you sure you want to remove this sample?')) {
+        $.ajax({
+          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken,
+          context: document.body,
+          success: function(data){
+            // Reload step 4
+            init_step4();
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            // If something goes wrong, give an error
+            $("#drag").html(xhr.status+" "+thrownError);
+          }
+        });
+    }
 }
 
 /**
@@ -294,12 +320,12 @@ function updateOptions(selectid) {
     iSelected = document.getElementById(selectid).selectedIndex;
     
     strVisible = "hidden";
-    // If neither the first or the last option is selected, show the autofill button
+    // If neither the first nor the last option is selected, show the autofill button
     if(iSelected>0 && iSelected<(document.getElementById(selectid).length-1)) {
         strVisible = "visible";
     }
 
-document.getElementById("link_autofill_"+selectid).style.visibility=strVisible;
+    document.getElementById("link_autofill_"+selectid).style.visibility=strVisible;
 
     // validate the options
     validateOptions();
@@ -340,6 +366,36 @@ function autofill(selectid) {
     }
     // Hide the autofill button
     document.getElementById("link_autofill_"+selectid).style.visibility="hidden";
+    // Validate the selected options
+    validateOptions();
+}
+
+/**
+ * Function that resets the selects from a certain select to the first null;
+ */
+function autoclear(selectid) {
+    // get all selects
+    lstSelects = $('.select_file');
+    // this boolean is used to remember if we have found our SELECT in the list
+    blnAutofill = false;
+    for(i=0; i<lstSelects.length; i++) {
+       if(!blnAutofill) {
+           // check if the current SELECT is the one we search for
+           if(lstSelects[i].getAttribute("id")==selectid && lstSelects[i].value!="none") {
+               // start autofill and remember the option selected by this SELECT
+               blnAutofill = true;
+               lstSelects[i].selectedIndex = 0;
+           }
+       } else {
+           // Autoclear clears until the next SELECT that is not filled
+           if(lstSelects[i].value!="none") {
+               lstSelects[i].selectedIndex = 0;
+           } else {
+               // stop the loop, we are have reached a filled SELECT
+               break;
+           }
+        }
+    }
     // Validate the selected options
     validateOptions();
 }

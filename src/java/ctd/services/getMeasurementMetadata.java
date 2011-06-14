@@ -44,8 +44,7 @@ public class getMeasurementMetadata {
 
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"isUser",null);
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+        if(!objGSCFService.isUser(getSessionToken())) {
             throw new Exception403Forbidden();
         }
 
@@ -69,7 +68,7 @@ public class getMeasurementMetadata {
         
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
-        strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
+        String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getAuthorizationLevel",objParam);
         if (!(objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"isOwner") || objGSCFService.getAuthorizationLevel(strGSCFRespons[1],"canRead"))) {
             throw new Exception401Unauthorized();
         }

@@ -159,22 +159,31 @@ public class GscfService {
         return res.getString("gscf.baseURL") + "/logout/remote?moduleURL="+res.getString("ctd.moduleURL")+"&consumer="+res.getString("ctd.consumerID")+"&token="+strToken+"&returnUrl="+strReturnURL;
     }
 
-    public boolean isUser(String strJSON) {
+    public boolean isUser(String strSessionToken) {
         boolean blnRet = false;
 
-        ObjectTransformer trans = null;
+        String[] strGSCFRespons = new String[2];
         try {
-            trans = ObjectTransformerFactory.getInstance().getImplementation();
-            Map objJSON = (Map) trans.deserializeFromJsonString(strJSON);
-            if(objJSON.containsKey("authenticated")) {
-                String strAuth = (String) objJSON.get("authenticated").toString();
-                if(strAuth.equals("true")) {
-                    blnRet = true;
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService.isUser");
+            strGSCFRespons = this.callGSCF(strSessionToken, "isUser", null);
+        } catch (Exception500InternalServerError ex) {
+            Logger.getLogger(GscfService.class.getName()).log(Level.SEVERE, "isUser ERROR: "+ex.getError());
         }
+
+        //if(!(strGSCFRespons[1]==null)) {
+            ObjectTransformer trans = null;
+            try {
+                trans = ObjectTransformerFactory.getInstance().getImplementation();
+                Map objJSON = (Map) trans.deserializeFromJsonString(strGSCFRespons[1]);
+                if(objJSON.containsKey("authenticated")) {
+                    String strAuth = (String) objJSON.get("authenticated").toString();
+                    if(strAuth.equals("true")) {
+                        blnRet = true;
+                    }
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Skaringa Exception in GscfService.isUser");
+            }
+        //}
 
         return blnRet;
     }

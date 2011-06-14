@@ -46,9 +46,8 @@ public class getStudies {
 
         // Check if the provided sessionToken is valid
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",null);
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+strSessionToken);
+        if(!objGSCFService.isUser(getSessionToken())) {
+            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+getSessionToken());
             throw new Exception403Forbidden();
         }
 

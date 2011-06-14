@@ -29,15 +29,9 @@ public class loginGSCF {
 
     public void loginGSCF() throws Exception307TemporaryRedirect {
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = new String[2];
-        try {
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "isUser", null);
-        } catch (Exception500InternalServerError ex) {
-            Logger.getLogger(loginGSCF.class.getName()).log(Level.SEVERE, "loginGSCF ERROR: Internal Service Error");
-        }
-        if (!objGSCFService.isUser(strGSCFRespons[1])) {
+        if (!objGSCFService.isUser(getSessionToken())) {
             ResourceBundle res = ResourceBundle.getBundle("settings");
-            String urlAuthRemote = objGSCFService.urlAuthRemote(strSessionToken, res.getString("ctd.moduleURL") + "/"+getReturnScript());
+            String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL") + "/"+getReturnScript());
             throw new Exception307TemporaryRedirect(urlAuthRemote);
         }
     }
@@ -47,6 +41,8 @@ public class loginGSCF {
         String strUser = "";
 
         GscfService objGSCFService = new GscfService();
+        objGSCFService.isUser(getSessionToken());
+        
         String[] strGSCFRespons = new String[2];
         try {
             strGSCFRespons = objGSCFService.callGSCF(getSessionToken(), "getUser", null);

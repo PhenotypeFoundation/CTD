@@ -34,15 +34,8 @@ public class Overview {
 
         //Check if the user is logged in
         GscfService objGSCFService = new GscfService();
-        String[] strGSCFRespons = new String[2];
         ResourceBundle res = ResourceBundle.getBundle("settings");
-        try {
-            strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",null);
-        } catch (Exception500InternalServerError e) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW ERROR (isUser): "+e.getError());
-        }
-
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+        if(!objGSCFService.isUser(getSessionToken())) {
             String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/index.jsp?p=overview");
             throw new Exception307TemporaryRedirect(urlAuthRemote);
         }
@@ -126,7 +119,7 @@ public class Overview {
             String strLine = (String)mapStudyNames.get((String)data[1])+(String)mapAssayNames.get((String)data[0])+"!!SEP!!<tr class=\""+strClass+"\">\n";
             strLine += "\t<td class=\"tdoverview\">"+mapAssayNames.get((String)data[0])+" (<a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>details in GSCF</a>)</td>\n";
             strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>details in GSCF</a>)</td>\n";
-            strLine += "\t<td class=\"tdoverview\">"+data[2].toString()+"&nbsp;(<a href='#' onClick='showOverviewDetails(\""+(String)data[0]+"\")'>more info</a>)\n";
+            strLine += "\t<td class=\"tdoverview\"><span id='numsamp"+(String)data[0]+"'>"+data[2].toString()+"</span>&nbsp;(<a href='#' onClick='showOverviewDetails(\""+(String)data[0]+"\")'>more info</a>)\n";
             strLine += "</tr>\n";
             strLine += "<tbody id=\""+(String)data[0]+"HiddenRows\" style='display: none;'><tr><td class=\"tdoverview tdoverviewdetails\" colspan='4' id=\""+(String)data[0]+"Details\"><img src='./images/wait.gif' /></td></tr></tbody>\n";
             lstRijen.add(strLine);

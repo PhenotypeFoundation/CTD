@@ -37,3 +37,31 @@ function closeOverviewDetails() {
         overviewdetail = "";
     }
 }
+
+/**
+ * Function that deletes a sample from the database
+ */
+function delSampleOverview(sampleToken, assayToken) {
+    // Does the users realy want to delete this sample
+    if(confirm('Are you sure you want to remove this sample?')) {
+        $.ajax({
+          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken,
+          context: document.body,
+          success: function(data){
+            // Change the content of the datails div
+            overviewdetail = "";
+            showOverviewDetails(assayToken);
+            number = parseInt($("#numsamp"+assayToken).html())-1;
+            if(number>0) {
+                $("#numsamp"+assayToken).html(number);
+            } else {
+                loadPage('overview.jsp','content');
+            }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            // If something goes wrong, give an error
+            $("#"+assayToken+"Details").html(xhr.status+" "+thrownError);
+          }
+        });
+    }
+}

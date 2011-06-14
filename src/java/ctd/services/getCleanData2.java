@@ -46,6 +46,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -348,6 +349,23 @@ public class getCleanData2 {
                     fileFolderOld.delete();
                 } catch(Exception e){
                     Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
+                }
+
+                //Remove old temporary folders
+                File folderData = new File(res.getString("ws.upload_folder"));
+                listOfFiles = folderData.listFiles();
+                for(int i=0; i<listOfFiles.length;) {
+                    if(listOfFiles[i].lastModified()<(Integer.valueOf(timestamp)-10000) && listOfFiles[i].getName().length()<10) {
+                        // This folder is more than a day old
+                        // We know it is a temporary folder because the name is less than 10 chars long
+                        File[] lstDelete = listOfFiles[i].listFiles();
+                        for(int j=0; j<listOfFiles.length;) {
+                            // Delete all content of the old folder
+                            lstDelete[j].delete();
+                        }
+                        // Delete the old folder
+                        listOfFiles[i].delete();
+                    }
                 }
             }
 

@@ -70,8 +70,7 @@ public class getSamples {
         HashMap<String, String> restParams = new HashMap<String, String>();
         restParams.put("assayToken", getAssayToken());
 
-        String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"isUser",restParams);
-        if(!objGSCFService.isUser(strGSCFRespons[1])) {
+        if(!objGSCFService.isUser(getSessionToken())) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getSamples(): strSessionToken invalid: "+getSessionToken());
             throw new Exception403Forbidden();
         }
@@ -125,6 +124,7 @@ public class getSamples {
                 strReturn.append("<tr>" +
                     "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapFiles.get(mapSamples.get("sampleToken"))).append("</td>" +
                     "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapSamples.get("name")).append(" - ").append(mapSamples.get("event")).append(" - ").append(mapSamples.get("Text on vial")).append("</td>" +
+                    " <a href='#' onClick='delSampleUpload(\""+mapSamples.get("sampleToken")+"\",\""+getAssayToken()+"\");return false;'><img src='./images/icon_delete.png' alt='delete sample' /></a>" +
                      "</tr>");
             }
         }
@@ -141,7 +141,8 @@ public class getSamples {
                     "<td class='fs_fontsize' style='width:50%; background-color:").append(strColor).append(";'>").append(fn).append("</td>" + 
                     "<td class='fs_fontsize' style='width:50%; background-color:").append(strColor).append(";'>" + 
                         "<select id='").append(fn).append("' class='select_file' style='width:250px' onChange=\"updateOptions('").append(fn).append("');\">").append(strOptions).append("</select>" + 
-                        "<a href='#' id='link_autofill_").append(fn).append("' style='visibility: hidden' onClick=\"autofill('").append(fn).append("'); return false;\"><img src='./images/lightningBolt.png' style='border: 0px;' alt='autofill' /></a>" + 
+                        "<a href='#' id='link_autofill_").append(fn).append("' style='visibility: hidden' onClick=\"autofill('").append(fn).append("'); return false;\"><img src='./images/lightningBolt.png' style='border: 0px;' alt='autofill' /></a>" +
+                        "<a href='#' id='link_autoclear_").append(fn).append("' style='visibility: hidden' onClick=\"autoclear('").append(fn).append("'); return false;\"><img src='./images/icon_bin.png' style='border: 0px;' alt='autoclear' /></a>" +
                         " <span id='errorspan_").append(fn).append("' style='visibility: hidden; color:red; font-weight:bold;'>!!!</span>" +
                     "</td></tr>");
         }
@@ -168,10 +169,12 @@ public class getSamples {
             HashMap<String, String> restParams = new HashMap<String, String>();
             restParams.put("assayToken", getAssayToken());
             LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
-            Collections.sort(lstGetSamples, new responseComparator("name"));
-            Collections.sort(lstGetSamples, new responseComparator("subject"));
-            Collections.sort(lstGetSamples, new responseComparator("startTime"));
-            Collections.sort(lstGetSamples, new responseComparator("event"));
+            if(lstGetSamples.size()>1) {
+                Collections.sort(lstGetSamples, new responseComparator("name"));
+                Collections.sort(lstGetSamples, new responseComparator("subject"));
+                Collections.sort(lstGetSamples, new responseComparator("startTime"));
+                Collections.sort(lstGetSamples, new responseComparator("event"));
+            }
 
             HashMap<String, String> mapFiles = getFilesFromDatabase(getAssayToken());
 
@@ -181,6 +184,8 @@ public class getSamples {
                 String strFile = "<i>no file</i>";
                 if(mapFiles.containsKey(mapSamples.get("sampleToken"))) {
                     strFile = mapFiles.get(mapSamples.get("sampleToken"));
+                    strFile += " <a href='#' onClick='delSampleOverview(\""+mapSamples.get("sampleToken")+"\",\""+getAssayToken()+"\");return false;'>"
+                            + "<img src='./images/icon_delete.png' alt='delete sample' /></a>";
                 }
                 
                 String strStyle = "";
@@ -191,9 +196,7 @@ public class getSamples {
                 strRet.append("<tr style='").append(strStyle).append(";'>" +
                         "<td colspan='5'>Samplename: <span class='name'>").append(mapSamples.get("name")).append("</span></td>"+
                         "</tr>");
-                strRet.append("<tr style='").append(strStyle).append(";'>" +
-                        "<td>").append(mapSamples.get("event")).append("</td>" +
-                        "<td>").append(mapSamples.get("startTime")).append("</td>" +
+                strRet.append("<tr style='").append(strStyle).append(";'>" + "<td>").append(mapSamples.get("event")).append("</td>" + "<td>").append(mapSamples.get("startTime")).append("</td>" +
                         "<td>").append(mapSamples.get("subject")).append("</td>" +
                         "<td>").append(strFile).append("</td>"+
                         "</tr>\n");
