@@ -104,7 +104,8 @@ public class delSample {
         int iChipsDeleted = 0;
         if(intCount==1) {
             // Delete all chip annotations from the database if this is the last sample
-            iChipsDeleted = session.createSQLQuery("DELETE FROM chip_annotation WHERE id IN(SELECT chip_annotation_id FROM expression WHERE study_sample_assay_id=" + intSampleId+")").executeUpdate();
+            // Don't delete chip_annotations because they are shared over multiple assays
+            //iChipsDeleted = session.createSQLQuery("DELETE FROM chip_annotation WHERE id IN(SELECT chip_annotation_id FROM expression WHERE study_sample_assay_id=" + intSampleId+")").executeUpdate();
         }
         //Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Chips deleted: "+iChipsDeleted);
 
