@@ -77,6 +77,8 @@ public class delSample {
         // init some vars
         int intSampleId = 0;
         int intCount = 0;
+        String strCelFile = "";
+        ResourceBundle res = ResourceBundle.getBundle("settings");
 
         // Get all samples with the same assayToken
         // In this loop we want to know:
@@ -89,6 +91,7 @@ public class delSample {
             if(objSSA.getSampleToken().equals(getSampleToken())) {
                 // we found the sample we want to delete
                 intSampleId = objSSA.getId();
+                strCelFile = objSSA.getNameRawfile();
             }
             intCount++;
             if(intCount>1 && intSampleId>0) {
@@ -113,6 +116,12 @@ public class delSample {
         int iSampleDeleted = session.createQuery("delete from StudySampleAssay StudySampleAssay where id=" + intSampleId).executeUpdate();
         //Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Samples deleted: "+iSampleDeleted);
 
+        // Delete the .CEL file
+        String strPath = res.getString("ws.upload_folder")+getAssayToken()+"/"+strCelFile;
+        File celfile = new File(strPath);
+        boolean blnCelDeleted = celfile.delete();
+        Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Celfile deleted: "+blnCelDeleted+"<br />"+strPath);
+
         // close hibernate connection
         tr2.commit();
         session.disconnect();
@@ -123,7 +132,6 @@ public class delSample {
             // assay and all files in it
             Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Delete files and folder:" + getAssayToken());
 
-            ResourceBundle res = ResourceBundle.getBundle("settings");
             String dirName = res.getString("ws.upload_folder")+getAssayToken();
             File objFolder=new File(dirName);
             File[] arrFiles = objFolder.listFiles();

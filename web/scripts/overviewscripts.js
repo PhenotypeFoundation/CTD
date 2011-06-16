@@ -21,6 +21,8 @@ function showOverviewDetails(assay) {
             success: function(data, textStatus, jqXHR){
                 // Set the inner HTML of the tbody (a table with data)
                 $("#"+assay+"Details").html(data);
+                // Close blocking of the UI
+                $.unblockUI();
             }
         });
     }
@@ -43,9 +45,11 @@ function closeOverviewDetails() {
  */
 function delSampleOverview(sampleToken, assayToken) {
     // Does the users realy want to delete this sample
-    if(confirm('Are you sure you want to remove this sample?')) {
+    if(confirm('This will remove the data and the CEL file linked to this sample. Do you wish to continue?')) {
+        // Block UI
+        $.blockUI({ message: '<h2><img src="./images/wait.gif" /><br />We are processing your request...</h2>' });
         $.ajax({
-          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken,
+          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken+"&noCacheVar=" + new Date().getTime(),
           context: document.body,
           success: function(data){
             // Change the content of the datails div

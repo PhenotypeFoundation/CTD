@@ -174,10 +174,13 @@ function init_step4() {
 
         // add some explainatory text to step 4 (this might have been removed by previous error messages)
         $("#spanstep4").html('You can drag and drop the samples in order to match with the files. Each file should have one sample assigned to it. You need to add the samplenames to GSCF before you can assign files to them.<div id="drag"></div>');
-        
-        // add a loading span to indicate to the user that the SELECT is being filled
-        $('#spanstep4').append("<span id='loadingstep4'><img src='./images/icon_loading.gif' alt='loading' /></span>");
-        
+
+        // show step 4
+        $('#step4').show('slow');
+
+        // Block step 4 while loading
+        $('#step4').block({ message: "<img src='./images/wait.gif' alt='loading page'/><br /><h2>Loading data...</h2>"});
+
         // disable step 2 and 3 and enable the saving button
         $('#selectAssay').attr('disabled', 'disabled');
         $('#selectStudy').attr('disabled', 'disabled');
@@ -200,15 +203,15 @@ function init_step4() {
                 // the table with files and samples is shown
                 $("#drag").html(data);
             }
-            // remove the loading
-            $('#loadingstep4').remove();
-            
+
+            // unblock step 4
+            $("#step4").unblock();
+
             // scroll to step 4
             $.scrollTo('#step4', 800);
           }
         });
         // show step 4
-        $('#step4').show('slow');
         $.scrollTo('#step4', 800);
     }
 }
@@ -294,9 +297,9 @@ function validateOptions() {
  */
 function delSampleUpload(sampleToken, assayToken) {
     // Does the users realy want to delete this sample
-    if(confirm('Are you sure you want to remove this sample?')) {
+    if(confirm('This will remove the data and the CEL file linked to this sample. Do you wish to continue?')) {
         $.ajax({
-          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken,
+          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken+"&noCacheVar=" + new Date().getTime(),
           context: document.body,
           success: function(data){
             // Reload step 4

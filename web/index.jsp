@@ -25,6 +25,7 @@
         <script type="text/javascript" src="./scripts/overviewscripts.js"></script>
         <script type="text/javascript" src="./scripts/swfobject.js"></script>
         <script type="text/javascript" src="./scripts/jquery.uploadify.v2.1.4.min.js"></script>
+        <script type="text/javascript" src="./scripts/jquery.blockUI.js"></script>
         <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     </head>
@@ -63,10 +64,10 @@
       </tr>
       <tr>
         <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="700" colspan="5" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;margin-bottom:10px;"><img src="./images/wait.gif" alt="loading page content..." /></div></td>
+        <td width="700" colspan="5" bgcolor="#FFFFFF"><div id="content" style="width:700px; min-height:500px; margin-top:20px;margin-bottom:10px;"></div></td>
         <td bgcolor="#FFFFFF">&nbsp;</td>
       </tr>
     </table>
-       
+
     </body>
 </html>

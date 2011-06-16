@@ -353,13 +353,14 @@ public class getCleanData2 {
 
                 //Remove old temporary folders
                 File folderData = new File(res.getString("ws.upload_folder"));
+                long lngTimestamp = new java.util.Date().getTime();
                 listOfFiles = folderData.listFiles();
-                for(int i=0; i<listOfFiles.length;) {
-                    if(listOfFiles[i].lastModified()<(Integer.valueOf(timestamp)-10000) && listOfFiles[i].getName().length()<10) {
+                for(int i=0; i<listOfFiles.length; i++) {
+                    if(listOfFiles[i].lastModified()<(lngTimestamp-10000) && listOfFiles[i].getName().length()<10) {
                         // This folder is more than a day old
                         // We know it is a temporary folder because the name is less than 10 chars long
                         File[] lstDelete = listOfFiles[i].listFiles();
-                        for(int j=0; j<listOfFiles.length;) {
+                        for(int j=0; j<lstDelete.length; j++) {
                             // Delete all content of the old folder
                             lstDelete[j].delete();
                         }

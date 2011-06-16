@@ -5,7 +5,7 @@
  
  function loadPage(page, div) {
     // indicate in the div that a page is loading
-    $("#"+div).html("<img src='./images/wait.gif' alt='loading page'/>");
+    $("#"+div).block({ message: "<img src='./images/wait.gif' alt='loading page'/><br /><h2>Loading page...</h2>"});
     
     // add the noCacheVar to the end of the querystring
     var strSep = "?";
@@ -26,10 +26,12 @@
                 // show the data
                 $("#"+div).html(data);
             }
+            $("#"+div).unblock();
         },
         error: function (xhr, ajaxOptions, thrownError) {
             // if there is an error, show it's code and message
             $("#"+div).html(xhr.status+" "+thrownError);
+            $("#"+div).unblock();
         }
     });
 }
