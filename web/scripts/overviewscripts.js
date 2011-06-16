@@ -17,7 +17,7 @@ function showOverviewDetails(assay) {
         // Show the tbody
         $("#"+overviewdetail+"HiddenRows").show();
         $.ajax({
-            url: "./samplesoverview.jsp?assayToken="+assay,
+            url: "./samplesoverview.jsp?assayToken="+assay+"&noCacheVar=" + new Date().getTime(),
             success: function(data, textStatus, jqXHR){
                 // Set the inner HTML of the tbody (a table with data)
                 $("#"+assay+"Details").html(data);
@@ -49,7 +49,7 @@ function delSampleOverview(sampleToken, assayToken) {
         // Block UI
         $.blockUI({ message: '<h2><img src="./images/wait.gif" /><br />We are processing your request...</h2>' });
         $.ajax({
-          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken+"&noCacheVar=" + new Date().getTime(),
+          url: "./delSample.jsp?sampleToken="+sampleToken+"&assayToken="+assayToken,
           context: document.body,
           success: function(data){
             // Change the content of the datails div
