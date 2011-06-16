@@ -1,20 +1,13 @@
 package ctd.services;
 
-import com.skaringa.javaxml.DeserializerException;
-import com.skaringa.javaxml.NoImplementationException;
-import com.skaringa.javaxml.ObjectTransformer;
-import com.skaringa.javaxml.ObjectTransformerFactory;
 import ctd.services.exceptions.Exception400BadRequest;
-import ctd.services.exceptions.Exception401Unauthorized;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
 import ctd.services.internal.GscfService;
 import ctd.services.internal.responseComparator;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,12 +20,13 @@ public class getStudies {
     private String strSessionToken;
 
     /***
-     * TODO: COMMENT
+     * This function generates a sting containing all the OPTIONs that are shown
+     * in step 2 of the upload process.
      * 
-     * @return
-     * @throws Exception400BadRequest
-     * @throws Exception403Forbidden
-     * @throws Exception500InternalServerError
+     * @return The string containing the OPTIONs
+     * @throws Exception400BadRequest returned if the sessiontoken is not set
+     * @throws Exception403Forbidden returned if the user isn't logged in
+     * @throws Exception500InternalServerError returned if there is some error
      */
 
     public String getStudies() throws Exception400BadRequest, Exception403Forbidden, Exception500InternalServerError {
@@ -44,15 +38,19 @@ public class getStudies {
             throw new Exception400BadRequest();
         }
 
-        // Check if the provided sessionToken is valid
+        // init a GSCF service
         GscfService objGSCFService = new GscfService();
+
+        // Check if the provided sessionToken is valid
         if(!objGSCFService.isUser(getSessionToken())) {
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "getStudies(): strSessionToken invalid: "+getSessionToken());
             throw new Exception403Forbidden();
         }
 
+        // Get all assays that are available to the user from GSCF
         LinkedList lstGetAssays = objGSCFService.callGSCF2(getSessionToken(),"getAssays",null);
 
+        // Collect all the studyTokens in order to call CGSF for more information
         String strStudyCall = "";
         for(int i = 0; i < lstGetAssays.size(); i++){
             HashMap<String, String> mapTokens = (HashMap<String, String>) lstGetAssays.get(i);
@@ -61,11 +59,15 @@ public class getStudies {
             strStudyCall += mapTokens.get("parentStudyToken");
         }
 
+        // Call GSCF in order to get information of the studies
         HashMap<String, String> objParam = new HashMap();
         objParam.put("studyToken",strStudyCall);
         LinkedList lstGetStudies = objGSCFService.callGSCF2(getSessionToken(),"getStudies",objParam);
+
+        // Sort all studies according to title
         Collections.sort(lstGetStudies, new responseComparator("title"));
 
+        // Generate the OPTIONs containing the studies a user has access to
         strReturn = "<option value='none'>Select a study...</option>";
         for(int i = 0; i < lstGetStudies.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGetStudies.get(i);

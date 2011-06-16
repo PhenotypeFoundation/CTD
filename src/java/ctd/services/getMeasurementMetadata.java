@@ -1,24 +1,16 @@
 package ctd.services;
 
-import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
-import com.skaringa.javaxml.SerializerException;
-
-import ctd.model.StudySampleAssay;
-import ctd.model.Ticket;
 import ctd.services.exceptions.*;
-import ctd.services.getTicket;
 import ctd.services.internal.GscfService;
 import ctd.ws.model.ProbeSetAnnotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -35,7 +27,18 @@ public class getMeasurementMetadata {
     private String strAssayToken;
     private LinkedList<String> strMeasurementToken = new LinkedList<String>();
 
-    public String[] getMeasurementMetadata() throws SerializerException, Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
+    /**
+     *
+     * @return
+     * @throws SerializerException
+     * @throws Exception401Unauthorized
+     * @throws Exception500InternalServerError
+     * @throws Exception403Forbidden
+     * @throws Exception400BadRequest
+     * @throws Exception404ResourceNotFound
+     */
+
+    public String[] getMeasurementMetadata() throws Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
 
         // Check if the minimal parameters are set
         if(strAssayToken==null || strSessionToken==null){
@@ -62,10 +65,12 @@ public class getMeasurementMetadata {
             strStudyToken = (String) it1.next();
         }
 
+        // If the assay isn't found we throw a 404
         if(strStudyToken.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
-        
+
+        // Call GSCF to check a if a user is authorized for the requested data
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getAuthorizationLevel",objParam);
@@ -84,6 +89,7 @@ public class getMeasurementMetadata {
             strMeasurementQuery = " AND ca.probeset IN(" + strMeasurementQuery + ") ";
         }
 
+        // Create a query to collect all data that is requested
         SQLQuery sql2 = session.createSQLQuery("SELECT DISTINCT ca.probeset,ca.gene_accession,ca.gene_symbol,ca.gene_description"
                 + " FROM study_sample_assay ssa, expression ex, chip c,chip_annotation ca"
                 + " WHERE ssa.X_REF='" + getAssayToken() + "'"
@@ -91,6 +97,8 @@ public class getMeasurementMetadata {
                 + " AND ex.chip_annotation_id=ca.id "
                 + " AND ca.chip_id=c.id"
                 + strMeasurementQuery + ";");
+
+        // Iterate over the data in order to add them to the lists that are used to create to maps
         Iterator it2 = sql2.list().iterator();
         while (it2.hasNext()) {
             ProbeSetAnnotation ca = new ProbeSetAnnotation();
@@ -105,7 +113,6 @@ public class getMeasurementMetadata {
             ca.setGeneAccession(strGeneaccession);
             ca.setGeneDescription(strGeneannotation);
             ca.setGeneSymbol(strGenesymbol);
-            //ca.setProbeSet(getAssayToken());
             metadata.add(ca);
         }
 
@@ -121,13 +128,14 @@ public class getMeasurementMetadata {
         ObjectTransformer trans = null;
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
-        } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+            strReturn[1] = trans.serializeToJsonString(metadata);
+        } catch (Exception ex) {
+            throw new Exception500InternalServerError("ERROR getMeasurementMetadata: "+ex.getLocalizedMessage());
         }
 
         // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
-        strReturn[1] = trans.serializeToJsonString(metadata);
+        
         return strReturn;
     }
 
@@ -146,19 +154,26 @@ public class getMeasurementMetadata {
     }
 
     /**
+     * The measurementTokens are collected in a list. This function transformes
+     * this list to a String
      * @return the strMeasurementToken
      */
     public String getMeasurementToken() {
         StringBuffer strRet = new StringBuffer();
         strRet.append("");
+
+        // Boolean used to check for the first item
         boolean hasMeasurementToken = false;
 
-         for(int i=0; i<strMeasurementToken.size(); i++) {
+        for(int i=0; i<strMeasurementToken.size(); i++) {
             if(hasMeasurementToken) {
+                // Seperate items with a comma
                 strRet.append( "," );
             } else {
                 hasMeasurementToken = true;
             }
+
+            // Add the measurementtokens (with surrounding quotes)
             strRet.append( "'" ).append( strMeasurementToken .get(i) ).append( "'" );
         }
         return strRet.toString();
