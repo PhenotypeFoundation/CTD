@@ -120,7 +120,7 @@ public class delSample {
         String strPath = res.getString("ws.upload_folder")+getAssayToken()+"/"+strCelFile;
         File celfile = new File(strPath);
         boolean blnCelDeleted = celfile.delete();
-        Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Celfile deleted: "+blnCelDeleted+"<br />"+strPath);
+        //Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Celfile deleted: "+blnCelDeleted+"<br />"+strPath);
 
         // close hibernate connection
         tr2.commit();
@@ -130,7 +130,7 @@ public class delSample {
         if(intCount==1) {
             // if this is the last sample of an assay, delete the folder of this
             // assay and all files in it
-            Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Delete files and folder:" + getAssayToken());
+            //Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "delSample(): Delete files and folder:" + getAssayToken());
 
             String dirName = res.getString("ws.upload_folder")+getAssayToken();
             File objFolder=new File(dirName);

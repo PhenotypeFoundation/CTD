@@ -365,7 +365,9 @@ public class getCleanData2 {
                             lstDelete[j].delete();
                         }
                         // Delete the old folder
-                        listOfFiles[i].delete();
+                        if(!listOfFiles[i].delete()) {
+                            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "delSample(): Folder deletion failed: "+listOfFiles[i].getName());
+                        }
                     }
                 }
             }
