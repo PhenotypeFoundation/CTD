@@ -121,11 +121,20 @@ public class getSamples {
             if(!mapFiles.containsKey(mapSamples.get("sampleToken"))) {
                 strOptions += "<option value='"+mapSamples.get("sampleToken")+"'>"+mapSamples.get("name")+" - "+mapSamples.get("event")+" - "+mapSamples.get("Text on vial")+"</option>";
             } else {
-                strReturn.append("<tr>" +
-                    "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapFiles.get(mapSamples.get("sampleToken"))).append("</td>" +
-                    "<td class='fs_fontsize' style='width:50%; background-color:#CCC;'>").append(mapSamples.get("name")).append(" - ").append(mapSamples.get("event")).append(" - ").append(mapSamples.get("Text on vial")).append("</td>" +
-                    " <a href='#' onClick='delSampleUpload(\""+mapSamples.get("sampleToken")+"\",\""+getAssayToken()+"\");return false;'><img src='./images/icon_delete.png' alt='delete sample' /></a>" +
-                     "</tr>");
+                strReturn.append("<tr><td class='fs_fontsize' style='width:50%; background-color:#CCC;'>")
+                        .append(mapFiles.get(mapSamples.get("sampleToken")))
+                        .append(" <a href='#' onClick='delSampleUpload(\"")
+                        .append(mapSamples.get("sampleToken"))
+                        .append("\",\"")
+                        .append(getAssayToken())
+                        .append("\");return false;'><img src='./images/icon_delete.png' alt='delete sample' /></a>")
+                    .append("</td><td class='fs_fontsize' style='width:50%; background-color:#CCC;'>")
+                        .append(mapSamples.get("name"))
+                        .append(" - ")
+                        .append(mapSamples.get("event"))
+                        .append(" - ")
+                        .append(mapSamples.get("Text on vial"))
+                    .append("</td></tr>");
             }
         }
 
