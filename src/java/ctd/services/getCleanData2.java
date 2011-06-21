@@ -18,7 +18,6 @@ package ctd.services;
 import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
-import com.skaringa.javaxml.SerializerException;
 import ctd.model.Chip;
 import ctd.model.ChipAnnotation;
 import ctd.model.StudySampleAssay;
@@ -28,25 +27,16 @@ import ctd.statistics.Statistics;
 import ctd.ws.model.CleanDataResult;
 import java.io.BufferedReader;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Date;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +54,6 @@ import org.hibernate.cfg.Configuration;
 import org.apache.commons.io.*;
 
 /**
- *
  * @author kerkh010
  * @author Tjeerd van Dijk
  * @author Taco Steemers
@@ -150,7 +139,10 @@ public class getCleanData2 {
                 String args = rscript+" --verbose --vanilla " + rscript_cleandata + " -i" + zip_file + " -o" + gct_file + " -w" + zip_folder;
                 Logger.getLogger(getTicket.class.getName()).log(Level.INFO, timestamp+": Running: "+args);
                 Process p = Runtime.getRuntime().exec(args);
-                //Check if CEL files are unzipped allready
+                // Check if CEL files are unzipped allready
+                // This is done by checking every 5 seconds for the existence of a .chip file
+                // This is a bad way of doing this, in future versions of CTD
+                // the output of the R scripts should be parsed
                 boolean do_loop = true;
                 while (do_loop) {
                     File dir2 = new File(zip_folder);
@@ -344,14 +336,19 @@ public class getCleanData2 {
                     }
                 }
 
-                //Remove temporary folder
+                // Remove temporary folder
                 try{
                     fileFolderOld.delete();
                 } catch(Exception e){
                     Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
                 }
 
-                //Remove old temporary folders
+                // --------------------------------------------
+                // This piece of code is added in order to cleanup all the files
+                // of aborted upload procedures. It checks for these old folders
+                // (more than a day old and a temporaty name (which is just a number
+                // from 1 upwards. It is assumed that a temporary folder has a
+                // name shorter than 10 chars) and removes these files and folders
                 File folderData = new File(res.getString("ws.upload_folder"));
                 long lngTimestamp = new java.util.Date().getTime();
                 listOfFiles = folderData.listFiles();
@@ -370,20 +367,21 @@ public class getCleanData2 {
                         }
                     }
                 }
+                // --------------------------------------------
             }
 
-            ////////////////////
-            //SKARINGA
+            // set the messages of the response
             result.setErrorMessage(error_message);
-
             result.setMessage(message);
+
+            // Use SKARINGA in order to create the JSON response
             ObjectTransformer trans = null;
             try {
                 trans = ObjectTransformerFactory.getInstance().getImplementation();
+                message = trans.serializeToString(result);
             } catch (NoImplementationException ex) {
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, timestamp+": "+ex);
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "SKARINGA ERROR IN getCleanData2: "+ex.getLocalizedMessage());
             }
-            message = trans.serializeToString(result);
             
         } catch(Exception e){
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, timestamp+": ERROR IN getCleanData2: "+e.toString());
