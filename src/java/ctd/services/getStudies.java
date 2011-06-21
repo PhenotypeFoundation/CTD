@@ -75,7 +75,7 @@ public class getStudies {
             if(map.get("code")==null) {
                 strCode = "";
             }
-            strReturn += "<option value="+map.get("studyToken")+">"+map.get("title")+strCode+"</option>";
+            strReturn += "<option value='"+map.get("studyToken")+"'>"+map.get("title")+strCode+"</option>";
         }
 
         return strReturn;

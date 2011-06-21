@@ -3,13 +3,12 @@
 	uploadHandler.jsp
 ------------------------------------------------------------
 --%>
-
 <%@page import="java.util.logging.Level"%>
 <%@page import="ctd.services.setData"%>
 <%@page import="java.util.logging.Logger"%>
 <%@
 page session="false" %><%@
-page contentType="text/html; charset=UTF-8" %><%@
+page contentType="text/plain; charset=UTF-8" %><%@
 page import="java.io.*" %><%@
 page import="java.net.*" %><%@
 page import="java.util.*" %><%@

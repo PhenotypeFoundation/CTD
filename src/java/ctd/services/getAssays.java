@@ -64,7 +64,7 @@ public class getAssays {
         strReturn = "<option value='none'>Select an assay...</option>";
         for(int i = 0; i < lstGetAssays.size(); i++){
             HashMap<String, String> map = (HashMap<String, String>) lstGetAssays.get(i);
-            strReturn += "<option value="+map.get("assayToken")+">"+map.get("name")+"</option>";
+            strReturn += "<option value='"+map.get("assayToken")+"'>"+map.get("name")+"</option>";
         }
         
         return strReturn;

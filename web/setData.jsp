@@ -3,8 +3,8 @@
     Created on : apr 2011
     Author     : Tjeerd van Dijk and Taco Steemers
 --%>
-<%@page contentType="text/html" import="java.util.*" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/plain" import="java.util.*" %>
+<%@page contentType="text/plain" pageEncoding="UTF-8"%>
 <jsp:useBean id="setData" scope="page" class="ctd.services.setData"/>
 
 <%
