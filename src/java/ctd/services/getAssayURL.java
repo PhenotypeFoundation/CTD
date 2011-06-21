@@ -1,10 +1,7 @@
 package ctd.services;
 
-import com.skaringa.javaxml.NoImplementationException;
 import com.skaringa.javaxml.ObjectTransformer;
 import com.skaringa.javaxml.ObjectTransformerFactory;
-import com.skaringa.javaxml.SerializerException;
-import ctd.model.Ticket;
 import ctd.services.exceptions.*;
 import ctd.services.internal.GscfService;
 import java.util.HashMap;
@@ -12,7 +9,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,7 +24,19 @@ public class getAssayURL {
     private String strSessionToken;
     private String strAssayToken;
 
-    public String[] getAssayURL() throws NoImplementationException, SerializerException, Exception400BadRequest, Exception500InternalServerError, Exception403Forbidden, Exception401Unauthorized, Exception404ResourceNotFound {
+    /**
+     * This function is used by the REST service getAssayURL to create it's response
+     *
+     * @return a String in JSON format
+     *
+     * @throws Exception401Unauthorized This exception is thrown if GSCF indicates that a user is not authorized (getAuthorizationLevel)
+     * @throws Exception500InternalServerError This exception is thrown when there is an error in this code
+     * @throws Exception403Forbidden This exception is thrown if GSCF indicates that a user is not logged in (isUser)
+     * @throws Exception404ResourceNotFound This exception is thrown when the requested assay isn't present in the database
+     * @throws Exception400BadRequest This exception is thrown when not enough paremeters are set
+     */
+
+    public String[] getAssayURL() throws Exception400BadRequest, Exception500InternalServerError, Exception403Forbidden, Exception401Unauthorized, Exception404ResourceNotFound {
 
         // Check if the minimal parameters are set
         if(getAssayToken()==null || getSessionToken()==null){
@@ -54,11 +62,13 @@ public class getAssayURL {
         while (it1.hasNext()) {
             strStudyToken = (String) it1.next();
         }
-        
+
+        // If the study can't be found a 404 is thrown
         if(strStudyToken.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
+        // Call GSCF in order to get the authorization level for a study
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         String[] strGSCFRespons = objGSCFService.callGSCF(getSessionToken(),"getAuthorizationLevel",objParam);
@@ -68,24 +78,14 @@ public class getAssayURL {
 
         // init parameters  
         String[] strReturn = new String [2];
-
-        //init parameters
         ResourceBundle res = ResourceBundle.getBundle("settings");
 
+        // init paremeters from the settings
         String ftp_username = res.getString("ws.ftp_username");
         String hostname = res.getString("ws.hostname");
         String ftp_folder = res.getString("ws.ftp_folder");
 
-//        //open hibernate connection
-//        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-//        Session session = sessionFactory.openSession();
-//
-//        Ticket ticket = null;
-//        Query q = session.createQuery("from Ticket where password='" + getSessionToken() + "'");
-//        ticket = (Ticket) q.uniqueResult();
-//        session.close();
-//
-//        String folder = ticket.getFolder();
+        // Get the folder
         String folder = getAssayToken();
 
         //location ftp folder
@@ -94,26 +94,28 @@ public class getAssayURL {
         // The link is now hardwired to the CTD home because there doesn't excist a page for assay details
         link = res.getString("ctd.moduleURL");
 
-        HashMap<String,String> url = new HashMap<String,String>();
+        // Create a map and put the url inside it.
+        HashMap<String,String> mapURL = new HashMap<String,String>();
+        mapURL.put("url", link);
 
-        url.put("url", link);
-
-        if(url.isEmpty()) {
+        // If no URL is present a 404 is thrown
+        if(mapURL.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
         // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
+        strReturn[1] = "";
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
-        } catch (NoImplementationException ex) {
-            Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, null, ex);
+            strReturn[1] = trans.serializeToJsonString(mapURL);
+        } catch (Exception ex) {
+            Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "SKARINGA EXCEPTION in getAssayURL: "+ ex.getLocalizedMessage());
         }
 
         // HTTP response code 200 means 'OK'
         strReturn[0] = "200";
-        strReturn[1] = trans.serializeToJsonString(url);
-
+        
         return strReturn;
     }
 

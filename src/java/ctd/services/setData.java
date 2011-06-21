@@ -50,7 +50,7 @@ public class setData {
         Session session = sessionFactory.openSession();
         Transaction tr = session.beginTransaction();
 
-        // Create a ticket and store some information
+        // Create a ticket and store it in the database
         Ticket objTicket = new Ticket(getCdRef(), getFolder(), getPassword());
         objTicket.setClosed("no");
         session.saveOrUpdate(objTicket);
@@ -73,12 +73,14 @@ public class setData {
         objCommitData.setSampletokens(objMatches);
 
         try {
+            // Try to save the data to the database
             strRet = objCommitData.cleanData();
         } catch (Exception e) {
             strRet = "Saving Failed: "+e.toString()+" \n"+e.getMessage();
             Logger.getLogger(setData.class.getName()).log(Level.SEVERE, getPassword()+": setData ERROR: Internal Service Error: "+e.toString());
         }
 
+        // Get the result of the saving and put it into the logs
         Logger.getLogger(setData.class.getName()).log(Level.INFO, getPassword()+": setData returns: "+strRet);
         return strRet;
     }

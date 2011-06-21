@@ -43,13 +43,15 @@ public class getMeasurementData {
     private boolean blnVerbose = false;
 
     /**
-     * 
-     * @return
-     * @throws Exception401Unauthorized
-     * @throws Exception500InternalServerError
-     * @throws Exception403Forbidden
-     * @throws Exception400BadRequest
-     * @throws Exception404ResourceNotFound
+     * This function is used by the REST service getMeasurementData to create it's response
+     *
+     * @return a String in JSON format
+     *
+     * @throws Exception401Unauthorized This exception is thrown if GSCF indicates that a user is not authorized (getAuthorizationLevel)
+     * @throws Exception500InternalServerError This exception is thrown when there is an error in this code
+     * @throws Exception403Forbidden This exception is thrown if GSCF indicates that a user is not logged in (isUser)
+     * @throws Exception404ResourceNotFound This exception is thrown when the requested assay isn't present in the database
+     * @throws Exception400BadRequest This exception is thrown when not enough paremeters are set
      */
 
     public String[] getMeasurementData() throws Exception401Unauthorized, Exception500InternalServerError, Exception403Forbidden, Exception400BadRequest, Exception404ResourceNotFound {
@@ -80,10 +82,12 @@ public class getMeasurementData {
             strStudyToken = (String) it1.next();
         }
 
+        // If no study can be found a 404 is thrown
         if(strStudyToken.isEmpty()) {
             throw new Exception404ResourceNotFound();
         }
 
+        // Get the authorization level of a user for a certain study
         HashMap<String,String> objParam = new HashMap();
         objParam.put("studyToken", strStudyToken);
         String[] strGSCFRespons = objGSCFService.callGSCF(strSessionToken,"getAuthorizationLevel",objParam);
@@ -112,7 +116,7 @@ public class getMeasurementData {
             strSampleQuery = " AND ssa.sample_token IN(" + strSampleQuery + ") ";
         }
 
-
+        // Create the SQL query
         String strQuery2 = "SELECT ex.expression,ca.probeset,ssa.sample_token"
                         + " FROM expression ex,chip_annotation ca,study_sample_assay ssa"
                         + " WHERE ssa.X_REF='" + getAssayToken() +"'"
@@ -162,15 +166,19 @@ public class getMeasurementData {
             // message should report a sampleToken, a measurementToken and a
             // value
             while (it2.hasNext()) {
+                // Get the data
                 Object[] data = (Object[]) it2.next();
                 Double value = (Double) data[0];
                 String sMeasurementToken = (String) data[1];
                 String sSampleToken = (String) data[2];
 
+                // Create a ExpressionProbeSample which represents a line in the JSON
                 ExpressionProbesetSample objNew = new ExpressionProbesetSample();
                 objNew.setMeasurementToken(sMeasurementToken);
                 objNew.setSampleToken(sSampleToken);
                 objNew.setValue(value);
+
+                // Add the ExpressionProbeSample to a map
                 total.add(objNew);
             }
         }
@@ -184,11 +192,12 @@ public class getMeasurementData {
 
         // Use SKARINGA to transform the results into a valide JSON message
         ObjectTransformer trans = null;
+        strReturn[1] = "";
         try {
             trans = ObjectTransformerFactory.getInstance().getImplementation();
             strReturn[1] = trans.serializeToJsonString(total);
         } catch (Exception ex) {
-            throw new Exception500InternalServerError("ERROR getMeasurementData: "+ex.getLocalizedMessage());
+            throw new Exception500InternalServerError("SKARINGA ERROR getMeasurementData: "+ex.getLocalizedMessage());
         }
 
         // HTTP response code 200 means 'OK'
@@ -226,19 +235,26 @@ public class getMeasurementData {
     }
 
     /**
+     * The measurementTokens are collected in a list. This function transformes
+     * this list to a String
      * @return the strMeasurementToken
      */
     public String getMeasurementToken() {
         StringBuffer strRet = new StringBuffer();
         strRet.append("");
+
+        // Boolean used to check for the first item
         boolean hasMeasurementToken = false;
 
          for(int i=0; i<strMeasurementToken.size(); i++) {
             if(hasMeasurementToken) {
+                // Seperate items with a comma
                 strRet.append( "," );
             } else {
                 hasMeasurementToken = true;
             }
+
+            // Add the measurementtokens (with surrounding quotes)
             strRet.append( "'" ).append( strMeasurementToken .get(i) ).append( "'" );
         }
         return strRet.toString();
@@ -252,19 +268,26 @@ public class getMeasurementData {
     }
 
     /**
+     * The sampleTokens are collected in a list. This function transformes
+     * this list to a String
      * @return the strSampleToken
      */
     public String getSampleToken() {
         StringBuffer strRet = new StringBuffer();
         strRet.append("");
+
+        // Boolean used to check for the first item
         boolean hasSampleToken = false;
 
          for(int i=0; i<strSampleToken.size(); i++) {
             if(hasSampleToken) {
+                // Seperate items with a comma
                 strRet.append( "," );
             } else {
                 hasSampleToken = true;
             }
+
+            // Add the measurementtokens (with surrounding quotes)
             strRet.append( "'" ).append( strSampleToken .get(i) ).append( "'" );
         }
         return strRet.toString();

@@ -41,7 +41,10 @@ public class responseComparator implements Comparator {
         HashMap<String, String> map0 = (HashMap<String, String>)arg0;
         HashMap<String, String> map1 = (HashMap<String, String>)arg1;
 
+        // If the field we want to compare is a number, the boolean blnIsDouble
+        // will be set
         if(!blnIsDouble) {
+            // No number, just user the compareTo function of String
             if(map0.get(strMapKey).compareTo(map1.get(strMapKey))<0) {
                 return -1;
             } else if(map0.get(strMapKey).equals(map1.get(strMapKey))) {
@@ -50,6 +53,7 @@ public class responseComparator implements Comparator {
                 return 1;
             }
         } else {
+            // Number, convert to Double and compare these doubles
             double v0 = Double.valueOf(map0.get(strMapKey));
             double v1 = Double.valueOf(map1.get(strMapKey));
             if(v0<v1) {
