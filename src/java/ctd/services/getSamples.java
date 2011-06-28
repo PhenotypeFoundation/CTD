@@ -223,7 +223,7 @@ public class getSamples {
             if(!objGSCFService.isUser(getSessionToken())) {
                 ResourceBundle res = ResourceBundle.getBundle("settings");
                 String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/assay/showByToken/"+getAssayToken());
-                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT in getSamples: "+urlAuthRemote);
+                //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT in getSamples: "+urlAuthRemote);
                 throw new Exception307TemporaryRedirect(urlAuthRemote);
             }
 
