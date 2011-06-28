@@ -66,6 +66,7 @@ public class CtdService {
                 String key = (String) keyIter.next();  // Get the next key.
                 String[] value = (String[]) objParameterMap.get(key);  // Get the value for that key.
                 for(int i=0; i<value.length; i++) {
+                    // for the variable "sessionToken" we search for the method "setSessionToken"
                     key = key.substring(0, 1).toUpperCase()+key.substring(1, key.length());
                     if(mapParameterTypes.containsKey("set"+key)) {
                        Object[] arguments = new Object[1];
@@ -93,7 +94,7 @@ public class CtdService {
 
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-
+            // Catch the possible CTD Exceptions that can occur
             if(cause instanceof Exception307TemporaryRedirect){
                 Exception307TemporaryRedirect eNew = (Exception307TemporaryRedirect) cause;
                 strRet[0] = "307";
@@ -115,40 +116,48 @@ public class CtdService {
                 strRet[0] = "404";
                 strRet[1] = eNew.getError();
             } else {
+                // Report an internal server error
                 strRet[0] = "500";
                 strRet[1] = "Internal Server Error: Unknown InvocationTargetException"+" "+cause.toString();
                 Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Internal Server Error (invocation): "+cause.toString()+"\n"+cause.getMessage());
             }
         } catch (Exception e) {
-            //throw new Exception(e);
+            // Report an internal server error
             strRet[0] = "500";
             strRet[1] = "Internal Server Error: CtdService";
             Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "Internal Server Error: CtdService:\n"+e.getMessage());
         }
-        /*
-        String strBericht = strRet[1];
-        if(strRet[1].length()>2000) {
-            strBericht = strRet[1].substring(0, 1999)+" (...)";
-        }
-        Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, "CODE: "+strRet[0]+", Response at "+strRestService+" (in "+(System.currentTimeMillis()-startTime)+"ms):<br />"+strBericht);
-        */
+
         return strRet;
     }
+
+    /***
+     * This function casts a certain variable to a given type. If the given type
+     * isn't int, double or boolean the variable is returned as a String
+     *
+     * @param strType the type we need to casts to
+     * @param strValue the incomming variable that needs to be cast
+     * @return a variable of the type strType
+     */
 
     static public Object[] determineArguments(String strType, String strValue){
         Object[] returnValues = new Object[1];
         if(strType.equals("int")){
+            // If we have an integer
             returnValues[0] = Integer.valueOf((String) strValue);
         } else if(strType.equals("double")){
+            // If we have a double
             returnValues[0] = Double.valueOf((String) strValue);
         } else if(strType.equals("boolean")){
+            // If we have a boolean
             if(strValue.toLowerCase().equals("true")){
                 returnValues[0] = true;
             }
             if(strValue.toLowerCase().equals("false")){
-                returnValues[0] = true;
+                returnValues[0] = false;
             }
         } else {
+            // In all other cases, return a String
             returnValues[0] = strValue;
         }
         return returnValues;

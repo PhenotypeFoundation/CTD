@@ -1,18 +1,11 @@
 package ctd.services.internal;
 
-import com.skaringa.javaxml.ObjectTransformer;
-import com.skaringa.javaxml.ObjectTransformerFactory;
 import ctd.services.exceptions.Exception307TemporaryRedirect;
-import ctd.services.exceptions.Exception500InternalServerError;
-import ctd.services.getTicket;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,12 +22,22 @@ public class Overview {
 
     String strSessionToken = "";
 
+    /**
+     * This function generates the table that is shown on the "My Studies" page
+     * @return a String containing HTML
+     * @throws Exception307TemporaryRedirect if the user is not logged in a redirect is thrown
+     */
+
     public String Overview() throws Exception307TemporaryRedirect {
         String strRet = "";
 
-        //Check if the user is logged in
+        // Create a GSCF service
         GscfService objGSCFService = new GscfService();
+        
+        // Load the CTD settings
         ResourceBundle res = ResourceBundle.getBundle("settings");
+        
+        //Check if the user is logged in
         if(!objGSCFService.isUser(getSessionToken())) {
             String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/index.jsp?p=overview");
             throw new Exception307TemporaryRedirect(urlAuthRemote);
@@ -50,38 +53,49 @@ public class Overview {
         }
         strOffset = "";
 
-
+        // Call GSCF in order to get all assays of this module and user
         LinkedList lstGetAssays = objGSCFService.callGSCF2(getSessionToken(),"getAssays",null);
+
+        // Init params
         String strStudyQuery = "";
         String strStudyCall = "";
         Map mapAssayNames = new HashMap();
 
-       if(lstGetAssays.size()==0) {
-           return "";
-       }
+        // if this user doesn't have any assays, the empty string is returned
+        if(lstGetAssays.size()==0) {
+            return "";
+        }
 
+        // We need some data of each assay in order to be able to query the database
         for(int i=0; i<lstGetAssays.size(); i++) {
             HashMap<String, String> objMap = (HashMap) lstGetAssays.get(i);
-            
+
+            // Get all studyTokens (comma seperated) for the database query
             if(!strStudyQuery.equals("")) strStudyQuery += ",";
             strStudyQuery += "'"+objMap.get("parentStudyToken")+"'";
 
+            // Get all studyTokens for the REST call
             if(!strStudyCall.equals("")) strStudyCall += "&studyToken=";
             strStudyCall += objMap.get("parentStudyToken");
 
+            // Save the assay names and tokens in a map for future use
             mapAssayNames.put(objMap.get("assayToken"), objMap.get("name"));
         }
 
+        // Call GSCF in order to get info on all the studies we have
         HashMap<String, String> objParam = new HashMap();
         objParam.put("studyToken",strStudyCall);
         LinkedList lstGetStudies = objGSCFService.callGSCF2(getSessionToken(),"getStudies",objParam);
 
+        // For each studytoken, we want to know which name to attach
         Map mapStudyNames = new HashMap();
         for(int i=0; i<lstGetStudies.size(); i++) {
             HashMap<String, String> objMap = (HashMap) lstGetStudies.get(i);
+            // add the token and name to he map
             mapStudyNames.put(objMap.get("studyToken"), objMap.get("title"));
         }
 
+        // create a clause for the studytokens
         if(!strStudyQuery.equals("")) strStudyQuery = " WHERE a.study_token IN(" + strStudyQuery + ") ";
 
         //open hibernate connection
@@ -98,7 +112,7 @@ public class Overview {
                             +" "+strStudyQuery
                             +" GROUP BY a.X_REF"
                             +" "+strOffset+"";
-        //Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "OVERVIEW QUERY: "+strQuery);
+        
         SQLQuery sql = session.createSQLQuery(strQuery);
         Iterator it2 = sql.list().iterator();
         int iRownr = 1;
@@ -113,13 +127,16 @@ public class Overview {
             String strClass = "odd";
             if(iRownr%2==0) strClass = "even";
 
+            // Collect stats on the number of files that have been uploaded for an assay
             String strExprCount = "0";
             if(data[3]!=null) {
                 strExprCount = data[3].toString();
             }
 
+            // Count rows for odd and even style classes
             iRownr++;
-            
+
+            // Create a line in the table
             String strLine = (String)mapStudyNames.get((String)data[1])+(String)mapAssayNames.get((String)data[0])+"!!SEP!!<tr class=\""+strClass+"\">\n";
             strLine += "\t<td class=\"tdoverview\">"+mapAssayNames.get((String)data[0])+" (<a href='"+strGscfHome+"/assay/showByToken/"+(String)data[0]+"'>details in GSCF</a>)</td>\n";
             strLine += "\t<td class=\"tdoverview\">"+mapStudyNames.get((String)data[1])+" (<a href='"+strGscfHome+"/study/showByToken/"+(String)data[1]+"'>details in GSCF</a>)</td>\n";
@@ -129,11 +146,13 @@ public class Overview {
             lstRijen.add(strLine);
         }
 
+        // This ugly hack is implemented in order to be able to order the rows alphabeticly
         for(int i=0; i<lstRijen.size(); i++) {
             String[] arrLine = lstRijen.get(i).split("!!SEP!!");
             strRet += arrLine[1];
         }
-        
+
+        // close hibernate session
         session.close();
 
         return strRet;

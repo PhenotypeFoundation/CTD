@@ -68,8 +68,7 @@ public class getMeasurementData {
         }
 
         //open hibernate connection
-        Configuration objConf = new Configuration().configure();
-        SessionFactory sessionFactory = objConf.buildSessionFactory();
+        SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
 
         // Check if the provided sessionToken has access to the provided assayToken
@@ -123,7 +122,7 @@ public class getMeasurementData {
                         + " AND ex.chip_annotation_id=ca.id"
                         + " AND ex.study_sample_assay_id=ssa.id"
                         + strSampleQuery + strMeasurementQuery
-                        + " ORDER BY ssa.sample_token ASC, ca.probeset ASC;";
+                        + " ORDER BY ca.probeset ASC, ssa.sample_token ASC;";
 
         SQLQuery sql2 = session.createSQLQuery(strQuery2);
         Iterator it2 = sql2.list().iterator();

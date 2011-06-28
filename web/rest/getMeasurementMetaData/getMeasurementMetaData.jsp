@@ -6,7 +6,7 @@
     Author     : Tjeerd van Dijk and Taco Steemers
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/plain" pageEncoding="UTF-8"%>
 <jsp:useBean id="ctdservice" scope="page" class="ctd.services.internal.CtdService"/>
 
 <%

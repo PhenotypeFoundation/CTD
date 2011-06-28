@@ -6,7 +6,7 @@
     Author     : Tjeerd van Dijk and Taco Steemers
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/plain" pageEncoding="UTF-8"%>
 <jsp:useBean id="ctdservice" scope="page" class="ctd.services.internal.CtdService"/>
 
 <%
@@ -15,7 +15,7 @@
     if(Integer.valueOf(message[0])!=307) {
         // A 307 is a redirect code and needs to be treated different than the other returns
         response.setStatus(Integer.valueOf(message[0]));
-        response.getWriter().println(message[1]);   
+        response.getWriter().println(message[1]);
     } else {
         response.sendRedirect(message[1]);
     }
