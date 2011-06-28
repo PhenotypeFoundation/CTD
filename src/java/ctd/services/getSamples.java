@@ -1,6 +1,7 @@
 package ctd.services;
 
 import ctd.model.StudySampleAssay;
+import ctd.services.exceptions.Exception307TemporaryRedirect;
 import ctd.services.exceptions.Exception400BadRequest;
 import ctd.services.exceptions.Exception403Forbidden;
 import ctd.services.exceptions.Exception500InternalServerError;
@@ -182,12 +183,24 @@ public class getSamples {
     }
 
     /**
+     * This function enables the blnDelete option of getSamplesOverview to be empty
+     * @return a String containing the table
+     * @throws Exception307TemporaryRedirect if the user isn't logged in
+     */
+    public String getSamplesOverview() throws Exception307TemporaryRedirect {
+        // Use blnDelete=true as default
+        return getSamplesOverview(true);
+    }
+
+    /**
      * This function generated the table that is shown in de details pannel in
      * the overview (my studies) screen.
      *
+     * @param blnDelete a boolean that indicates if delete buttons need to be printed
      * @return a String containing the table
+     * @throws Exception307TemporaryRedirect if the user isn't logged in
      */
-    public String getSamplesOverview() {
+    public String getSamplesOverview(boolean blnDelete) throws Exception307TemporaryRedirect {
         
         StringBuilder strRet = new StringBuilder();
 
@@ -206,10 +219,23 @@ public class getSamples {
             // Init a GSCF service
             GscfService objGSCFService = new GscfService();
 
+            // Check id the user is authenticated
+            if(!objGSCFService.isUser(getSessionToken())) {
+                ResourceBundle res = ResourceBundle.getBundle("settings");
+                String urlAuthRemote = objGSCFService.urlAuthRemote(getSessionToken(), res.getString("ctd.moduleURL")+"/assay/showByToken/"+getAssayToken());
+                Logger.getLogger(getTicket.class.getName()).log(Level.SEVERE, "REDIRECT in getSamples: "+urlAuthRemote);
+                throw new Exception307TemporaryRedirect(urlAuthRemote);
+            }
+
             // Get all samples that are linked to this assay
             HashMap<String, String> restParams = new HashMap<String, String>();
             restParams.put("assayToken", getAssayToken());
             LinkedList lstGetSamples = objGSCFService.callGSCF2(getSessionToken(),"getSamples",restParams);
+
+            // If the call for information didn't yield results return the empty string
+            if(lstGetSamples==null) {
+                return "";
+            }
 
             // If the list of samples enables sorting
             if(lstGetSamples.size()>1) {
@@ -232,8 +258,11 @@ public class getSamples {
                 String strFile = "<i>no file</i>";
                 if(mapFiles.containsKey(mapSamples.get("sampleToken"))) {
                     strFile = mapFiles.get(mapSamples.get("sampleToken"));
-                    strFile += " <a href='#' onClick='delSampleOverview(\""+mapSamples.get("sampleToken")+"\",\""+getAssayToken()+"\");return false;'>"
-                            + "<img src='./images/icon_delete.png' alt='delete sample' /></a>";
+                    if(blnDelete) {
+                        // If it is requested a Delete button is shown
+                        strFile += " <a href='#' onClick='delSampleOverview(\""+mapSamples.get("sampleToken")+"\",\""+getAssayToken()+"\");return false;'>"
+                                + "<img src='./images/icon_delete.png' alt='delete sample' /></a>";
+                    }
                 }
 
                 // Lines should have alternating colour
@@ -243,10 +272,10 @@ public class getSamples {
                 } 
 
                 // Generate a line in the table
-                strRet.append("<tr style='").append(strStyle).append(";'>" +
+                strRet.append("<tr style='").append(strStyle).append("'>" +
                         "<td colspan='5'>Samplename: <span class='name'>").append(mapSamples.get("name")).append("</span></td>"+
                         "</tr>");
-                strRet.append("<tr style='").append(strStyle).append(";'>" +
+                strRet.append("<tr style='").append(strStyle).append("'>" +
                         "<td>").append(mapSamples.get("event")).append("</td>" +
                         "<td>").append(mapSamples.get("startTime")).append("</td>" +
                         "<td>").append(mapSamples.get("subject")).append("</td>" +
@@ -257,7 +286,7 @@ public class getSamples {
         }
         // Close the table
         strRet.append("</table>");
-
+        
         return strRet.toString();
     }
 

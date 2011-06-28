@@ -55,7 +55,11 @@ public class Overview {
         String strStudyQuery = "";
         String strStudyCall = "";
         Map mapAssayNames = new HashMap();
-                
+
+       if(lstGetAssays.size()==0) {
+           return "";
+       }
+
         for(int i=0; i<lstGetAssays.size(); i++) {
             HashMap<String, String> objMap = (HashMap) lstGetAssays.get(i);
             

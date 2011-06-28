@@ -68,6 +68,13 @@
         <to type="forward">getAssayURL.jsp$1</to>
     </rule>
 
+    <rule enabled="true">
+        <name>getAssayDetails rule according to specification</name>
+        <note>In GSCF goto a study, select the tab assays and click on details</note>
+        <from>^/assay/showByToken/(.*)$</from>
+        <to type="forward">../../getAssayDetails.jsp?assayToken=$1</to>
+    </rule>
+
 </urlrewrite>
 
 
