@@ -6,6 +6,6 @@ The main advantage of the Clean Transcriptome Database is the equal normalizatio
 The probeset name can be used to query the database resulting in a graphical representation of all expression values for a specific gene. If samples have been grouped a standard deviation bar is shown.
 
 
-![Expression Values](samples_expression.png)
+<img alt="Expression Values" src="samples_expression.png"/>
 
 _Figure 1: Expression values grouped by sample treatment and experiment. The extremes (blue dots), average (red dots) and STD are shown for gene 19013 (mouse: probeset 19013_at)._
